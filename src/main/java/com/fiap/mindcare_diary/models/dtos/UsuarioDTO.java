@@ -1,6 +1,5 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import com.fiap.mindcare_diary.models.TipoUsuario;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,16 +12,10 @@ public class UsuarioDTO {
 
     private String senha;
 
-    private String tipoUsuario;
-
     private String nomeCompleto;
 
-    private LocalDate dataNascimento;
+    private String dataNascimento;
 
-    private String enderecoCompleto;
-
-    private String cpf;
-
-    private LocalDateTime dataCriacaoCadastro;
+    private String dataHoraAtivacao;
 
 }

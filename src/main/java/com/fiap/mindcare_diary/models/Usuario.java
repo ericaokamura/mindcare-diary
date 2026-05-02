@@ -21,16 +21,10 @@ public class Usuario {
 
     private String senha;
 
-    private TipoUsuario tipoUsuario;
-
     private String nomeCompleto;
 
     private LocalDate dataNascimento;
 
-    private String enderecoCompleto;
-
-    private String cpf;
-
-    private LocalDateTime dataCriacaoCadastro;
+    private LocalDateTime dataHoraAtivacao;
 
 }

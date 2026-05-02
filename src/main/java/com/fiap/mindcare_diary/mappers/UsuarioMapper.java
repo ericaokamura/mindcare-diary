@@ -13,12 +13,9 @@ public class UsuarioMapper {
         for (Usuario usuario : usuarios) {
             UsuarioDTO dto = new UsuarioDTO();
             dto.setNomeUsuario(usuario.getNomeUsuario());
-            dto.setTipoUsuario(usuario.getTipoUsuario().name());
-            dto.setCpf(usuario.getCpf());
             dto.setNomeCompleto(usuario.getNomeCompleto());
-            dto.setDataNascimento(usuario.getDataNascimento());
-            dto.setEnderecoCompleto(usuario.getEnderecoCompleto());
-            dto.setDataCriacaoCadastro(usuario.getDataCriacaoCadastro());
+            dto.setDataNascimento(usuario.getDataNascimento().toString());
+            dto.setDataHoraAtivacao(usuario.getDataHoraAtivacao().toString());
             dtos.add(dto);
         }
         return dtos;

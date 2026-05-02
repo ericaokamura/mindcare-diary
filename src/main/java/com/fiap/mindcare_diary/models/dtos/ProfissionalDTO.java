@@ -2,9 +2,12 @@ package com.fiap.mindcare_diary.models.dtos;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class ProfissionalDTO extends UsuarioDTO {
 
-    private String identificadorProfissional;
+    private List<PacienteDTO> pacientes = new ArrayList<>();
 
 }

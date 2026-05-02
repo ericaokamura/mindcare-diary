@@ -4,11 +4,14 @@ import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.RegistroDiario;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class RelatorioSemanalDTO {
 
     private PacienteDTO paciente;

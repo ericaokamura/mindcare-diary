@@ -20,7 +20,7 @@ public class RegistroDiarioController {
         return ResponseEntity.ok(registroDiarioService.retornarRegistrosDiarios(idPaciente));
     }
 
-    @PostMapping("/{idPaciente}")
+    @PostMapping("/cadastrarRegistroDiario/{idPaciente}")
     public ResponseEntity<Void> salvarRegistroDiario(@PathVariable("idPaciente") Long idPaciente, @RequestBody RegistroDiarioDTO registroDiarioDTO) {
         registroDiarioService.salvarRegistroDiario(idPaciente, registroDiarioDTO);
         return ResponseEntity.ok().build();

@@ -1,8 +1,11 @@
 package com.fiap.mindcare_diary.models.dtos;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class RegistroDiarioDTO {
 
     private PacienteDTO paciente;

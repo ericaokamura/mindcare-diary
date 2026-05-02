@@ -23,4 +23,16 @@ public class RelatorioSemanalMapper {
         }
         return dtos;
     }
+
+    public static RelatorioSemanalDTO convertModelToDTO(RelatorioSemanal relatorio) {
+        RelatorioSemanalDTO dto = new RelatorioSemanalDTO();
+        dto.setFaixaDeDatas(relatorio.getFaixaDeDatas());
+        dto.setPaciente(PacienteMapper.convertModelToDTO(relatorio.getPaciente()));
+        dto.setRegistrosDiarios(RegistroDiarioMapper.convertModelListToDTOList(relatorio.getRegistrosDiarios()));
+        dto.setObservacoes(relatorio.getObservacoes());
+        dto.setRecomendacoes(relatorio.getRecomendacoes());
+        dto.setRelatorioIA(relatorio.getRelatorioIA());
+        dto.setDataHoraCriacao(relatorio.getDataHoraCriacao().toString());
+        return dto;
+    }
 }

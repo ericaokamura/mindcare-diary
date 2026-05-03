@@ -23,9 +23,9 @@ public class RegistroDiarioService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public void salvarRegistroDiario(Long idPaciente, RegistroDiarioDTO registroDiarioDTO) {
+    public void salvarRegistroDiario(String nomeUsuario, RegistroDiarioDTO registroDiarioDTO) {
         RegistroDiario registroDiario = RegistroDiarioMapper.convertDTOToModel(registroDiarioDTO);
-        Optional<Paciente> optionalPaciente = this.pacienteRepository.findById(idPaciente);
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             registroDiario.setPaciente(optionalPaciente.get());
             registroDiario.setDataHoraCriacao(LocalDateTime.now());
@@ -35,8 +35,8 @@ public class RegistroDiarioService {
         }
     }
 
-    public List<RegistroDiarioDTO> retornarRegistrosDiarios(Long idPaciente) {
-        Optional<Paciente> optionalPaciente = this.pacienteRepository.findById(idPaciente);
+    public List<RegistroDiarioDTO> retornarRegistrosDiarios(String nomeUsuario) {
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             return RegistroDiarioMapper.convertModelListToDTOList(this.registroDiarioRepository.findAllByPaciente(optionalPaciente.get()));
         } else {

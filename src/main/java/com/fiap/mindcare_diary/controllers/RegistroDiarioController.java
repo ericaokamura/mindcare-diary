@@ -15,14 +15,14 @@ public class RegistroDiarioController {
     @Autowired
     private RegistroDiarioService registroDiarioService;
 
-    @GetMapping("/{idPaciente}")
-    public ResponseEntity<List<RegistroDiarioDTO>> retornarRegistrosDiarios(@PathVariable("idPaciente") Long idPaciente) {
-        return ResponseEntity.ok(registroDiarioService.retornarRegistrosDiarios(idPaciente));
+    @GetMapping("/{nomeUsuario}")
+    public ResponseEntity<List<RegistroDiarioDTO>> retornarRegistrosDiarios(@PathVariable("nomeUsuario") String nomeUsuario) {
+        return ResponseEntity.ok(registroDiarioService.retornarRegistrosDiarios(nomeUsuario));
     }
 
-    @PostMapping("/cadastrarRegistroDiario/{idPaciente}")
-    public ResponseEntity<Void> salvarRegistroDiario(@PathVariable("idPaciente") Long idPaciente, @RequestBody RegistroDiarioDTO registroDiarioDTO) {
-        registroDiarioService.salvarRegistroDiario(idPaciente, registroDiarioDTO);
+    @PostMapping("/cadastrarRegistroDiario/{nomeUsuario}")
+    public ResponseEntity<Void> salvarRegistroDiario(@PathVariable("nomeUsuario") String nomeUsuario, @RequestBody RegistroDiarioDTO registroDiarioDTO) {
+        registroDiarioService.salvarRegistroDiario(nomeUsuario, registroDiarioDTO);
         return ResponseEntity.ok().build();
     }
 }

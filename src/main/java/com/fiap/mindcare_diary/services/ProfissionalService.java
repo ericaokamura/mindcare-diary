@@ -8,7 +8,6 @@ import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,12 +40,33 @@ public class ProfissionalService {
         return ProfissionalMapper.convertModelListToDTOList(this.profissionalRepository.findAll());
     }
 
-    public List<PacienteDTO> retornarPacientesPorProfissional(Long idProfissional) {
-        Optional<Profissional> optionalProfissional = profissionalRepository.findById(idProfissional);
+    public List<PacienteDTO> retornarPacientesPorProfissional(String nomeUsuario) {
+        Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(nomeUsuario);
         if(optionalProfissional.isPresent()) {
             return PacienteMapper.convertModelListToDTOList(pacienteRepository.findAllByProfissional(optionalProfissional.get()));
         } else {
             throw new ProfissionalJaCadastradoException("");
         }
+    }
+
+    public ProfissionalDTO retornarProfissional(String nomeUsuario) {
+        Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(nomeUsuario);
+        if(optionalProfissional.isPresent()) {
+            return ProfissionalMapper.convertModelToDTO(optionalProfissional.get());
+        } else {
+            throw new ProfissionalJaCadastradoException("");
+        }
+
+    }
+
+    public List<ProfissionalDTO> buscarProfissionaisProTipo(String tipoProfissional) {
+        List<ProfissionalDTO>  profissionais = new ArrayList<>();
+        this.profissionalRepository.findAll().forEach(profissional -> {
+            if(profissional.getTipoProfissional().toString().equals(tipoProfissional)) {
+                profissionais.add(ProfissionalMapper.convertModelToDTO(profissional));
+            }
+        });
+        return profissionais;
+
     }
 }

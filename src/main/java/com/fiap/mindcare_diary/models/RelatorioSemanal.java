@@ -33,4 +33,8 @@ public class RelatorioSemanal {
     private String relatorioIA;
 
     private LocalDateTime dataHoraCriacao;
+
+    private int totalPositivos;
+
+    private int totalNegativos;
 }

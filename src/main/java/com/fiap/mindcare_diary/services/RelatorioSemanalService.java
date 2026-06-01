@@ -9,7 +9,6 @@ import com.fiap.mindcare_diary.models.dtos.RelatorioSemanalDTO;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +31,8 @@ public class RelatorioSemanalService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public RelatorioSemanalDTO gerarRelatorioSemanal(Long idPaciente, RelatorioSemanalDTO dto) {
-        Optional<Paciente> optionalPaciente = this.pacienteRepository.findById(idPaciente);
+    public RelatorioSemanalDTO gerarRelatorioSemanal(String nomeUsuario, RelatorioSemanalDTO dto) {
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
@@ -51,8 +50,15 @@ public class RelatorioSemanalService {
             for(RegistroDiario registroDiario : todosRegistrosDiarios) {
                 if(registroDiario.getDataHoraCriacao().isAfter(LocalDateTime.parse(datas[0])) && registroDiario.getDataHoraCriacao().isBefore(LocalDateTime.parse(datas[1]))) {
                     registrosDiarios.add(registroDiario);
+                    if(registroDiario.getPontosPositivos() != null && !registroDiario.getPontosPositivos().isBlank()){
+                        countPontosPositivos++;
+                    } else if(registroDiario.getDificuldadesDesafios() != null && !registroDiario.getDificuldadesDesafios().isBlank()){
+                        countDificuldadesDesafios++;
+                    }
                 }
             }
+            relatorioSemanal.setTotalPositivos(countPontosPositivos);
+            relatorioSemanal.setTotalNegativos(countDificuldadesDesafios);
             relatorioSemanal.setRegistrosDiarios(registrosDiarios);
             relatorioSemanalRepository.save(relatorioSemanal);
             return RelatorioSemanalMapper.convertModelToDTO(relatorioSemanal);
@@ -61,8 +67,8 @@ public class RelatorioSemanalService {
         }
     }
 
-    public List<RelatorioSemanalDTO> retornarRelatoriosSemanaisPorPaciente(Long idPaciente) {
-        Optional<Paciente> optionalPaciente = this.pacienteRepository.findById(idPaciente);
+    public List<RelatorioSemanalDTO> retornarRelatoriosSemanaisPorPaciente(String nomeUsuario) {
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             return RelatorioSemanalMapper.convertModelListToDTOList(this.relatorioSemanalRepository.findAllByPaciente(optionalPaciente.get()));
         } else {

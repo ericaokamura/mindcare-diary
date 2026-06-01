@@ -5,6 +5,7 @@ import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
+import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class ProfissionalMapper {
             dto.setEstadoPaciente(p.getEstadoPaciente().name());
             pacientes.add(dto);
         });
+        profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
         return profissionalDTO;
     }
 
@@ -38,6 +40,7 @@ public class ProfissionalMapper {
         profissional.setSenha(dto.getSenha());
         profissional.setNomeCompleto(dto.getNomeCompleto());
         profissional.setDataNascimento(LocalDate.parse(dto.getDataNascimento()));
+        profissional.setTipoProfissional(TipoProfissional.valueOf(dto.getTipoProfissional()));
         return profissional;
     }
 

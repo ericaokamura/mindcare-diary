@@ -25,13 +25,23 @@ public class ProfissionalController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{idProfissional}")
-    public ResponseEntity<List<PacienteDTO>> retornarPacientesPorProfissional(@PathVariable("idProfissional") Long idProfissional) {
-        return ResponseEntity.ok(profissionalService.retornarPacientesPorProfissional(idProfissional));
+    @GetMapping("/{nomeUsuario}/pacientes")
+    public ResponseEntity<List<PacienteDTO>> retornarPacientesPorProfissional(@PathVariable("nomeUsuario") String nomeUsuario) {
+        return ResponseEntity.ok(profissionalService.retornarPacientesPorProfissional(nomeUsuario));
     }
 
     @GetMapping()
     public ResponseEntity<List<ProfissionalDTO>> retornarProfissionais() {
         return ResponseEntity.ok(profissionalService.retornarProfissionais());
+    }
+
+    @GetMapping("/{nomeUsuario}")
+    public ResponseEntity<ProfissionalDTO> retornarProfissional(@PathVariable("nomeUsuario") String nomeUsuario) {
+        return ResponseEntity.ok(profissionalService.retornarProfissional(nomeUsuario));
+    }
+
+    @GetMapping("/tipoProfissional/{tipoProfissional}")
+    public ResponseEntity<List<ProfissionalDTO>> buscarProfissionaisProTipo(@PathVariable("tipoProfissional") String tipoProfissional) {
+        return ResponseEntity.ok(profissionalService.buscarProfissionaisProTipo(tipoProfissional));
     }
 }

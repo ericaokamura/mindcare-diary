@@ -11,7 +11,6 @@ import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +60,7 @@ public class PacienteService {
         }
     }
 
-    public @Nullable PacienteDTO atualizarEstadoPaciente(Long idProfissional, Long idPaciente, String estadoPaciente) {
+    public PacienteDTO atualizarEstadoPaciente(Long idProfissional, Long idPaciente, String estadoPaciente) {
         Optional<Paciente> optionalPaciente = pacienteRepository.findById(idPaciente);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();

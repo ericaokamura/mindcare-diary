@@ -1,6 +1,9 @@
 package com.fiap.mindcare_diary.models;
 
+import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.Getter;
@@ -13,7 +16,13 @@ import java.util.List;
 @Setter
 public class Profissional extends Usuario {
 
-    @OneToMany
+    @OneToMany(mappedBy = "profissional")
     private List<Paciente> pacientes;
+
+    @OneToMany(mappedBy = "profissional")
+    private List<Consulta> consultas;
+
+    @Enumerated(EnumType.STRING)
+    private TipoProfissional tipoProfissional;
 
 }

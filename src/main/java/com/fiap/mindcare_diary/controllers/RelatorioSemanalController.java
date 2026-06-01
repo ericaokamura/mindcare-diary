@@ -15,13 +15,13 @@ public class RelatorioSemanalController {
     @Autowired
     private RelatorioSemanalService relatorioSemanalService;
 
-    @PostMapping("/gerar/{idPaciente}")
-    public ResponseEntity<RelatorioSemanalDTO> gerarRelatorioSemanal(@PathVariable("idPaciente") Long idPaciente, @RequestBody RelatorioSemanalDTO relatorioSemanal) {
-        return ResponseEntity.ok(relatorioSemanalService.gerarRelatorioSemanal(idPaciente, relatorioSemanal));
+    @PostMapping("/gerar/{nomeUsuario}")
+    public ResponseEntity<RelatorioSemanalDTO> gerarRelatorioSemanal(@PathVariable("nomeUsuario") String nomeUsuario, @RequestBody RelatorioSemanalDTO relatorioSemanal) {
+        return ResponseEntity.ok(relatorioSemanalService.gerarRelatorioSemanal(nomeUsuario, relatorioSemanal));
     }
 
-    @GetMapping("/{idPaciente}")
-    public ResponseEntity<List<RelatorioSemanalDTO>> retornarRelatoriosSemanaisPorPaciente(@PathVariable("idPaciente") Long idPaciente)  {
-        return ResponseEntity.ok(relatorioSemanalService.retornarRelatoriosSemanaisPorPaciente(idPaciente));
+    @GetMapping("/{nomeUsuario}")
+    public ResponseEntity<List<RelatorioSemanalDTO>> retornarRelatoriosSemanaisPorPaciente(@PathVariable("nomeUsuario") String nomeUsuario)  {
+        return ResponseEntity.ok(relatorioSemanalService.retornarRelatoriosSemanaisPorPaciente(nomeUsuario));
     }
 }

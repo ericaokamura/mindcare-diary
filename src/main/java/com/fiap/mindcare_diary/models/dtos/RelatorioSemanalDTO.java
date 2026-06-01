@@ -27,4 +27,8 @@ public class RelatorioSemanalDTO {
     private String relatorioIA;
 
     private String dataHoraCriacao;
+
+    private int totalPositivos;
+
+    private int totalNegativos;
 }

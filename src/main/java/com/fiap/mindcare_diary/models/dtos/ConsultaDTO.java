@@ -11,6 +11,8 @@ public class ConsultaDTO {
 
     private ProfissionalDTO profissional;
 
+    private PacienteDTO paciente;
+
     private String dataHoraConsulta;
 
     private boolean atendida;

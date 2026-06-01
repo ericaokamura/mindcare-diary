@@ -4,7 +4,8 @@ public enum EstadoPaciente {
 
     ESTAVEL(0, "ESTÁVEL"),
     ATENCAO(1, "ATENÇÃO"),
-    MELHORANDO(2, "MELHORANDO");
+    MELHORANDO(2, "MELHORANDO"),
+    SEM_DEFINICAO(3, "SEM_DEFINICAO");
 
     private int codigo;
     private String descricao;

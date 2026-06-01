@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -15,9 +17,10 @@ public class Paciente extends Usuario {
     @JoinColumn(name = "profissional_id")
     private Profissional profissional;
 
-    private boolean ativo;
+    @OneToMany(mappedBy = "paciente")
+    private List<Consulta> consultas;
 
     @Enumerated(EnumType.STRING)
-    private EstadoPaciente estadoPaciente;
+    private EstadoPaciente estadoPaciente = EstadoPaciente.SEM_DEFINICAO;
 
 }

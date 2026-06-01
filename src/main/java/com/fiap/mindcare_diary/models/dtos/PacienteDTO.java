@@ -3,13 +3,16 @@ package com.fiap.mindcare_diary.models.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class PacienteDTO extends UsuarioDTO {
 
     private ProfissionalDTO profissional;
 
-    private boolean ativo;
+    private List<ConsultaDTO> consultas = new ArrayList<>();
 
-    private String estadoPaciente;
+    private String estadoPaciente = "SEM_DEFINICAO";
 }

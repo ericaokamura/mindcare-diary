@@ -19,6 +19,8 @@ public class UsuarioDTO {
 
     private String dataNascimento;
 
+    private boolean ativo;
+
     private String dataHoraAtivacao;
 
 }

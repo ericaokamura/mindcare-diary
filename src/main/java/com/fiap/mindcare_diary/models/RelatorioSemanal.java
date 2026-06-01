@@ -23,7 +23,7 @@ public class RelatorioSemanal {
 
     private String faixaDeDatas;
 
-    @OneToMany
+    @ManyToMany
     private List<RegistroDiario> registrosDiarios;
 
     private String observacoes;
@@ -37,4 +37,6 @@ public class RelatorioSemanal {
     private int totalPositivos;
 
     private int totalNegativos;
+
+    private String resumo;
 }

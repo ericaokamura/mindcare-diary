@@ -31,4 +31,6 @@ public class RelatorioSemanalDTO {
     private int totalPositivos;
 
     private int totalNegativos;
+
+    private String resumo;
 }

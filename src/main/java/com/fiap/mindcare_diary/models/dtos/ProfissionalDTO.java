@@ -12,6 +12,8 @@ public class ProfissionalDTO extends UsuarioDTO {
 
     private List<PacienteDTO> pacientes = new ArrayList<>();
 
+    private List<ConsultaDTO> consultas = new ArrayList<>();
+
     private String tipoProfissional;
 
 }

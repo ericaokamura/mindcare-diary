@@ -1,14 +1,18 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.AgendamentoNaoPodeSerRealizadoException;
+import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
 import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
 import com.fiap.mindcare_diary.mappers.ConsultaMapper;
 import com.fiap.mindcare_diary.models.Consulta;
+import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.RecomendacaoHorario;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
+import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 import com.fiap.mindcare_diary.repositories.AgendamentoRepository;
+import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
 import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +37,11 @@ public class AgendamentoService {
 
     @Autowired
     private AgendamentoRepository agendamentoRepository;
+
     @Autowired
-    private AbstractObservationVectorStore abstractObservationVectorStore;
+    private PacienteRepository pacienteRepository;
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     public void salvarAgendamento(ConsultaDTO consultaDTO) {
 
@@ -54,18 +61,30 @@ public class AgendamentoService {
             throw new AgendamentoNaoPodeSerRealizadoException("Agendamento precisa ser realizado entre 8h e 18h.");
         }
 
-        Optional<Profissional> optionalProfissional = this.profissionalRepository.findByNomeUsuario(consultaDTO.getProfissional().getNomeUsuario());
-        if (optionalProfissional.isPresent()) {
-            Optional<Consulta> consultaOptional = this.agendamentoRepository.findByProfissionalAndDataHoraConsulta(optionalProfissional.get(), LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
-            if (consultaOptional.isPresent()) {
-                throw new AgendamentoNaoPodeSerRealizadoException("Já existe um agendamento para essa data e hora.");
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(consultaDTO.getPaciente().getNomeUsuario());
+        if (optionalPaciente.isPresent()) {
+            Paciente paciente = optionalPaciente.get();
+            Optional<Profissional> optionalProfissional = this.profissionalRepository.findByNomeUsuario(consultaDTO.getProfissional().getNomeUsuario());
+            if (optionalProfissional.isPresent()) {
+                Profissional profissional = optionalProfissional.get();
+                Optional<Consulta> consultaOptional = this.agendamentoRepository.findByProfissionalAndDataHoraConsulta(profissional, LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
+                if (consultaOptional.isPresent()) {
+                    throw new AgendamentoNaoPodeSerRealizadoException("Já existe um agendamento para essa data e hora.");
+                }
+                paciente.setProfissional(optionalProfissional.get());
+                profissional.getPacientes().add(paciente);
+                Consulta consulta = ConsultaMapper.convertDTOToModel(consultaDTO);
+                consulta.setProfissional(optionalProfissional.get());
+                consulta.setPaciente(paciente);
+                consulta.setDataHoraConsulta(LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
+                this.agendamentoRepository.save(consulta);
+                this.pacienteRepository.save(paciente);
+                this.profissionalRepository.save(profissional);
+            } else {
+                throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
             }
-            Consulta consulta = ConsultaMapper.convertDTOToModel(consultaDTO);
-            consulta.setProfissional(optionalProfissional.get());
-            consulta.setDataHoraConsulta(LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
-            this.agendamentoRepository.save(consulta);
         } else {
-            throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
+            throw new PacienteNaoEncontradoException("Paciente não encontrado.");
         }
     }
 
@@ -87,7 +106,6 @@ public class AgendamentoService {
             List<RecomendacaoHorario> recomendacoes = new ArrayList<>();
             for(LocalTime horario : horariosDisponiveis) {
                 if(!horariosAgendados.contains(LocalDateTime.of(dataInformadaConvertida, horario))) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
                     recomendacoes.add(new RecomendacaoHorario(formatter.format(LocalDateTime.of(dataInformadaConvertida, horario)), profissional.getTipoProfissional().name(), 1.0));
                 }
             }
@@ -158,7 +176,6 @@ public class AgendamentoService {
                 double score = scoreHorario + scoreDiaSemana + scoreConfiabilidadePaciente;
 
                 if(!horariosAgendados.contains(LocalDateTime.of(dataRecomendada, horario))) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
                     recomendacoes.add(new RecomendacaoHorario(formatter.format(LocalDateTime.of(dataRecomendada, horario)), tipoProfissionalConvertido.name(), score));
                 }
             }

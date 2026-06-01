@@ -10,6 +10,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,20 +21,8 @@ import java.util.List;
 @RequestMapping("agendamentos")
 public class AgendamentoController {
 
-    private final ChatClient chatClient;
-
-    private final PgVectorStore pgVectorStore;
-
-    private final DataLoader dataLoader;
-
-    private final AgendamentoService agendamentoService;
-
-    public AgendamentoController(ChatClient.Builder builder, PgVectorStore pgVectorStore, DataLoader dataLoader, AgendamentoService agendamentoService) {
-        this.chatClient = builder.defaultAdvisors(new QuestionAnswerAdvisor(pgVectorStore)).build();
-        this.pgVectorStore = pgVectorStore;
-        this.dataLoader = dataLoader;
-        this.agendamentoService = agendamentoService;
-    }
+    @Autowired
+    private AgendamentoService agendamentoService;
 
     @PostMapping
     public ResponseEntity<Void> agendarConsulta(@RequestBody ConsultaDTO consultaDTO) {

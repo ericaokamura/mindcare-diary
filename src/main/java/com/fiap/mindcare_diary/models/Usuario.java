@@ -28,6 +28,8 @@ public class Usuario {
 
     private LocalDate dataNascimento;
 
+    private boolean ativo;
+
     private LocalDateTime dataHoraAtivacao;
 
 }

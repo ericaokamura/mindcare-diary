@@ -21,6 +21,7 @@ public class RelatorioSemanalMapper {
             dto.setDataHoraCriacao(relatorio.getDataHoraCriacao().toString());
             dto.setTotalNegativos(relatorio.getTotalNegativos());
             dto.setTotalPositivos(relatorio.getTotalPositivos());
+            dto.setResumo(relatorio.getResumo());
             dtos.add(dto);
         }
         return dtos;
@@ -37,6 +38,7 @@ public class RelatorioSemanalMapper {
         dto.setDataHoraCriacao(relatorio.getDataHoraCriacao().toString());
         dto.setTotalNegativos(relatorio.getTotalNegativos());
         dto.setTotalPositivos(relatorio.getTotalPositivos());
+        dto.setResumo(relatorio.getResumo());
         return dto;
     }
 }

@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RelatorioSemanalRepository extends JpaRepository<RelatorioSemanal, Long> {
 
     List<RelatorioSemanal> findAllByPaciente(Paciente paciente);
+
+    Optional<RelatorioSemanal> findByPacienteAndFaixaDeDatas(Paciente paciente, String faixaDeDatas);
 }

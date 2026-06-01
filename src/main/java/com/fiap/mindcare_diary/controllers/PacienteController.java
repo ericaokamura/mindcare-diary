@@ -19,9 +19,9 @@ public class PacienteController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{idPaciente}")
-    public ResponseEntity<PacienteDTO> retornarCadastroPaciente(@PathVariable("idPaciente") Long idPaciente) {
-        return ResponseEntity.ok(pacienteService.retornarCadastroPaciente(idPaciente));
+    @GetMapping("/{nomeUsuario}")
+    public ResponseEntity<PacienteDTO> retornarCadastroPaciente(@PathVariable("nomeUsuario") String nomeUsuario) {
+        return ResponseEntity.ok(pacienteService.retornarCadastroPaciente(nomeUsuario));
     }
 
     @PatchMapping("/selecionarProfissional/{idProfissional}/{idPaciente}")

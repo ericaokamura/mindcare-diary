@@ -15,21 +15,14 @@ import java.util.List;
 public class ProfissionalMapper {
 
     public static ProfissionalDTO convertModelToDTO(Profissional profissional) {
-        List<PacienteDTO> pacientes = new ArrayList<>();
         ProfissionalDTO profissionalDTO = new ProfissionalDTO();
         profissionalDTO.setNomeUsuario(profissional.getNomeUsuario());
         profissionalDTO.setSenha(profissional.getSenha());
         profissionalDTO.setNomeCompleto(profissional.getNomeCompleto());
-        profissionalDTO.setDataHoraAtivacao(profissional.getDataHoraAtivacao().toString());
-        profissionalDTO.setDataNascimento(profissional.getDataNascimento().toString());
-        profissionalDTO.setPacientes(pacientes);
-        profissional.getPacientes().forEach(p -> {
-            PacienteDTO dto = new PacienteDTO();
-            dto.setProfissional(profissionalDTO);
-            dto.setAtivo(p.isAtivo());
-            dto.setEstadoPaciente(p.getEstadoPaciente().name());
-            pacientes.add(dto);
-        });
+        profissionalDTO.setDataHoraAtivacao(String.valueOf(profissional.getDataHoraAtivacao()));
+        profissionalDTO.setDataNascimento(String.valueOf(profissional.getDataNascimento()));
+        profissionalDTO.setAtivo(profissional.isAtivo());
+        //profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
         profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
         return profissionalDTO;
     }
@@ -41,6 +34,11 @@ public class ProfissionalMapper {
         profissional.setNomeCompleto(dto.getNomeCompleto());
         profissional.setDataNascimento(LocalDate.parse(dto.getDataNascimento()));
         profissional.setTipoProfissional(TipoProfissional.valueOf(dto.getTipoProfissional()));
+        profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        //profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        profissional.setAtivo(dto.isAtivo());
+        profissional.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
+        //profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         return profissional;
     }
 
@@ -51,5 +49,13 @@ public class ProfissionalMapper {
             dtos.add(convertModelToDTO(p));
         });
         return dtos;
+    }
+
+    public static List<Profissional> convertDTOListToModelList(List<ProfissionalDTO> dtos) {
+        List<Profissional> profissionais = new ArrayList<>();
+        dtos.forEach(dto -> {
+            profissionais.add(convertDTOToModel(dto));
+        });
+        return profissionais;
     }
 }

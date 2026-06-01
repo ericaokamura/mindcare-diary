@@ -33,8 +33,8 @@ public class PacienteService {
         this.pacienteRepository.save(paciente);
     }
 
-    public PacienteDTO retornarCadastroPaciente(Long idPaciente) {
-        Optional<Paciente> optionalPaciente = pacienteRepository.findById(idPaciente);
+    public PacienteDTO retornarCadastroPaciente(String nomeUsuario) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             return PacienteMapper.convertModelToDTO(optionalPaciente.get());
         } else {

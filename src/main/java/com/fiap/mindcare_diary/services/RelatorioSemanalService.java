@@ -112,6 +112,7 @@ public class RelatorioSemanalService {
             if(relatorioSemanalOptional.isPresent()) {
                 RelatorioSemanal relatorioSemanal = relatorioSemanalOptional.get();
                 relatorioSemanal.setRecomendacoes(relatorioSemanalDTO.getRecomendacoes());
+                relatorioSemanal.setObservacoes(relatorioSemanalDTO.getObservacoes());
                 this.relatorioSemanalRepository.save(relatorioSemanal);
             } else {
                 throw new RelatorioSemanalNaoExistenteException("Relatório semanal não encontrado.");

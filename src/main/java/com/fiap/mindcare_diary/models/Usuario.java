@@ -32,4 +32,6 @@ public class Usuario {
 
     private LocalDateTime dataHoraAtivacao;
 
+    private String token;
+
 }

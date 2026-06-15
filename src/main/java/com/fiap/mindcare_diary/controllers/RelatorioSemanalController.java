@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("relatoriosSemanais")
+@CrossOrigin(value = "*", allowedHeaders = "*")
 public class RelatorioSemanalController {
 
     @Autowired

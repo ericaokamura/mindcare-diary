@@ -25,6 +25,7 @@ public class PacienteMapper {
         dto.setDataHoraAtivacao(paciente.getDataHoraAtivacao() == null ? "" : String.valueOf(paciente.getDataHoraAtivacao()));
         dto.setProfissional(paciente.getProfissional() == null ? null : ProfissionalMapper.convertModelToDTO(paciente.getProfissional()));
         dto.setEstadoPaciente(paciente.getEstadoPaciente() == null ? "SEM_DEFINICAO" : paciente.getEstadoPaciente().name());
+        dto.setToken(paciente.getToken() == null ? "" : paciente.getToken());
         //dto.setConsultas(ConsultaMapper.convertModelListToDTOList(paciente.getConsultas()));
         return dto;
     }
@@ -39,6 +40,7 @@ public class PacienteMapper {
         model.setAtivo(dto.isAtivo());
         model.setEstadoPaciente(dto.getEstadoPaciente() == null ? EstadoPaciente.SEM_DEFINICAO : EstadoPaciente.valueOf(dto.getEstadoPaciente()));
         model.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
+        model.setToken(dto.getToken() == null ? "" : dto.getToken());
         //model.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         return model;
     }

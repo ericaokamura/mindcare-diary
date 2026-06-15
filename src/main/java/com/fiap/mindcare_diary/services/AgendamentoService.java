@@ -3,20 +3,17 @@ package com.fiap.mindcare_diary.services;
 import com.fiap.mindcare_diary.exceptions.AgendamentoNaoPodeSerRealizadoException;
 import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
 import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
+import com.fiap.mindcare_diary.exceptions.UsuarioNaoEncontradoException;
 import com.fiap.mindcare_diary.mappers.ConsultaMapper;
-import com.fiap.mindcare_diary.models.Consulta;
-import com.fiap.mindcare_diary.models.Paciente;
-import com.fiap.mindcare_diary.models.Profissional;
-import com.fiap.mindcare_diary.models.RecomendacaoHorario;
+import com.fiap.mindcare_diary.models.*;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
-import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 import com.fiap.mindcare_diary.repositories.AgendamentoRepository;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
-import org.springframework.ai.vectorstore.observation.AbstractObservationVectorStore;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -40,6 +37,9 @@ public class AgendamentoService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private PushNotificationService pushNotificationService;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
@@ -80,6 +80,18 @@ public class AgendamentoService {
                 this.agendamentoRepository.save(consulta);
                 this.pacienteRepository.save(paciente);
                 this.profissionalRepository.save(profissional);
+
+                if (paciente.getToken() != null) {
+                    Message message = Message.builder()
+                            .setToken(paciente.getToken())
+                            .setNotification(Notification.builder()
+                                    .setTitle("Consulta Agendada")
+                                    .setBody("Sua consulta foi marcada para " + consulta.getDataHoraConsulta() + " com o profissional " + consulta.getProfissional().getNomeCompleto())
+                                    .build())
+                            .build();
+
+                    pushNotificationService.sendNotification(message);
+                }
             } else {
                 throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
             }

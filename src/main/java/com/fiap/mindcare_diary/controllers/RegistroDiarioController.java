@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("registrosDiarios")
+@CrossOrigin(value = "*", allowedHeaders = "*")
 public class RegistroDiarioController {
 
     @Autowired

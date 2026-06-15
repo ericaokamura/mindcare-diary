@@ -16,6 +16,7 @@ public class UsuarioMapper {
             dto.setNomeCompleto(usuario.getNomeCompleto());
             dto.setDataNascimento(usuario.getDataNascimento().toString());
             dto.setDataHoraAtivacao(usuario.getDataHoraAtivacao().toString());
+            dto.setToken(usuario.getToken());
             dtos.add(dto);
         }
         return dtos;

@@ -24,7 +24,7 @@ public class RegistroDiarioMapper {
         RegistroDiario model = new RegistroDiario();
         model.setDificuldadesDesafios(registroDiarioDTO.getDificuldadesDesafios());
         model.setPontosPositivos(registroDiarioDTO.getPontosPositivos());
-        model.setNivelHumor(NivelHumor.valueOf(registroDiarioDTO.getNivelHumor()));
+        model.setNivelHumor(registroDiarioDTO.getNivelHumor().isBlank() ? NivelHumor.SEM_DEFINICAO : NivelHumor.valueOf(registroDiarioDTO.getNivelHumor()));
         return model;
     }
 

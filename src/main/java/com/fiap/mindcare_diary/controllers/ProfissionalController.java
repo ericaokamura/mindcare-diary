@@ -14,6 +14,7 @@ import java.util.PrimitiveIterator;
 
 @RestController
 @RequestMapping("profissionais")
+@CrossOrigin(value = "*", allowedHeaders = "*")
 public class ProfissionalController {
 
     @Autowired

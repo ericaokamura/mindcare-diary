@@ -6,7 +6,8 @@ public enum NivelHumor {
     BOM(1, "BOM"),
     NEUTRO(2, "NEUTRO"),
     MAL(3, "MAL"),
-    PESSIMO(4, "PÉSSIMO");
+    PESSIMO(4, "PÉSSIMO"),
+    SEM_DEFINICAO(5, "SEM DEFINIÇÃO");
 
     private int codigo;
     private String descricao;

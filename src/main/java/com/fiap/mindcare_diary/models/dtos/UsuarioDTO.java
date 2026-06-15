@@ -23,4 +23,6 @@ public class UsuarioDTO {
 
     private String dataHoraAtivacao;
 
+    private String token;
+
 }

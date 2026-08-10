@@ -25,10 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PacienteService {
@@ -43,6 +40,8 @@ public class PacienteService {
     private PrescriptionRepository prescriptionRepository;
 
     private static final String DATE_FORMATTER = "yyyy-MM-dd";
+
+    private Random random = new Random();
 
     public void salvarCadastroPaciente(PacienteDTO pacienteDTO) {
         Paciente paciente = PacienteMapper.convertDTOToModel(pacienteDTO);
@@ -108,6 +107,7 @@ public class PacienteService {
 
     public void salvarPrescricaoDePaciente(String nomeUsuario, String profissionalNomeUsuario, String issueDate, String expirationDate, String medicines, boolean controlled, MultipartFile arquivo) throws IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
+        Integer numero = 100000 + random.nextInt(900000);
         validarPdf(arquivo);
         Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
@@ -118,7 +118,7 @@ public class PacienteService {
             prescription.setIssueDate(LocalDate.parse(issueDate.trim(), formatter));
             prescription.setExpirationDate(LocalDate.parse(expirationDate, formatter));
             prescription.setControlled(controlled);
-            prescription.setNumber(UUID.randomUUID().toString());
+            prescription.setNumber(numero.toString());
             prescription.setMedicines(Arrays.asList(medicines.split(",")));
             prescription.setValid(LocalDate.now().isBefore(LocalDate.parse(expirationDate)));
             prescription.setDaysRemaining(ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.parse(expirationDate)));

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,10 @@ public class Paciente extends Usuario {
     private Profissional profissional;
 
     @OneToMany(mappedBy = "paciente")
-    private List<Consulta> consultas;
+    private List<Consulta> consultas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "paciente")
+    private List<Prescription> prescricoes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private EstadoPaciente estadoPaciente = EstadoPaciente.SEM_DEFINICAO;

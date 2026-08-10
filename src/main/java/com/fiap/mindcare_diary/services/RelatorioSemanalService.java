@@ -59,13 +59,13 @@ public class RelatorioSemanalService {
 
     public RelatorioSemanalDTO gerarRelatorioSemanal(String nomeUsuario) {
 
-        String relatorioIA = this.gerarRelatorioIA(nomeUsuario);
+        //String relatorioIA = this.gerarRelatorioIA(nomeUsuario);
 
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
-            relatorioSemanal.setRelatorioIA(relatorioIA);
+            relatorioSemanal.setRelatorioIA("Relatório gerado por IA");
             relatorioSemanal.setDataHoraCriacao(LocalDateTime.now());
             relatorioSemanal.setPaciente(paciente);
             String faixaDeDatas = formatter.format(LocalDate.now().minusDays(7)) + DELIMITER + formatter.format(LocalDate.now());

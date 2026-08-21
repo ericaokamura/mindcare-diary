@@ -21,7 +21,7 @@ public class UsuarioDTO {
 
     private String dataNascimento;
 
-    private Sexo genero;
+    private String genero;
 
     private boolean ativo;
 
@@ -29,6 +29,6 @@ public class UsuarioDTO {
 
     private String token;
 
-    private UserRole userRole;
+    private String userRole;
 
 }

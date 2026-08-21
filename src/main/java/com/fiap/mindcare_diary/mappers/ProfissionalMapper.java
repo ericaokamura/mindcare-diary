@@ -5,7 +5,9 @@ import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
+import com.fiap.mindcare_diary.models.enums.Sexo;
 import com.fiap.mindcare_diary.models.enums.TipoProfissional;
+import com.fiap.mindcare_diary.models.enums.UserRole;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,12 +23,17 @@ public class ProfissionalMapper {
         profissionalDTO.setNomeCompleto(profissional.getNomeCompleto());
         profissionalDTO.setDataHoraAtivacao(String.valueOf(profissional.getDataHoraAtivacao()));
         profissionalDTO.setDataNascimento(String.valueOf(profissional.getDataNascimento()));
+        profissionalDTO.setGenero(profissional.getGenero().name());
         profissionalDTO.setAtivo(profissional.isAtivo());
         profissionalDTO.setToken(profissional.getToken());
         profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
         profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
         profissionalDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(profissional.getConsultas()));
         profissionalDTO.setRegistroProfissional(profissional.getRegistroProfissional());
+        profissionalDTO.setAbordagens(profissional.getAbordagens());
+        profissionalDTO.setEspecialidades(profissional.getEspecialidades());
+        profissionalDTO.setModalidades(profissional.getModalidades());
+        profissionalDTO.setUserRole(profissional.getUserRole().name());
         return profissionalDTO;
     }
 
@@ -38,6 +45,7 @@ public class ProfissionalMapper {
         profissional.setDataNascimento(LocalDate.parse(dto.getDataNascimento()));
         profissional.setTipoProfissional(TipoProfissional.valueOf(dto.getTipoProfissional()));
         profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        profissional.setGenero(Sexo.valueOf(dto.getGenero()));
         profissional.setToken(dto.getToken());
         profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         profissional.setAtivo(dto.isAtivo());
@@ -45,6 +53,10 @@ public class ProfissionalMapper {
         profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         profissional.setRegistroProfissional(dto.getRegistroProfissional());
+        profissional.setModalidades(dto.getModalidades());
+        profissional.setAbordagens(dto.getAbordagens());
+        profissional.setEspecialidades(dto.getEspecialidades());
+        profissional.setUserRole(UserRole.valueOf(dto.getUserRole()));
         return profissional;
     }
 

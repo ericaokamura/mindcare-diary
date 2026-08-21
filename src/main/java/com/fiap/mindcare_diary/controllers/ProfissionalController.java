@@ -26,6 +26,12 @@ public class ProfissionalController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/{nomeUsuario}")
+    public ResponseEntity<Void> atualizarDadosProfissional(@PathVariable("nomeUsuario") String nomeUsuario, @RequestBody ProfissionalDTO profissionalDTO) {
+        profissionalService.atualizarDadosProfissional(nomeUsuario, profissionalDTO);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{nomeUsuario}/pacientes")
     public ResponseEntity<List<PacienteDTO>> retornarPacientesPorProfissional(@PathVariable("nomeUsuario") String nomeUsuario) {
         return ResponseEntity.ok(profissionalService.retornarPacientesPorProfissional(nomeUsuario));

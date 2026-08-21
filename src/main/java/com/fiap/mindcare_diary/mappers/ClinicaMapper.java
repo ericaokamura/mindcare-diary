@@ -3,6 +3,8 @@ package com.fiap.mindcare_diary.mappers;
 import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 
+import java.util.List;
+
 public class ClinicaMapper {
 
     public static ClinicaDTO convertModelToDTO(Clinica model) {
@@ -25,4 +27,11 @@ public class ClinicaMapper {
         return model;
     }
 
+    public static List<ClinicaDTO> convertModelListToDTOList(List<Clinica> clinicas) {
+        return clinicas.stream().map(ClinicaMapper::convertModelToDTO).toList();
+    }
+
+    public static List<Clinica> convertDTOListToModelList(List<ClinicaDTO> dtos) {
+        return dtos.stream().map(ClinicaMapper::convertDTOToModel).toList();
+    }
 }

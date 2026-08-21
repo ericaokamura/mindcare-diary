@@ -43,8 +43,8 @@ public class ClinicaController {
         return ResponseEntity.ok(clinicaService.retornarFaturamentoPorClinicaIdPorAnoMes(clinicaId, ano, mes));
     }
 
-    @GetMapping("/{clinicaId}/faturamento/descontos")
-    public ResponseEntity<Double> retornarFaturamentoAposDescontosPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
+    @GetMapping("/{clinicaId}/receita/descontos")
+    public ResponseEntity<Double> retornarReceitaAposDescontosPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
         return ResponseEntity.ok(clinicaService.retornarReceitaAposDescontosPorClinicaIdPorAnoMes(clinicaId, ano, mes));
     }
 

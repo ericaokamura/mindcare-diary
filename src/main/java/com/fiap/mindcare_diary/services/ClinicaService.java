@@ -63,12 +63,12 @@ public class ClinicaService {
         if(clinicaOptional.isEmpty()) {
             throw new ClinicaNaoExistenteException("Clínica não existente.");
         }
-        return calcularFaturamentoPorAnoMes(clinicaOptional.get().getConsultas(), ano, mes);
+        return calcularFaturamentoPorAnoMes(clinicaOptional.get(), ano, mes);
     }
 
-    private Double calcularFaturamentoPorAnoMes(List<Consulta> consultas, Long ano, Long mes) {
+    private Double calcularFaturamentoPorAnoMes(Clinica clinica, Long ano, Long mes) {
         Double faturamento = 0.0;
-        List<Consulta> consultasPorAnoMes = consultas.stream().filter(
+        List<Consulta> consultasPorAnoMes = clinica.getConsultas().stream().filter(
                                                         consulta ->
                                                         consulta.getDataHoraConsulta().getMonthValue() == mes &&
                                                         consulta.getDataHoraConsulta().getYear() == ano &&
@@ -104,7 +104,6 @@ public class ClinicaService {
             faturamento += consulta.getValorConsulta();
         }
         Double taxaComissao = clinica.getTaxaComissao();
-
         return faturamento * (1-taxaComissao);
     }
 

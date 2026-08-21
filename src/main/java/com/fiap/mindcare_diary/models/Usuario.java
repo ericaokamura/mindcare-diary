@@ -1,9 +1,8 @@
 package com.fiap.mindcare_diary.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fiap.mindcare_diary.models.enums.Sexo;
+import com.fiap.mindcare_diary.models.enums.UserRole;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,10 +27,15 @@ public class Usuario {
 
     private LocalDate dataNascimento;
 
+    private Sexo genero;
+
     private boolean ativo;
 
     private LocalDateTime dataHoraAtivacao;
 
     private String token;
+
+    @Enumerated(value = EnumType.STRING)
+    private UserRole userRole;
 
 }

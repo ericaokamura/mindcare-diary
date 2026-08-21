@@ -1,14 +1,15 @@
 package com.fiap.mindcare_diary.models;
 
+import com.fiap.mindcare_diary.models.enums.AbordagemPsicologia;
+import com.fiap.mindcare_diary.models.enums.ConsultaModalidade;
+import com.fiap.mindcare_diary.models.enums.EspecialidadePsiquiatria;
 import com.fiap.mindcare_diary.models.enums.TipoProfissional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,13 +17,22 @@ import java.util.List;
 @Setter
 public class Profissional extends Usuario {
 
-    @OneToMany(mappedBy = "profissional")
-    private List<Paciente> pacientes;
+    @ManyToMany
+    private List<Paciente> pacientes = new ArrayList<>();
 
     @OneToMany(mappedBy = "profissional")
-    private List<Consulta> consultas;
+    private List<Consulta> consultas = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private TipoProfissional tipoProfissional;
+
+    private List<AbordagemPsicologia> abordagens = new ArrayList<>();
+
+    private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();
+
+    private List<ConsultaModalidade> modalidades = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Clinica> clinicas = new ArrayList<>();
 
 }

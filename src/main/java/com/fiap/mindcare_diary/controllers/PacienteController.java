@@ -66,6 +66,6 @@ public class PacienteController {
     public ResponseEntity<byte[]> baixarPdf(@PathVariable String number) {
         PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(number);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + receita.getNomeArquivo() + "\"").body(receita.getArquivoPdf());
+                        "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());
     }
 }

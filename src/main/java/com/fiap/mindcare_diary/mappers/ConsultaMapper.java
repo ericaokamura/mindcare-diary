@@ -20,6 +20,7 @@ public class ConsultaMapper {
         consulta.setAtendida(dto.isAtendida());
         consulta.setCancelada(dto.isCancelada());
         consulta.setPaciente(PacienteMapper.convertDTOToModel(dto.getPaciente()));
+        consulta.setValorConsulta(dto.getValorConsulta());
         return consulta;
     }
 
@@ -30,6 +31,7 @@ public class ConsultaMapper {
         dto.setAtendida(model.isAtendida());
         dto.setCancelada(model.isCancelada());
         dto.setPaciente(PacienteMapper.convertModelToDTO(model.getPaciente()));
+        dto.setValorConsulta(model.getValorConsulta());
         return dto;
     }
 

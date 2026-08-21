@@ -31,13 +31,5 @@ public class PrescriptionDTO {
 
     private boolean valid;
 
-    private byte[] arquivoPdf;
-
-    private String nomeArquivo;
-
-    private String contentType;
-
-    private Long tamanhoBytes;
-
-    private LocalDateTime criadoEm;
+    private PrescriptionDocumentDTO prescriptionDocument;
 }

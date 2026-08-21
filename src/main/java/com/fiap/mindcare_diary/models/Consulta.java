@@ -24,6 +24,12 @@ public class Consulta {
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
+    @ManyToOne
+    @JoinColumn(name = "clinica_id")
+    private Clinica clinica;
+
+    private Double valorConsulta;
+
     private LocalDateTime dataHoraConsulta;
 
     private boolean atendida;

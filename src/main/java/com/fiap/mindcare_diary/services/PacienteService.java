@@ -7,6 +7,7 @@ import com.fiap.mindcare_diary.mappers.PrescriptionMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Prescription;
+import com.fiap.mindcare_diary.models.PrescriptionDocument;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
@@ -66,7 +67,7 @@ public class PacienteService {
             Optional<Profissional> optionalProfissional = profissionalRepository.findById(idProfissional);
             if(optionalProfissional.isPresent()) {
                 Profissional profissional = optionalProfissional.get();
-                paciente.setProfissional(profissional);
+                paciente.getProfissionais().add(profissional);
                 pacienteRepository.save(paciente);
                 return PacienteMapper.convertModelToDTO(paciente);
             } else {
@@ -122,19 +123,22 @@ public class PacienteService {
             prescription.setMedicines(Arrays.asList(medicines.split(",")));
             prescription.setValid(LocalDate.now().isBefore(LocalDate.parse(expirationDate)));
             prescription.setDaysRemaining(ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.parse(expirationDate)));
-            prescription.setArquivoPdf(arquivo.getBytes());
-            prescription.setNomeArquivo(arquivo.getOriginalFilename());
-            prescription.setContentType(arquivo.getContentType());
-            prescription.setTamanhoBytes(arquivo.getSize());
-            prescription.setCriadoEm(LocalDateTime.now());
+            PrescriptionDocument document = new PrescriptionDocument();
+            document.setPrescription(prescription);
+            document.setArquivoPdf(arquivo.getBytes());
+            document.setNomeArquivo(arquivo.getOriginalFilename());
+            document.setContentType(arquivo.getContentType());
+            document.setTamanhoBytes(arquivo.getSize());
+            document.setCriadoEm(LocalDateTime.now());
+            prescription.setPrescriptionDocument(document);
             Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
             if(optionalProfissional.isPresent()) {
-                paciente.setProfissional(optionalProfissional.get());
+                paciente.getProfissionais().add(optionalProfissional.get());
                 pacienteRepository.save(paciente);
                 prescription.setDoctorInfo(optionalProfissional.get());
                 prescriptionRepository.save(prescription);
             } else {
-                throw new PacienteNaoEncontradoException("Profissional não encontrado.");
+                throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
             }
         } else {
             throw new PacienteNaoEncontradoException("Paciente não encontrado.");

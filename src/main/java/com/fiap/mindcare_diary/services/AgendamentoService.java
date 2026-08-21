@@ -71,7 +71,7 @@ public class AgendamentoService {
                 if (consultaOptional.isPresent()) {
                     throw new AgendamentoNaoPodeSerRealizadoException("Já existe um agendamento para essa data e hora.");
                 }
-                paciente.setProfissional(optionalProfissional.get());
+                paciente.getProfissionais().add(optionalProfissional.get());
                 profissional.getPacientes().add(paciente);
                 Consulta consulta = ConsultaMapper.convertDTOToModel(consultaDTO);
                 consulta.setProfissional(optionalProfissional.get());

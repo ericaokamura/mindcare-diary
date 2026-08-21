@@ -41,18 +41,8 @@ public class Prescription {
 
     private boolean valid;
 
-    @Column(name = "arquivo_pdf", columnDefinition = "bytea")
-    private byte[] arquivoPdf;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "prescription_document_id")
+    private PrescriptionDocument prescriptionDocument;
 
-    @Column(name = "nome_arquivo")
-    private String nomeArquivo;
-
-    @Column(name = "content_type")
-    private String contentType;
-
-    @Column(name = "tamanho_bytes")
-    private Long tamanhoBytes;
-
-    @Column(name = "criado_em")
-    private LocalDateTime criadoEm;
 }

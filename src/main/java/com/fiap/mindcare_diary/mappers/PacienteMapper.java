@@ -23,10 +23,11 @@ public class PacienteMapper {
         dto.setNomeCompleto(paciente.getNomeCompleto());
         dto.setDataNascimento(paciente.getDataNascimento() == null ? "" : String.valueOf(paciente.getDataNascimento()));
         dto.setDataHoraAtivacao(paciente.getDataHoraAtivacao() == null ? "" : String.valueOf(paciente.getDataHoraAtivacao()));
-        dto.setProfissional(paciente.getProfissional() == null ? null : ProfissionalMapper.convertModelToDTO(paciente.getProfissional()));
+        dto.getProfissionais().addAll(paciente.getProfissionais().isEmpty() ? new ArrayList<>() : ProfissionalMapper.convertModelListToDTOList(paciente.getProfissionais()));
         dto.setEstadoPaciente(paciente.getEstadoPaciente() == null ? "SEM_DEFINICAO" : paciente.getEstadoPaciente().name());
         dto.setToken(paciente.getToken() == null ? "" : paciente.getToken());
-        //dto.setConsultas(ConsultaMapper.convertModelListToDTOList(paciente.getConsultas()));
+        dto.setConsultas(ConsultaMapper.convertModelListToDTOList(paciente.getConsultas()));
+        dto.setPrescricoes(PrescriptionMapper.convertModelListToDTOList(paciente.getPrescricoes()));
         return dto;
     }
 
@@ -36,12 +37,13 @@ public class PacienteMapper {
         model.setSenha(dto.getSenha());
         model.setNomeCompleto(dto.getNomeCompleto());
         model.setDataNascimento(dto.getDataNascimento() == null ? null : LocalDate.parse(dto.getDataNascimento()));
-        model.setProfissional(dto.getProfissional() == null ? null : ProfissionalMapper.convertDTOToModel(dto.getProfissional()));
+        model.getProfissionais().addAll(dto.getProfissionais().isEmpty() ? new ArrayList<>() : ProfissionalMapper.convertDTOListToModelList(dto.getProfissionais()));
         model.setAtivo(dto.isAtivo());
         model.setEstadoPaciente(dto.getEstadoPaciente() == null ? EstadoPaciente.SEM_DEFINICAO : EstadoPaciente.valueOf(dto.getEstadoPaciente()));
         model.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
         model.setToken(dto.getToken() == null ? "" : dto.getToken());
-        //model.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        model.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        model.setPrescricoes(PrescriptionMapper.convertDTOListToModelList(dto.getPrescricoes()));
         return model;
     }
 

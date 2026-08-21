@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.ProfissionalJaCadastradoException;
+import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
 import com.fiap.mindcare_diary.models.Profissional;
@@ -43,9 +44,9 @@ public class ProfissionalService {
     public List<PacienteDTO> retornarPacientesPorProfissional(String nomeUsuario) {
         Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(nomeUsuario);
         if(optionalProfissional.isPresent()) {
-            return PacienteMapper.convertModelListToDTOList(pacienteRepository.findAllByProfissional(optionalProfissional.get()));
+            return PacienteMapper.convertModelListToDTOList((optionalProfissional.get().getPacientes()));
         } else {
-            throw new ProfissionalJaCadastradoException("");
+            throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
         }
     }
 
@@ -54,7 +55,7 @@ public class ProfissionalService {
         if(optionalProfissional.isPresent()) {
             return ProfissionalMapper.convertModelToDTO(optionalProfissional.get());
         } else {
-            throw new ProfissionalJaCadastradoException("");
+            throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
         }
 
     }

@@ -23,8 +23,9 @@ public class ProfissionalMapper {
         profissionalDTO.setDataNascimento(String.valueOf(profissional.getDataNascimento()));
         profissionalDTO.setAtivo(profissional.isAtivo());
         profissionalDTO.setToken(profissional.getToken());
-        //profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
+        profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
         profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
+        profissionalDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(profissional.getConsultas()));
         return profissionalDTO;
     }
 
@@ -37,10 +38,11 @@ public class ProfissionalMapper {
         profissional.setTipoProfissional(TipoProfissional.valueOf(dto.getTipoProfissional()));
         profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         profissional.setToken(dto.getToken());
-        //profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         profissional.setAtivo(dto.isAtivo());
         profissional.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
-        //profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         return profissional;
     }
 

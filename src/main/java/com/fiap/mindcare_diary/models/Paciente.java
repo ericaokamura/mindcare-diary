@@ -14,9 +14,11 @@ import java.util.List;
 @Setter
 public class Paciente extends Usuario {
 
-    @ManyToOne
-    @JoinColumn(name = "profissional_id")
-    private Profissional profissional;
+    @ManyToMany
+    private List<Profissional> profissionais = new ArrayList<>();
+
+    @ManyToMany
+    private List<Clinica> clinicas = new ArrayList<>();
 
     @OneToMany(mappedBy = "paciente")
     private List<Consulta> consultas = new ArrayList<>();

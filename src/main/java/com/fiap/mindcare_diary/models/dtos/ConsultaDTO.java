@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.models.dtos;
 
+import com.fiap.mindcare_diary.models.Clinica;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,10 @@ public class ConsultaDTO {
     private ProfissionalDTO profissional;
 
     private PacienteDTO paciente;
+
+    private ClinicaDTO clinica;
+
+    private Double valorConsulta;
 
     private String dataHoraConsulta;
 

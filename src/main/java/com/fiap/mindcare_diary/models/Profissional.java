@@ -26,6 +26,8 @@ public class Profissional extends Usuario {
     @Enumerated(EnumType.STRING)
     private TipoProfissional tipoProfissional;
 
+    private String registroProfissional;
+
     private List<AbordagemPsicologia> abordagens = new ArrayList<>();
 
     private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();

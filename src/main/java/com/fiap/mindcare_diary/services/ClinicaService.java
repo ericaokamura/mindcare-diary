@@ -11,6 +11,7 @@ import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
+import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import com.fiap.mindcare_diary.repositories.ClinicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,5 +78,49 @@ public class ClinicaService {
             faturamento += consulta.getValorConsulta();
         }
         return faturamento;
+    }
+
+    public void cadastrarClinica(ClinicaDTO clinicaDTO) {
+        clinicaRepository.save(ClinicaMapper.convertDTOToModel(clinicaDTO));
+    }
+
+    public Double retornarReceitaAposDescontosPorClinicaIdPorAnoMes(Long clinicaId, Long ano, Long mes) {
+        Optional<Clinica> clinicaOptional = clinicaRepository.findById(clinicaId);
+        if(clinicaOptional.isEmpty()) {
+            throw new ClinicaNaoExistenteException("Clínica não existente.");
+        }
+        return calcularReceitaAposDescontosPorAnoMes(clinicaOptional.get(), ano, mes);
+    }
+
+    private Double calcularReceitaAposDescontosPorAnoMes(Clinica clinica, Long ano, Long mes) {
+        Double faturamento = 0.0;
+        List<Consulta> consultasPorAnoMes = clinica.getConsultas().stream().filter(
+                consulta ->
+                        consulta.getDataHoraConsulta().getMonthValue() == mes &&
+                                consulta.getDataHoraConsulta().getYear() == ano &&
+                                consulta.isAtendida() && !consulta.isCancelada()).collect(Collectors.toList());
+
+        for(Consulta consulta : consultasPorAnoMes) {
+            faturamento += consulta.getValorConsulta();
+        }
+        Double taxaComissao = clinica.getTaxaComissao();
+
+        return faturamento * (1-taxaComissao);
+    }
+
+    public void atualizarDadosClinica(Long clinicaId, ClinicaDTO clinicaDTO) {
+        Optional<Clinica> clinicaOptional = clinicaRepository.findById(clinicaId);
+        if(clinicaOptional.isEmpty()) {
+            throw new ClinicaNaoExistenteException("Clínica não existente.");
+        }
+        Clinica clinica = clinicaOptional.get();
+        clinica.setNome(clinicaDTO.getNome());
+        clinica.setEndereco(clinicaDTO.getEndereco());
+        clinica.setPacientes(PacienteMapper.convertDTOListToModelList(clinicaDTO.getPacientes()));
+        clinica.setConsultas(ConsultaMapper.convertDTOListToModelList(clinicaDTO.getConsultas()));
+        clinica.setProfissionais(ProfissionalMapper.convertDTOListToModelList(clinicaDTO.getProfissionais()));
+        clinica.setPlanoAssinatura(PlanoAssinatura.valueOf(clinicaDTO.getPlanoAssinatura().name()));
+        clinica.setTaxaComissao(clinicaDTO.getTaxaComissao());
+        clinicaRepository.save(clinica);
     }
 }

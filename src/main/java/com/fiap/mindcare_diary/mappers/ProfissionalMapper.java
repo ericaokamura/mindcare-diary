@@ -26,6 +26,7 @@ public class ProfissionalMapper {
         profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
         profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
         profissionalDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(profissional.getConsultas()));
+        profissionalDTO.setRegistroProfissional(profissional.getRegistroProfissional());
         return profissionalDTO;
     }
 
@@ -43,6 +44,7 @@ public class ProfissionalMapper {
         profissional.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
         profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        profissional.setRegistroProfissional(dto.getRegistroProfissional());
         return profissional;
     }
 

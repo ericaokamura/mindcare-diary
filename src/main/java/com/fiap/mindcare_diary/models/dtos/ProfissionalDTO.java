@@ -20,6 +20,8 @@ public class ProfissionalDTO extends UsuarioDTO {
 
     private String tipoProfissional;
 
+    private String registroProfissional;
+
     private List<AbordagemPsicologia> abordagens = new ArrayList<>();
 
     private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.models.dtos;
 
 import com.fiap.mindcare_diary.models.Profissional;
+import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import lombok.Getter;
@@ -22,5 +23,9 @@ public class ClinicaDTO {
     private List<PacienteDTO> pacientes = new ArrayList<>();
 
     private List<ConsultaDTO> consultas = new ArrayList<>();
+
+    private Double taxaComissao;
+
+    private PlanoAssinatura planoAssinatura;
 
 }

@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.models;
 
+import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,5 +29,9 @@ public class Clinica {
 
     @OneToMany(mappedBy = "clinica")
     private List<Consulta> consultas = new ArrayList<>();
+
+    private Double taxaComissao;
+
+    private PlanoAssinatura planoAssinatura;
 
 }

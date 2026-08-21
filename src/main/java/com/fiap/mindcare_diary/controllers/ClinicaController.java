@@ -42,4 +42,21 @@ public class ClinicaController {
     public ResponseEntity<Double> retornarFaturamentoPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
         return ResponseEntity.ok(clinicaService.retornarFaturamentoPorClinicaIdPorAnoMes(clinicaId, ano, mes));
     }
+
+    @GetMapping("/{clinicaId}/faturamento/descontos")
+    public ResponseEntity<Double> retornarFaturamentoAposDescontosPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
+        return ResponseEntity.ok(clinicaService.retornarReceitaAposDescontosPorClinicaIdPorAnoMes(clinicaId, ano, mes));
+    }
+
+    @PostMapping()
+    public ResponseEntity<Void> cadastrarClinica(@RequestBody ClinicaDTO clinicaDTO) {
+        clinicaService.cadastrarClinica(clinicaDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("{clinicaId}")
+    public ResponseEntity<Void> atualizarDadosClinica(@PathVariable("clinicaId") Long clinicaId, @RequestBody ClinicaDTO clinicaDTO) {
+        clinicaService.atualizarDadosClinica(clinicaId, clinicaDTO);
+        return ResponseEntity.ok().build();
+    }
 }

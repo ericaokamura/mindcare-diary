@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@DiscriminatorValue("PACIENTE")
 @Getter
 @Setter
 public class Paciente extends Usuario {
@@ -27,6 +28,6 @@ public class Paciente extends Usuario {
     private List<Prescription> prescricoes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private EstadoPaciente estadoPaciente = EstadoPaciente.SEM_DEFINICAO;
+    private EstadoPaciente estadoPaciente = EstadoPaciente.ESTAVEL;
 
 }

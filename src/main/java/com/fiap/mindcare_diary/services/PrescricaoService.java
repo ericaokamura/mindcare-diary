@@ -1,7 +1,9 @@
 package com.fiap.mindcare_diary.services;
 
-import com.fiap.mindcare_diary.exceptions.PrescricaoNaoEncontrada;
+import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
+import com.fiap.mindcare_diary.exceptions.PrescricaoNaoEncontradaException;
 import com.fiap.mindcare_diary.mappers.PrescriptionMapper;
+import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Prescription;
 import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
@@ -17,10 +19,17 @@ public class PrescricaoService {
     @Autowired
     private PrescriptionRepository prescriptionRepository;
 
-    public PrescriptionDTO retornarPrescricaoPorNumber(String number) {
-        Optional<Prescription> optionalPrescription = prescriptionRepository.findByNumber(number);
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    public PrescriptionDTO retornarPrescricaoPorNumber(String pacienteNomeUsuario, String number) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
+        if(optionalPaciente.isEmpty()) {
+            throw new PacienteNaoEncontradoException("Paciente não encontrado.");
+        }
+        Optional<Prescription> optionalPrescription = prescriptionRepository.findByPacienteAndNumber(optionalPaciente.get(), number);
         if(optionalPrescription.isEmpty()) {
-            throw new PrescricaoNaoEncontrada("Prescrição não encontrada para esse número.");
+            throw new PrescricaoNaoEncontradaException("Prescrição não encontrada para esse número e paciente.");
         }
         return PrescriptionMapper.convertModelToDTO(optionalPrescription.get());
     }

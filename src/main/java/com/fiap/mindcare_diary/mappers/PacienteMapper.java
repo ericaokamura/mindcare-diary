@@ -1,9 +1,11 @@
 package com.fiap.mindcare_diary.mappers;
 
 import com.fiap.mindcare_diary.models.Paciente;
+import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
+import com.fiap.mindcare_diary.models.enums.UserRole;
 import org.hibernate.boot.jaxb.internal.stax.LocalSchemaLocator;
 
 import java.text.DateFormat;
@@ -28,6 +30,7 @@ public class PacienteMapper {
         dto.setToken(paciente.getToken() == null ? "" : paciente.getToken());
         dto.setConsultas(ConsultaMapper.convertModelListToDTOList(paciente.getConsultas()));
         dto.setPrescricoes(PrescriptionMapper.convertModelListToDTOList(paciente.getPrescricoes()));
+        dto.setUserRole(paciente.getUserRole().name());
         return dto;
     }
 
@@ -39,11 +42,11 @@ public class PacienteMapper {
         model.setDataNascimento(dto.getDataNascimento() == null ? null : LocalDate.parse(dto.getDataNascimento()));
         model.getProfissionais().addAll(dto.getProfissionais().isEmpty() ? new ArrayList<>() : ProfissionalMapper.convertDTOListToModelList(dto.getProfissionais()));
         model.setAtivo(dto.isAtivo());
-        model.setEstadoPaciente(dto.getEstadoPaciente() == null ? EstadoPaciente.SEM_DEFINICAO : EstadoPaciente.valueOf(dto.getEstadoPaciente()));
         model.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
         model.setToken(dto.getToken() == null ? "" : dto.getToken());
         model.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         model.setPrescricoes(PrescriptionMapper.convertDTOListToModelList(dto.getPrescricoes()));
+        model.setUserRole(UserRole.valueOf(dto.getUserRole()));
         return model;
     }
 
@@ -61,5 +64,19 @@ public class PacienteMapper {
             pacientes.add(convertDTOToModel(p));
         });
         return pacientes;
+    }
+
+    public static Paciente convertUsuarioToPaciente(Usuario usuario) {
+        Paciente model = new Paciente();
+        model.setNomeUsuario(usuario.getNomeUsuario());
+        model.setNomeCompleto(usuario.getNomeCompleto());
+        model.setAtivo(usuario.isAtivo());
+        model.setDataNascimento(usuario.getDataNascimento());
+        model.setDataHoraAtivacao(usuario.getDataHoraAtivacao());
+        model.setToken(usuario.getToken());
+        model.setGenero(usuario.getGenero());
+        model.setUserRole(usuario.getUserRole());
+        model.setBloqueado(usuario.isBloqueado());
+        return model;
     }
 }

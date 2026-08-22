@@ -2,6 +2,7 @@ package com.fiap.mindcare_diary.mappers;
 
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
+import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
@@ -43,7 +44,6 @@ public class ProfissionalMapper {
         profissional.setSenha(dto.getSenha());
         profissional.setNomeCompleto(dto.getNomeCompleto());
         profissional.setDataNascimento(LocalDate.parse(dto.getDataNascimento()));
-        profissional.setTipoProfissional(TipoProfissional.valueOf(dto.getTipoProfissional()));
         profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         profissional.setGenero(Sexo.valueOf(dto.getGenero()));
         profissional.setToken(dto.getToken());
@@ -75,5 +75,19 @@ public class ProfissionalMapper {
             profissionais.add(convertDTOToModel(dto));
         });
         return profissionais;
+    }
+
+    public static Profissional convertUsuarioToProfissional(Usuario usuarioSalvo) {
+        Profissional profissional = new Profissional();
+        profissional.setNomeUsuario(usuarioSalvo.getNomeUsuario());
+        profissional.setNomeCompleto(usuarioSalvo.getNomeCompleto());
+        profissional.setDataNascimento(usuarioSalvo.getDataNascimento());
+        profissional.setDataHoraAtivacao(usuarioSalvo.getDataHoraAtivacao());
+        profissional.setUserRole(usuarioSalvo.getUserRole());
+        profissional.setAtivo(usuarioSalvo.isAtivo());
+        profissional.setBloqueado(usuarioSalvo.isBloqueado());
+        profissional.setGenero(usuarioSalvo.getGenero());
+        profissional.setToken(usuarioSalvo.getToken());
+        return profissional;
     }
 }

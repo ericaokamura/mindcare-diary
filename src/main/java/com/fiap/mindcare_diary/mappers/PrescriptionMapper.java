@@ -22,6 +22,7 @@ public class PrescriptionMapper {
         dto.setValid(prescription.isValid());
         dto.setControlled(prescription.isControlled());
         dto.setDoctorInfo(ProfissionalMapper.convertModelToDTO(prescription.getDoctorInfo()));
+        dto.setPrescriptionDocument(PrescriptionDocumentMapper.convertModelToDTO(prescription.getPrescriptionDocument()));
         return dto;
     }
 
@@ -35,6 +36,7 @@ public class PrescriptionMapper {
         model.setValid(dto.isValid());
         model.setControlled(dto.isControlled());
         model.setDoctorInfo(ProfissionalMapper.convertDTOToModel(dto.getDoctorInfo()));
+        model.setPrescriptionDocument(PrescriptionDocumentMapper.convertDTOToModel(dto.getPrescriptionDocument()));
         return model;
     }
 

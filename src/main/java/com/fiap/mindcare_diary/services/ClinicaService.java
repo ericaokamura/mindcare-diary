@@ -118,7 +118,7 @@ public class ClinicaService {
         clinica.setPacientes(PacienteMapper.convertDTOListToModelList(clinicaDTO.getPacientes()));
         clinica.setConsultas(ConsultaMapper.convertDTOListToModelList(clinicaDTO.getConsultas()));
         clinica.setProfissionais(ProfissionalMapper.convertDTOListToModelList(clinicaDTO.getProfissionais()));
-        clinica.setPlanoAssinatura(PlanoAssinatura.valueOf(clinicaDTO.getPlanoAssinatura().name()));
+        clinica.setPlanoAssinatura(PlanoAssinatura.valueOf(clinicaDTO.getPlanoAssinatura()));
         clinica.setTaxaComissao(clinicaDTO.getTaxaComissao());
         clinicaRepository.save(clinica);
     }

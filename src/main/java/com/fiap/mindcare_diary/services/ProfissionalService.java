@@ -15,6 +15,7 @@ import com.fiap.mindcare_diary.models.enums.UserRole;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class ProfissionalService {
     private ProfissionalRepository profissionalRepository;
 
     @Autowired
-    private PacienteRepository pacienteRepository;
+    private PasswordEncoder passwordEncoder;
 
     public void salvarCadastroProfissional(ProfissionalDTO profissionalDTO) {
         Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalDTO.getNomeUsuario());
@@ -38,6 +39,7 @@ public class ProfissionalService {
             throw new ProfissionalJaCadastradoException("");
         } else {
             Profissional profissional = ProfissionalMapper.convertDTOToModel(profissionalDTO);
+            profissional.setSenha(passwordEncoder.encode(profissionalDTO.getSenha()));
             profissional.setDataHoraAtivacao(LocalDateTime.now());
             this.profissionalRepository.save(profissional);
         }
@@ -66,7 +68,7 @@ public class ProfissionalService {
 
     }
 
-    public List<ProfissionalDTO> buscarProfissionaisProTipo(String tipoProfissional) {
+    public List<ProfissionalDTO> buscarProfissionaisPorTipo(String tipoProfissional) {
         List<ProfissionalDTO>  profissionais = new ArrayList<>();
         this.profissionalRepository.findAll().forEach(profissional -> {
             if(profissional.getTipoProfissional().toString().equals(tipoProfissional)) {

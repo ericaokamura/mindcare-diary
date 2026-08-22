@@ -26,6 +26,6 @@ public class ClinicaDTO {
 
     private Double taxaComissao;
 
-    private PlanoAssinatura planoAssinatura;
+    private String planoAssinatura;
 
 }

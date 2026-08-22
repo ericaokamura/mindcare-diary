@@ -24,7 +24,7 @@ public class Profissional extends Usuario {
     private List<Consulta> consultas = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private TipoProfissional tipoProfissional;
+    private TipoProfissional tipoProfissional = TipoProfissional.PSICOLOGO;
 
     private String registroProfissional;
 

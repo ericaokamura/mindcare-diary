@@ -26,4 +26,40 @@ public class CustomControllerAdvice {
     public ResponseEntity<ErrorDTO> handleProfissionalNaoEncontradoException(ProfissionalNaoEncontradoException exception) {
         return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
     }
+
+    @ExceptionHandler(value = { ClinicaNaoExistenteException.class })
+    public ResponseEntity<ErrorDTO> handleClinicaNaoExistenteException(ClinicaNaoExistenteException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { ConsultaNaoEncontradaException.class })
+    public ResponseEntity<ErrorDTO> handleConsultaNaoEncontradaException(ConsultaNaoEncontradaException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { PrescricaoNaoEncontradaException.class })
+    public ResponseEntity<ErrorDTO> handlePrescricaoNaoEncontradaException(PrescricaoNaoEncontradaException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { RelatorioSemanalNaoExistenteException.class })
+    public ResponseEntity<ErrorDTO> handleRelatorioSemanalNaoExistenteException(RelatorioSemanalNaoExistenteException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { UsuarioNaoEncontradoException.class })
+    public ResponseEntity<ErrorDTO> handleUsuarioNaoEncontradoException(UsuarioNaoEncontradoException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { PacienteNaoEncontradoParaEsteProfissionalException.class })
+    public ResponseEntity<ErrorDTO> handlePacienteNaoEncontradoParaEsteProfissionalException(PacienteNaoEncontradoParaEsteProfissionalException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = { UsuarioBloqueadoException.class })
+    public ResponseEntity<ErrorDTO> handleUsuarioBloqueadoException(UsuarioBloqueadoException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
 }

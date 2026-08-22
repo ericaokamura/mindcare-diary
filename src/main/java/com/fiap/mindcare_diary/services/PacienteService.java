@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
+import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoParaEsteProfissionalException;
 import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.PrescriptionMapper;
@@ -18,6 +19,7 @@ import com.fiap.mindcare_diary.repositories.PrescriptionRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PacienteService {
@@ -44,10 +47,14 @@ public class PacienteService {
 
     private Random random = new Random();
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public void salvarCadastroPaciente(PacienteDTO pacienteDTO) {
         Paciente paciente = PacienteMapper.convertDTOToModel(pacienteDTO);
         paciente.setAtivo(true);
         paciente.setDataHoraAtivacao(LocalDateTime.now());
+        paciente.setSenha(passwordEncoder.encode(pacienteDTO.getSenha()));
         this.pacienteRepository.save(paciente);
     }
 
@@ -60,11 +67,11 @@ public class PacienteService {
         }
     }
 
-    public PacienteDTO selecionarProfissional(Long idProfissional, Long idPaciente) {
-        Optional<Paciente> optionalPaciente = pacienteRepository.findById(idPaciente);
+    public PacienteDTO selecionarProfissional(String profissionalNomeUsuario, String pacienteNomeUsuario) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
-            Optional<Profissional> optionalProfissional = profissionalRepository.findById(idProfissional);
+            Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
             if(optionalProfissional.isPresent()) {
                 Profissional profissional = optionalProfissional.get();
                 paciente.getProfissionais().add(profissional);
@@ -106,11 +113,11 @@ public class PacienteService {
         }
     }
 
-    public void salvarPrescricaoDePaciente(String nomeUsuario, String profissionalNomeUsuario, String issueDate, String expirationDate, String medicines, boolean controlled, MultipartFile arquivo) throws IOException {
+    public void salvarPrescricaoDePaciente(String pacienteNomeUsuario, String profissionalNomeUsuario, String issueDate, String expirationDate, String medicines, boolean controlled, MultipartFile arquivo) throws IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
         Integer numero = 100000 + random.nextInt(900000);
         validarPdf(arquivo);
-        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(nomeUsuario);
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
             Prescription prescription = new Prescription();
@@ -120,7 +127,10 @@ public class PacienteService {
             prescription.setExpirationDate(LocalDate.parse(expirationDate, formatter));
             prescription.setControlled(controlled);
             prescription.setNumber(numero.toString());
-            prescription.setMedicines(Arrays.asList(medicines.split(",")));
+            prescription.getMedicines().addAll(Arrays.stream(medicines.split(","))
+                                    .map(String::trim)
+                                    .filter(s -> !s.isBlank())
+                                    .toList());
             prescription.setValid(LocalDate.now().isBefore(LocalDate.parse(expirationDate)));
             prescription.setDaysRemaining(ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.parse(expirationDate)));
             PrescriptionDocument document = new PrescriptionDocument();
@@ -133,7 +143,10 @@ public class PacienteService {
             prescription.setPrescriptionDocument(document);
             Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
             if(optionalProfissional.isPresent()) {
-                paciente.getProfissionais().add(optionalProfissional.get());
+                List<Profissional> profissionais = paciente.getProfissionais().stream().filter(p -> p.equals(optionalProfissional.get())).collect(Collectors.toList());
+                if(profissionais.isEmpty()) {
+                    throw new PacienteNaoEncontradoParaEsteProfissionalException("Paciente não encontrado para este profissional.");
+                }
                 pacienteRepository.save(paciente);
                 prescription.setDoctorInfo(optionalProfissional.get());
                 prescriptionRepository.save(prescription);

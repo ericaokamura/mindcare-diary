@@ -1,0 +1,22 @@
+package com.fiap.mindcare_diary.models.enums;
+
+public enum Authority {
+
+    // Paciente
+    PATIENT_READ_PROFILE,
+    PATIENT_UPDATE_PROFILE,
+    PATIENT_SEARCH_PROFESSIONAL,
+    PATIENT_DOWNLOAD_PRESCRIPTION,
+
+    // Profissional
+    PROFESSIONAL_READ_PROFILE,
+    PROFESSIONAL_UPDATE_PROFILE,
+    PROFESSIONAL_UPLOAD_PRESCRIPTION,
+    PROFESSIONAL_READ_PATIENT,
+
+    // Admin
+    USER_READ,
+    USER_CREATE,
+    USER_UPDATE,
+    USER_DELETE
+}

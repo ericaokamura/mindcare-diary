@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,7 +36,12 @@ public class Prescription {
     private Profissional doctorInfo;
 
     @ElementCollection
-    private List<String> medicines;
+    @CollectionTable(
+            name = "prescription_medicines",
+            joinColumns = @JoinColumn(name = "prescription_id")
+    )
+    @Column(name = "medicines")
+    private List<String> medicines = new ArrayList<>();
 
     private boolean controlled;
 

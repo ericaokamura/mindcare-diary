@@ -1,14 +1,26 @@
 package com.fiap.mindcare_diary.controllers;
 
+import com.fiap.mindcare_diary.models.AuditoriaLog;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
+import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
+import com.fiap.mindcare_diary.models.enums.AuditAction;
+import com.fiap.mindcare_diary.services.AuditoriaLogService;
 import com.fiap.mindcare_diary.services.PacienteService;
+import com.fiap.mindcare_diary.services.PrescricaoService;
 import com.fiap.mindcare_diary.services.ProfissionalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.PrimitiveIterator;
 
@@ -48,7 +60,8 @@ public class ProfissionalController {
     }
 
     @GetMapping("/tipoProfissional/{tipoProfissional}")
-    public ResponseEntity<List<ProfissionalDTO>> buscarProfissionaisProTipo(@PathVariable("tipoProfissional") String tipoProfissional) {
-        return ResponseEntity.ok(profissionalService.buscarProfissionaisProTipo(tipoProfissional));
+    public ResponseEntity<List<ProfissionalDTO>> buscarProfissionaisPorTipo(@PathVariable("tipoProfissional") String tipoProfissional) {
+        return ResponseEntity.ok(profissionalService.buscarProfissionaisPorTipo(tipoProfissional));
     }
+
 }

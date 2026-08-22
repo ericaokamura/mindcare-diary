@@ -1,0 +1,5 @@
+com/fiap/mindcare_diary/configuration/SecurityConfiguration.class
+com/fiap/mindcare_diary/configuration/SecurityFilter.class
+com/fiap/mindcare_diary/configuration/FirebaseConfiguration.class
+com/fiap/mindcare_diary/configuration/PgVectorConfiguration.class
+com/fiap/mindcare_diary/MindcareDiaryApplication.class

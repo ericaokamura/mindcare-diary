@@ -1,12 +1,12 @@
 package com.fiap.mindcare_diary.controllers;
 
-import com.fiap.mindcare_diary.models.AuditoriaLog;
-import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.AuditAction;
 import com.fiap.mindcare_diary.services.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,17 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("prescriptions")
+@CrossOrigin(value = "*", allowedHeaders = "*")
+@Tag(
+        name = "Receitas Médicas",
+        description = "Operações relacionadas a receitas médicas."
+)
 public class PrescriptionController {
 
     @Autowired
     private PrescricaoService prescricaoService;
-
-    @Autowired
-    private AuditoriaLogService auditoriaLogService;
 
     @Autowired
     private PacienteService pacienteService;
@@ -42,6 +43,10 @@ public class PrescriptionController {
 
     @PreAuthorize("hasAuthority('PROFESSIONAL_UPLOAD_PRESCRIPTION')")
     @PostMapping(value = "/{pacienteNomeUsuario}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "Cadastra receita médica de paciente",
+            description = "Cadastra receita médica de paciente."
+    )
     public ResponseEntity<Void> salvarPrescricaoDePaciente(@PathVariable("pacienteNomeUsuario") String pacienteNomeUsuario,
                                                            HttpServletRequest request,
                                                            @RequestParam String issueDate,
@@ -55,19 +60,16 @@ public class PrescriptionController {
         }
         String suject = tokenService.getSubject(authorizationHeader);
         ProfissionalDTO profissionalDTO = profissionalService.retornarProfissional(suject);
-        AuditoriaLog auditoriaLog = new AuditoriaLog();
-        auditoriaLog.setMensagem("Dados do paciente: (nomeUsuario: " + profissionalDTO.getNomeUsuario() + "), dados do profissional: (nomeUsuario: " + profissionalDTO.getNomeUsuario() + ")");
-        auditoriaLog.setHttpMethod(HttpMethod.POST);
-        auditoriaLog.setDataHoraAuditoria(LocalDateTime.now());
-        auditoriaLog.setAction(AuditAction.PRESCRIPTION_UPLOAD);
-        auditoriaLogService.salvarLog(auditoriaLog);
-
         pacienteService.salvarPrescricaoDePaciente(pacienteNomeUsuario, profissionalDTO.getNomeUsuario(), issueDate, expirationDate, medicines, controlled, arquivo);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasAuthority('PATIENT_DOWNLOAD_PRESCRIPTION')")
     @PostMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "Realiza download de receita médica",
+            description = "Realiza download de receita médica pelo paciente."
+    )
     public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String number, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
@@ -75,14 +77,6 @@ public class PrescriptionController {
         }
         String suject = tokenService.getSubject(authorizationHeader);
         PacienteDTO pacienteDTO = pacienteService.retornarCadastroPaciente(suject);
-
-        AuditoriaLog auditoriaLog = new AuditoriaLog();
-        auditoriaLog.setMensagem("Dados do paciente: (nomeUsuario: " + pacienteDTO.getNomeUsuario() + "), dados do profissional: (nomeUsuario: " + profissionalNomeUsuario + ")");
-        auditoriaLog.setHttpMethod(HttpMethod.GET);
-        auditoriaLog.setDataHoraAuditoria(LocalDateTime.now());
-        auditoriaLog.setAction(AuditAction.PRESCRIPTION_DOWNLOAD);
-        auditoriaLogService.salvarLog(auditoriaLog);
-
         PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(pacienteDTO.getNomeUsuario(), profissionalNomeUsuario, number);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());

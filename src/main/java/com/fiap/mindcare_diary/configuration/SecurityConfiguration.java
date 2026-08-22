@@ -40,6 +40,10 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/profissionais").permitAll()
                 .requestMatchers(HttpMethod.POST, "/pacientes").permitAll()
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
+                ).permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

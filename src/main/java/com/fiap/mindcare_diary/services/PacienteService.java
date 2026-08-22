@@ -85,11 +85,11 @@ public class PacienteService {
         }
     }
 
-    public PacienteDTO atualizarEstadoPaciente(Long idProfissional, Long idPaciente, String estadoPaciente) {
-        Optional<Paciente> optionalPaciente = pacienteRepository.findById(idPaciente);
+    public PacienteDTO atualizarEstadoPaciente(String profissionalNomeUsuario, String pacienteNomeUsuario, String estadoPaciente) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
-            Optional<Profissional> optionalProfissional = profissionalRepository.findById(idProfissional);
+            Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
             if(optionalProfissional.isPresent()) {
                 paciente.setEstadoPaciente(EstadoPaciente.valueOf(estadoPaciente));
                 pacienteRepository.save(paciente);

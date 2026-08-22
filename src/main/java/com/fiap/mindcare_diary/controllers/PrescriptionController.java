@@ -67,7 +67,7 @@ public class PrescriptionController {
     }
 
     @PreAuthorize("hasAuthority('PATIENT_DOWNLOAD_PRESCRIPTION')")
-    @GetMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String number, HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null) {
@@ -77,13 +77,13 @@ public class PrescriptionController {
         PacienteDTO pacienteDTO = pacienteService.retornarCadastroPaciente(suject);
 
         AuditoriaLog auditoriaLog = new AuditoriaLog();
-        auditoriaLog.setMensagem("Dados do paciente: (nomeUsuario: " + pacienteDTO.getNomeUsuario() + ")");
+        auditoriaLog.setMensagem("Dados do paciente: (nomeUsuario: " + pacienteDTO.getNomeUsuario() + "), dados do profissional: (nomeUsuario: " + profissionalNomeUsuario + ")");
         auditoriaLog.setHttpMethod(HttpMethod.GET);
         auditoriaLog.setDataHoraAuditoria(LocalDateTime.now());
         auditoriaLog.setAction(AuditAction.PRESCRIPTION_DOWNLOAD);
         auditoriaLogService.salvarLog(auditoriaLog);
 
-        PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(pacienteDTO.getNomeUsuario(), number);
+        PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(pacienteDTO.getNomeUsuario(), profissionalNomeUsuario, number);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
                 "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());
     }

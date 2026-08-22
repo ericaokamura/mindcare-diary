@@ -21,7 +21,7 @@ public class PrescriptionMapper {
         dto.setDaysRemaining(prescription.getDaysRemaining());
         dto.setValid(prescription.isValid());
         dto.setControlled(prescription.isControlled());
-        dto.setDoctorInfo(ProfissionalMapper.convertModelToDTO(prescription.getDoctorInfo()));
+        dto.setProfissional(ProfissionalMapper.convertModelToDTO(prescription.getProfissional()));
         dto.setPrescriptionDocument(PrescriptionDocumentMapper.convertModelToDTO(prescription.getPrescriptionDocument()));
         return dto;
     }
@@ -35,7 +35,7 @@ public class PrescriptionMapper {
         model.setDaysRemaining(dto.getDaysRemaining());
         model.setValid(dto.isValid());
         model.setControlled(dto.isControlled());
-        model.setDoctorInfo(ProfissionalMapper.convertDTOToModel(dto.getDoctorInfo()));
+        model.setProfissional(ProfissionalMapper.convertDTOToModel(dto.getProfissional()));
         model.setPrescriptionDocument(PrescriptionDocumentMapper.convertDTOToModel(dto.getPrescriptionDocument()));
         return model;
     }

@@ -33,7 +33,7 @@ public class Prescription {
 
     @ManyToOne
     @JoinColumn(name = "profissional_id")
-    private Profissional doctorInfo;
+    private Profissional profissional;
 
     @ElementCollection
     @CollectionTable(

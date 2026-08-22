@@ -148,7 +148,7 @@ public class PacienteService {
                     throw new PacienteNaoEncontradoParaEsteProfissionalException("Paciente não encontrado para este profissional.");
                 }
                 pacienteRepository.save(paciente);
-                prescription.setDoctorInfo(optionalProfissional.get());
+                prescription.setProfissional(optionalProfissional.get());
                 prescriptionRepository.save(prescription);
             } else {
                 throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");

@@ -23,7 +23,7 @@ public class PrescriptionDTO {
 
     private Long daysRemaining;
 
-    private ProfissionalDTO doctorInfo;
+    private ProfissionalDTO profissional;
 
     private List<String> medicines;
 

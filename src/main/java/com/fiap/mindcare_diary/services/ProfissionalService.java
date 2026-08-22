@@ -6,6 +6,7 @@ import com.fiap.mindcare_diary.mappers.ClinicaMapper;
 import com.fiap.mindcare_diary.mappers.ConsultaMapper;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
+import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
@@ -23,12 +24,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProfissionalService {
 
     @Autowired
     private ProfissionalRepository profissionalRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -52,7 +57,10 @@ public class ProfissionalService {
     public List<PacienteDTO> retornarPacientesPorProfissional(String nomeUsuario) {
         Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(nomeUsuario);
         if(optionalProfissional.isPresent()) {
-            return PacienteMapper.convertModelListToDTOList((optionalProfissional.get().getPacientes()));
+            Profissional profissional = optionalProfissional.get();
+            List<Paciente> allPacientes = pacienteRepository.findAll();
+            List<Paciente> pacientesPorProfissional = allPacientes.stream().filter(paciente -> paciente.getProfissionais().contains(profissional)).collect(Collectors.toUnmodifiableList());
+            return PacienteMapper.convertModelListToDTOList(pacientesPorProfissional);
         } else {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
         }

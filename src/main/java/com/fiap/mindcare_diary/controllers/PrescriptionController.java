@@ -65,7 +65,7 @@ public class PrescriptionController {
     }
 
     @PreAuthorize("hasAuthority('PATIENT_DOWNLOAD_PRESCRIPTION')")
-    @PostMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(
             summary = "Realiza download de receita médica",
             description = "Realiza download de receita médica pelo paciente."

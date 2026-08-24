@@ -62,4 +62,9 @@ public class CustomControllerAdvice {
         return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
     }
 
+    @ExceptionHandler(value = { UsuarioJaExistenteException.class })
+    public ResponseEntity<ErrorDTO> handleUsuarioJaExistenteException(UsuarioJaExistenteException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
 }

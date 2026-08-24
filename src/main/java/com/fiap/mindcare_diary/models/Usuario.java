@@ -35,6 +35,7 @@ public class Usuario implements UserDetails {
 
     private LocalDate dataNascimento;
 
+    @Enumerated(EnumType.STRING)
     private Sexo genero;
 
     private boolean ativo;

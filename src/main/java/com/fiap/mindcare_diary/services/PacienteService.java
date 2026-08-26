@@ -3,6 +3,7 @@ package com.fiap.mindcare_diary.services;
 import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
 import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoParaEsteProfissionalException;
 import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
+import com.fiap.mindcare_diary.exceptions.ProfissionalSemPermissaoParaRealizarUploadDeReceitaMedica;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.PrescriptionMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
@@ -14,6 +15,7 @@ import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
+import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.PrescriptionRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
@@ -113,7 +115,10 @@ public class PacienteService {
         }
     }
 
-    public void salvarPrescricaoDePaciente(String pacienteNomeUsuario, String profissionalNomeUsuario, String issueDate, String expirationDate, String medicines, boolean controlled, MultipartFile arquivo) throws IOException {
+    public void salvarPrescricaoDePaciente(String pacienteNomeUsuario, Profissional profissional, String issueDate, String expirationDate, String medicines, boolean controlled, MultipartFile arquivo) throws IOException {
+        if(!TipoProfissional.PSIQUIATRA.equals(profissional.getTipoProfissional())){
+            throw new ProfissionalSemPermissaoParaRealizarUploadDeReceitaMedica("Profissional sem permissão para realizar upload de receita médica.");
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
         Integer numero = 100000 + random.nextInt(900000);
         validarPdf(arquivo);
@@ -141,7 +146,7 @@ public class PacienteService {
             document.setTamanhoBytes(arquivo.getSize());
             document.setCriadoEm(LocalDateTime.now());
             prescription.setPrescriptionDocument(document);
-            Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
+            Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissional.getNomeUsuario());
             if(optionalProfissional.isPresent()) {
                 List<Profissional> profissionais = paciente.getProfissionais().stream().filter(p -> p.equals(optionalProfissional.get())).collect(Collectors.toList());
                 if(profissionais.isEmpty()) {

@@ -2,7 +2,7 @@ package com.fiap.mindcare_diary.models.enums;
 
 public enum TipoProfissional {
 
-    PSICOLOGO(0, "PSICÓLOGO"),
+    PSICOLOGO(0, "PSICOLOGO"),
     PSIQUIATRA(1, "PSIQUIATRA");
 
     private int codigo;

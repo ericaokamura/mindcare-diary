@@ -73,7 +73,6 @@ public class ProfissionalService {
         } else {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
         }
-
     }
 
     public List<ProfissionalDTO> buscarProfissionaisPorTipo(String tipoProfissional) {
@@ -111,5 +110,14 @@ public class ProfissionalService {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
         }
 
+    }
+
+    public boolean verificaProfissional(String suject) {
+        Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(suject);
+        if(optionalProfissional.isPresent() && TipoProfissional.PSIQUIATRA.equals(optionalProfissional.get().getTipoProfissional())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

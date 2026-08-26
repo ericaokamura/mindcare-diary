@@ -1,9 +1,14 @@
 package com.fiap.mindcare_diary.controllers;
 
+import com.fiap.mindcare_diary.models.Paciente;
+import com.fiap.mindcare_diary.models.Profissional;
+import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.PrescriptionDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.AuditAction;
+import com.fiap.mindcare_diary.models.enums.Authority;
+import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 import com.fiap.mindcare_diary.services.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,11 +19,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("prescriptions")
@@ -48,20 +62,17 @@ public class PrescriptionController {
             description = "Cadastra receita médica de paciente."
     )
     public ResponseEntity<Void> salvarPrescricaoDePaciente(@PathVariable("pacienteNomeUsuario") String pacienteNomeUsuario,
-                                                           HttpServletRequest request,
                                                            @RequestParam String issueDate,
                                                            @RequestParam String expirationDate,
                                                            @RequestParam String medicines,
                                                            @RequestParam boolean controlled,
                                                            @RequestPart("arquivo") MultipartFile arquivo) throws IOException {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            authorizationHeader = authorizationHeader.replace("Bearer ", "");
+        Optional<Profissional> optionalProfissional = (Optional<Profissional>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(optionalProfissional.isPresent()) {
+            pacienteService.salvarPrescricaoDePaciente(pacienteNomeUsuario, optionalProfissional.get(), issueDate, expirationDate, medicines, controlled, arquivo);
+            return ResponseEntity.ok().build();
         }
-        String suject = tokenService.getSubject(authorizationHeader);
-        ProfissionalDTO profissionalDTO = profissionalService.retornarProfissional(suject);
-        pacienteService.salvarPrescricaoDePaciente(pacienteNomeUsuario, profissionalDTO.getNomeUsuario(), issueDate, expirationDate, medicines, controlled, arquivo);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(401).build();
     }
 
     @PreAuthorize("hasAuthority('PATIENT_DOWNLOAD_PRESCRIPTION')")
@@ -70,15 +81,13 @@ public class PrescriptionController {
             summary = "Realiza download de receita médica",
             description = "Realiza download de receita médica pelo paciente."
     )
-    public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String number, HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader != null) {
-            authorizationHeader = authorizationHeader.replace("Bearer ", "");
+    public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String number) {
+        Optional<Paciente> optionalPaciente = (Optional<Paciente>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (optionalPaciente.isPresent()) {
+            PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(optionalPaciente.get().getNomeUsuario(), profissionalNomeUsuario, number);
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
+                    "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());
         }
-        String suject = tokenService.getSubject(authorizationHeader);
-        PacienteDTO pacienteDTO = pacienteService.retornarCadastroPaciente(suject);
-        PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(pacienteDTO.getNomeUsuario(), profissionalNomeUsuario, number);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
-                "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());
+        return ResponseEntity.status(401).build();
     }
 }

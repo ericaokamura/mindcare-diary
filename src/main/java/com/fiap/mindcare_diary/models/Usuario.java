@@ -3,7 +3,6 @@ package com.fiap.mindcare_diary.models;
 import com.fiap.mindcare_diary.models.enums.Sexo;
 import com.fiap.mindcare_diary.models.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,14 +12,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Usuario implements UserDetails {
 
     @Id

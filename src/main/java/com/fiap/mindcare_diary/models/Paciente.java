@@ -2,7 +2,6 @@ package com.fiap.mindcare_diary.models;
 
 import com.fiap.mindcare_diary.models.enums.EstadoPaciente;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue("PACIENTE")
+@DiscriminatorValue("Paciente")
 @Getter
 @Setter
 public class Paciente extends Usuario {

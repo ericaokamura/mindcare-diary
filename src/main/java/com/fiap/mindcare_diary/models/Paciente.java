@@ -22,8 +22,8 @@ public class Paciente extends Usuario {
     )
     private List<Profissional> profissionais = new ArrayList<>();
 
-    @ManyToMany
-    private List<Clinica> clinicas = new ArrayList<>();
+    @ManyToOne
+    private Clinica clinica;
 
     @OneToMany(mappedBy = "paciente")
     private List<Consulta> consultas = new ArrayList<>();

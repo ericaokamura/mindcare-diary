@@ -173,12 +173,14 @@ public class ClinicaService {
         profissionalRepository.findByClinica(clinica).forEach(profissional -> {
             clinica.getProfissionais().add(profissional);
         });
-        List<Paciente> pacientes = pacienteRepository.findByClinicasContains(clinica);
+        pacienteRepository.findByClinica(clinica).forEach(paciente -> {
+            clinica.getPacientes().add(paciente);
+        });
         List<Consulta> consultas = consultaRepository.findAllByClinica(clinica);
         ClinicaDTO clinicaDTO = ClinicaMapper.convertModelToDTO(clinica);
-        clinicaDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(consultas));
-        clinicaDTO.setPacientes(PacienteMapper.convertModelListToDTOList(pacientes));
-        clinicaDTO.setProfissionais(ProfissionalMapper.convertModelListToDTOList(clinica.getProfissionais()));
+        clinicaDTO.getConsultas().addAll(ConsultaMapper.convertModelListToDTOList(consultas));
+        clinicaDTO.getPacientes().addAll(PacienteMapper.convertModelListToDTOList(clinica.getPacientes()));
+        clinicaDTO.getProfissionais().addAll(ProfissionalMapper.convertModelListToDTOList(clinica.getProfissionais()));
         return clinicaDTO;
 
     }

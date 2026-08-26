@@ -27,7 +27,7 @@ public class Clinica {
     @OneToMany(mappedBy = "clinica")
     private List<Profissional> profissionais = new ArrayList<>();
 
-    @ManyToMany
+    @OneToMany(mappedBy = "clinica")
     private List<Paciente> pacientes = new ArrayList<>();
 
     @OneToMany(mappedBy = "clinica")

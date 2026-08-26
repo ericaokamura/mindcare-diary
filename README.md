@@ -11,6 +11,6 @@
     mindcare_db.dump
 - Rodar mvn clean install para baixar as dependências Maven
 - Configurar variáveis de ambiente: 
-  - DB_PASSWORD = 1234568
+  - DB_PASSWORD = 12345678
   - OPEN_AI_API_KEY
 - Rodar a aplicação

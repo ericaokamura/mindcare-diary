@@ -16,15 +16,7 @@ public class UsuarioMapper {
     public static List<UsuarioDTO> convertListModelToListDTO(List<Usuario> usuarios) {
         List<UsuarioDTO> dtos = new ArrayList<>();
         for (Usuario usuario : usuarios) {
-            UsuarioDTO dto = new UsuarioDTO();
-            dto.setNomeUsuario(usuario.getNomeUsuario());
-            dto.setNomeCompleto(usuario.getNomeCompleto());
-            dto.setDataNascimento(usuario.getDataNascimento().toString());
-            dto.setDataHoraAtivacao(usuario.getDataHoraAtivacao().toString());
-            dto.setToken(usuario.getToken());
-            dto.setGenero(usuario.getGenero().name());
-            dto.setAtivo(usuario.isAtivo());
-            dto.setUserRole(usuario.getUserRole().name());
+            UsuarioDTO dto = convertModelToDTO(usuario);
             dtos.add(dto);
         }
         return dtos;
@@ -39,6 +31,7 @@ public class UsuarioMapper {
         model.setGenero(Sexo.valueOf(dto.getGenero()));
         model.setAtivo(dto.isAtivo());
         model.setUserRole(UserRole.valueOf(dto.getUserRole()));
+        model.setDataHoraAtivacao(LocalDateTime.now());
         return model;
     }
 

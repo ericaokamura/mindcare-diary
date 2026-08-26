@@ -22,6 +22,8 @@ public class RegistroDiarioMapper {
 
     public static RegistroDiario convertDTOToModel(RegistroDiarioDTO registroDiarioDTO) {
         RegistroDiario model = new RegistroDiario();
+        model.setPaciente(PacienteMapper.convertDTOToModel(registroDiarioDTO.getPaciente()));
+        model.setDataHoraCriacao(LocalDateTime.parse(registroDiarioDTO.getDataHoraCriacao()));
         model.setDificuldadesDesafios(registroDiarioDTO.getDificuldadesDesafios());
         model.setPontosPositivos(registroDiarioDTO.getPontosPositivos());
         model.setNivelHumor(registroDiarioDTO.getNivelHumor().isBlank() ? NivelHumor.SEM_DEFINICAO : NivelHumor.valueOf(registroDiarioDTO.getNivelHumor()));

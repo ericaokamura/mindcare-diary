@@ -15,7 +15,7 @@ public class RegistroDiarioMapper {
         dto.setPaciente(PacienteMapper.convertModelToDTO(registroDiario.getPaciente()));
         dto.setDificuldadesDesafios(registroDiario.getDificuldadesDesafios());
         dto.setPontosPositivos(registroDiario.getPontosPositivos());
-        dto.setNivelHumor(registroDiario.getNivelHumor() == null ? "SEM_DEFINICAO" : registroDiario.getNivelHumor().name());
+        dto.setNivelHumor(registroDiario.getNivelHumor() == null ? NivelHumor.SEM_DEFINICAO.name() : registroDiario.getNivelHumor().name());
         dto.setDataHoraCriacao(registroDiario.getDataHoraCriacao().toString());
         return dto;
     }

@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.repositories;
 
+import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Consulta;
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
@@ -14,4 +15,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findAllByPaciente(Paciente paciente);
 
     List<Consulta> findAllByProfissional(Profissional profissional);
+
+    List<Consulta> findAllByClinica(Clinica clinica);
 }

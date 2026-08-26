@@ -7,6 +7,7 @@ import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
 import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Consulta;
+import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
@@ -14,6 +15,7 @@ import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import com.fiap.mindcare_diary.repositories.ClinicaRepository;
+import com.fiap.mindcare_diary.repositories.ConsultaRepository;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,12 @@ public class ClinicaService {
 
     @Autowired
     private ProfissionalRepository profissionalRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -141,6 +149,7 @@ public class ClinicaService {
         clinica.setNome(clinicaDTO.getNome());
         clinica.setEndereco(clinicaDTO.getEndereco());
         clinica.setPacientes(PacienteMapper.convertDTOListToModelList(clinicaDTO.getPacientes()));
+        clinica.setProfissionais(ProfissionalMapper.convertDTOListToModelList(clinicaDTO.getProfissionais()));
         clinica.setConsultas(ConsultaMapper.convertDTOListToModelList(clinicaDTO.getConsultas()));
         clinica.setPlanoAssinatura(PlanoAssinatura.valueOf(clinicaDTO.getPlanoAssinatura()));
         clinica.setTaxaComissao(clinicaDTO.getTaxaComissao());
@@ -160,7 +169,17 @@ public class ClinicaService {
         if(clinicaOptional.isEmpty()) {
             throw new ClinicaNaoExistenteException("Clínica não existente.");
         }
-        return ClinicaMapper.convertModelToDTO(clinicaOptional.get());
+        Clinica clinica = clinicaOptional.get();
+        profissionalRepository.findByClinica(clinica).forEach(profissional -> {
+            clinica.getProfissionais().add(profissional);
+        });
+        List<Paciente> pacientes = pacienteRepository.findByClinicasContains(clinica);
+        List<Consulta> consultas = consultaRepository.findAllByClinica(clinica);
+        ClinicaDTO clinicaDTO = ClinicaMapper.convertModelToDTO(clinica);
+        clinicaDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(consultas));
+        clinicaDTO.setPacientes(PacienteMapper.convertModelListToDTOList(pacientes));
+        clinicaDTO.setProfissionais(ProfissionalMapper.convertModelListToDTOList(clinica.getProfissionais()));
+        return clinicaDTO;
 
     }
 }

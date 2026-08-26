@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.repositories;
 
+import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
@@ -14,4 +15,6 @@ import java.util.Optional;
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
     Optional<Paciente> findByNomeUsuario(String nomeUsuario);
+
+    List<Paciente> findByClinicasContains(Clinica clinica);
 }

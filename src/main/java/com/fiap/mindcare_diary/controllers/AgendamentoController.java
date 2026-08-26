@@ -24,6 +24,16 @@ public class AgendamentoController {
     private AgendamentoService agendamentoService;
 
     @Operation(
+            summary = "Carregar consultas por paciente",
+            description = "Carregar consultas por paciente."
+    )
+    @GetMapping("/{nomeUsuario}")
+    public ResponseEntity<List<ConsultaDTO>> carregarConsultas(@PathVariable("nomeUsuario") String nomeUsuario) {
+        List<ConsultaDTO> consultas = this.agendamentoService.carregarConsultas(nomeUsuario);
+        return ResponseEntity.ok().body(consultas);
+    }
+
+    @Operation(
             summary = "Agenda consulta",
             description = "Agenda consulta para paciente."
     )

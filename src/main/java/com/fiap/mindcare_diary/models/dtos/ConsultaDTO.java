@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Setter
 public class ConsultaDTO {
 
+    private String number;
+
     private ProfissionalDTO profissional;
 
     private PacienteDTO paciente;

@@ -20,10 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +40,11 @@ public class AgendamentoService {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
+    private Random random = new Random();
+
     public void salvarAgendamento(ConsultaDTO consultaDTO) {
+
+        Integer numero = 100000 + random.nextInt(900000);
 
         LocalDateTime dataHoraAgendamento = LocalDateTime.parse(consultaDTO.getDataHoraConsulta(), formatter);
         LocalDate dataAgendamento = dataHoraAgendamento.toLocalDate();
@@ -79,6 +80,7 @@ public class AgendamentoService {
                 consulta.setPaciente(paciente);
                 consulta.setDataHoraConsulta(LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
                 consulta.setClinica(clinica);
+                consulta.setNumber(numero.toString());
                 this.agendamentoRepository.save(consulta);
                 this.pacienteRepository.save(paciente);
                 this.profissionalRepository.save(profissional);
@@ -184,5 +186,13 @@ public class AgendamentoService {
         }
 
         return recomendacoes;
+    }
+
+    public List<ConsultaDTO> carregarConsultas(String nomeUsuario) {
+        List<ConsultaDTO> consultas = new ArrayList<>();
+        pacienteRepository.findByNomeUsuario(nomeUsuario).ifPresent(paciente -> {
+            consultas.addAll(paciente.getConsultas().stream().map(ConsultaMapper::convertModelToDTO).collect(Collectors.toList()));
+        });
+        return consultas;
     }
 }

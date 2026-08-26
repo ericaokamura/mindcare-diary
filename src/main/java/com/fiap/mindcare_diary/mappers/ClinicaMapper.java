@@ -13,7 +13,7 @@ public class ClinicaMapper {
         ClinicaDTO dto = new ClinicaDTO();
         dto.setNome(model.getNome());
         dto.setEndereco(model.getEndereco());
-        dto.getPacientes().addAll(PacienteMapper.convertModelListToDTOList(model.getPacientes()));
+        //dto.getPacientes().addAll(PacienteMapper.convertModelListToDTOList(model.getPacientes()));
         //dto.getProfissionais().addAll(ProfissionalMapper.convertModelListToDTOList(model.getProfissionais()));
         //dto.getConsultas().addAll(ConsultaMapper.convertModelListToDTOList(model.getConsultas()));
         dto.setTaxaComissao(model.getTaxaComissao());
@@ -28,7 +28,7 @@ public class ClinicaMapper {
         model.setNome(dto.getNome());
         model.setCnpj(dto.getCnpj());
         model.setEndereco(dto.getEndereco());
-        model.getPacientes().addAll(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        //model.getPacientes().addAll(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
         //model.getProfissionais().addAll(ProfissionalMapper.convertDTOListToModelList(dto.getProfissionais()));
         //model.getConsultas().addAll(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         model.setTaxaComissao(dto.getTaxaComissao());

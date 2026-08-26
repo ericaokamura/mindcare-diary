@@ -1,0 +1,717 @@
+{
+	"info": {
+		"_postman_id": "c5131d03-d96d-4622-991d-989d2409e7a2",
+		"name": "Mindcare Diary",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Cadastra refgistro diário de paciente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nivelHumor\": \"BOM\",\n    \"pontosPositivos\": \"Hoje acordei com disposição e sai para caminhar de manhã, à tarde conversei com meus amigos sobre um possível que irá acontecer nos próximos dias.\",\n    \"dificuldadesDesafios\": \"me senti um pouco deprimido durante a parte da noite.\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/registrosDiarios/cadastrarRegistroDiario/erica.okamura@yahoo.com.br",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"registrosDiarios",
+						"cadastrarRegistroDiario",
+						"erica.okamura@yahoo.com.br"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastra paciente",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nomeUsuario\": \"erica.okamura@yahoo.com.br\",\n    \"senha\": \"123456\",\n    \"nomeCompleto\": \"Erica Okamura\",\n    \"dataNascimento\": \"1986-04-04\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cadastra profissional",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nomeUsuario\": \"paula.torres@gmail.com\",\n    \"senha\": \"123456\",\n    \"nomeCompleto\": \"Paula Torres\",\n    \"dataNascimento\": \"1960-10-10\",\n    \"userRole\": \"ADMIN\",\n    \"genero\": \"FEMININO\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/profissionais",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profissionais"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna todos os pacientes cadastrados",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/profissionais",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profissionais"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna registros diários de pacientes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/registrosDiarios/erica.okamura@yahoo.com.br",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"registrosDiarios",
+						"erica.okamura@yahoo.com.br"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualiza estado de paciente",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes/atualizarEstadoPaciente/2/4?estadoPaciente=ESTAVEL",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"atualizarEstadoPaciente",
+						"2",
+						"4"
+					],
+					"query": [
+						{
+							"key": "estadoPaciente",
+							"value": "ESTAVEL"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna pacientes de profissional",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWlsYS5sb3JlbmFAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3Mzc1MzcyfQ.eUgI3e0R213Ax3rEXfI8ZUbFn4EJJ_ppKXy_btgRIbk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/profissionais/keila.lorena@gmail.com/pacientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profissionais",
+						"keila.lorena@gmail.com",
+						"pacientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adiciona profissional para paciente",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXJib3NhaEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc1MjU5Njl9.Rh7pue5Yw_rjSrHxbfVWo2G-32-qi2-sGWYTguiMyXM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/pacientes/selecionarProfissional/keila.lorena@gmail.com/barbosah@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"selecionarProfissional",
+						"keila.lorena@gmail.com",
+						"barbosah@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista Pacientes por Profissional",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWlsYS5sb3JlbmFAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3Mzc1MzcyfQ.eUgI3e0R213Ax3rEXfI8ZUbFn4EJJ_ppKXy_btgRIbk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/profissionais/keila.lorena@gmail.com/pacientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profissionais",
+						"keila.lorena@gmail.com",
+						"pacientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gerar relatório semanal",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW5pc2UuY2hhbkBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc3MjY5Mzh9.RI-Pflc_ajgzbowD68h5lqQGFR6DF4xFWvJlsyJ0DqU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"faixaDeDatas\": \"2026-06-07T00:00:00.000ˆ2026-06-14T00:00:00.000\",\n    \"observacoes\": \"Continue registrando suas emoções diariamente. Percebi uma evolução positiva em sua autoavaliação.\",\n    \"recomendacoes\": \"Mantenha as práticas de meditação e exercícios físicos.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/relatoriosSemanais/gerar/barbosah@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"relatoriosSemanais",
+						"gerar",
+						"barbosah@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna relatórios semanais por paciente",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/relatoriosSemanais/erica.okamura@yahoo.com.br",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"relatoriosSemanais",
+						"erica.okamura@yahoo.com.br"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verificar Disponibilidade",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/agendamentos/verificarDisponibilidade?nomeUsuarioProfissional=ericaok@gmail.com&data=2026-06-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"agendamentos",
+						"verificarDisponibilidade"
+					],
+					"query": [
+						{
+							"key": "nomeUsuarioProfissional",
+							"value": "ericaok@gmail.com"
+						},
+						{
+							"key": "data",
+							"value": "2026-06-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Agendamento de consulta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXJib3NhaEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc3MTY0NTB9.AygZs4yoyvOrNyiv9ZSNbO8stQHN8QWBAguHlnDF07c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"paciente\": {\n        \"nomeUsuario\": \"barbosah@gmail.com\",\n        \"senha\": \"123456\"\n    },\n    \"profissional\": {\n        \"nomeUsuario\": \"denise.chan@gmail.com\",\n        \"senha\": \"123456\",\n        \"tipoProfissional\": \"PSICOLOGO\"\n    },\n    \"dataHoraConsulta\": \"2026-08-26T09:00\",\n    \"atendida\": true,\n    \"cancelada\": false,\n    \"valorConsulta\": 400.00\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/agendamentos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"agendamentos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recomendação de horários",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/agendamentos/recomendarHorarios?tipoProfissional=PSICOLOGO",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"agendamentos",
+						"recomendarHorarios"
+					],
+					"query": [
+						{
+							"key": "tipoProfissional",
+							"value": "PSICOLOGO"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar profissionais por tipo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/profissionais/tipoProfissional/PSIQUIATRA",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profissionais",
+						"tipoProfissional",
+						"PSIQUIATRA"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consultas por profissional",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJpYS5jYWJyYWxAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3NzA4NzExfQ.0BqFsnIzqqqqEX2__ZmwLTfhwFGzSuVHuNaortrFvKc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/consultas/profissionais/maria.cabral@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"consultas",
+						"profissionais",
+						"maria.cabral@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualizar relatório semanal com base em registros diários",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"faixaDeDatas\": \"2026-05-30^2026-06-08\",\n    \"paciente\": {\n        \"nomeUsuario\": \"erica.okamura@yahoo.com.br\",\n        \"senha\": \"123456\",\n        \"nomeCompleto\": \"Erica Okamura\",\n        \"dataNascimento\": \"1986-04-04\",\n        \"ativo\": true,\n        \"dataHoraAtivacao\": \"2026-05-28T15:12:23.082564\",\n        \"profissional\": {\n            \"nomeUsuario\": \"maria.cabral@gmail.com\",\n            \"senha\": \"123456\",\n            \"nomeCompleto\": \"Maria Cabral\",\n            \"dataNascimento\": \"1986-04-04\",\n            \"ativo\": true,\n            \"dataHoraAtivacao\": \"2026-05-28T14:58:24.286454\",\n            \"pacientes\": [],\n            \"consultas\": [],\n            \"tipoProfissional\": \"PSIQUIATRA\"\n        },\n        \"consultas\": [],\n        \"estadoPaciente\": \"SEM_DEFINICAO\"\n    },\n    \"observacoes\": \"Continue praticando exercícios e meditando todos os dias.\",\n    \"recomendacoes\": \"Curta o tempo com sua família.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/relatoriosSemanais/atualizarRelatorioSemanal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"relatoriosSemanais",
+						"atualizarRelatorioSemanal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Salvar Nova Prescrição",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWlsYS5sb3JlbmFAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3NTI1OTA2fQ.HeJZfnqjnCFlCuIBLYPat8uMJTzYaPd1FjsDi0tPfZY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "profissionalNomeUsuario",
+							"value": "keila.lorena@gmail.com",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "issueDate",
+							"value": "2026-08-21",
+							"type": "text"
+						},
+						{
+							"key": "expirationDate",
+							"value": "2026-10-21",
+							"type": "text"
+						},
+						{
+							"key": "medicines",
+							"value": "Aristab,Cloridrato de Sertralina",
+							"type": "text"
+						},
+						{
+							"key": "controlled",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "arquivo",
+							"contentType": "",
+							"type": "file",
+							"src": "/Users/ericaokamura/Downloads/arquivo.pdf"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/prescriptions/barbosah@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"prescriptions",
+						"barbosah@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna prescrições médicas por paciente",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJpYS5jYWJyYWxAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3MzY5NzU0fQ.4tP5EbiK4v6VJIFhjCJcseHl-j1NPvapPGmHP_TA_10",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/pacientes/barbosah@gmail.com/prescriptions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"pacientes",
+						"barbosah@gmail.com",
+						"prescriptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login + JWT Generation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nomeUsuario\": \"denise.chan@gmail.com\",\n    \"senha\": 123456\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download de receita",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWFuYS5saXVAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg3Mzc2NTk0fQ.QpA-BHPoxrIqseOSNc4G_VaCBtEKe7hYRrSvZGXP258",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/prescriptions/keila.lorena@gmail.com/255322/pdf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"prescriptions",
+						"keila.lorena@gmail.com",
+						"255322",
+						"pdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna faturamento de clínica por ano e mês",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXJib3NhaEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc3MTc1MzR9.Lcrz53h-V_8O80GyM9aYRydVrDQ8YHMaH1Fak1gZ4gY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/clinicas/12345678/0001-23/faturamento?ano=2026&mes=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clinicas",
+						"12345678",
+						"0001-23",
+						"faturamento"
+					],
+					"query": [
+						{
+							"key": "ano",
+							"value": "2026"
+						},
+						{
+							"key": "mes",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

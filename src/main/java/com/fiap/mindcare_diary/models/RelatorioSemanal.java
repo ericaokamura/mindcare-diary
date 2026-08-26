@@ -30,6 +30,7 @@ public class RelatorioSemanal {
 
     private String recomendacoes;
 
+    @Column(columnDefinition = "VARCHAR")
     private String relatorioIA;
 
     private LocalDateTime dataHoraCriacao;

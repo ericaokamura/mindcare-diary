@@ -97,8 +97,8 @@ public class ProfissionalService {
             profissional.setUserRole(UserRole.valueOf(profissionalDTO.getUserRole()));
             profissional.setDataNascimento(LocalDate.parse(profissionalDTO.getDataNascimento()));
             profissional.setDataHoraAtivacao(LocalDateTime.parse(profissionalDTO.getDataHoraAtivacao()));
-            //profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(profissionalDTO.getConsultas()));
-            //profissional.setPacientes(PacienteMapper.convertDTOListToModelList(profissionalDTO.getPacientes()));
+            //profissional.getConsultas().addAll(ConsultaMapper.convertDTOListToModelList(profissionalDTO.getConsultas()));
+            //profissional.getPacientes().addAll(PacienteMapper.convertDTOListToModelList(profissionalDTO.getPacientes()));
             //profissional.getClinicas().addAll(ClinicaMapper.convertDTOListToModelList(profissionalDTO.getClinicas()));
             profissional.setRegistroProfissional(profissional.getRegistroProfissional());
             profissional.setTipoProfissional(TipoProfissional.valueOf(profissionalDTO.getTipoProfissional()));
@@ -108,16 +108,6 @@ public class ProfissionalService {
             profissionalRepository.save(profissional);
         } else {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
-        }
-
-    }
-
-    public boolean verificaProfissional(String suject) {
-        Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(suject);
-        if(optionalProfissional.isPresent() && TipoProfissional.PSIQUIATRA.equals(optionalProfissional.get().getTipoProfissional())) {
-            return true;
-        } else {
-            return false;
         }
     }
 }

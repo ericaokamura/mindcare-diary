@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
@@ -48,6 +49,8 @@ public class RelatorioSemanalService {
 
     private final static String DELIMITER = "^";
 
+    private Random random = new Random();
+
     public RelatorioSemanalService(RelatorioSemanalRepository relatorioSemanalRepository, RegistroDiarioRepository registroDiarioRepository, PacienteRepository pacienteRepository, ChatClient.Builder builder, PgVectorStore pgVectorStore, DataLoader dataLoader) {
         this.relatorioSemanalRepository = relatorioSemanalRepository;
         this.registroDiarioRepository = registroDiarioRepository;
@@ -58,6 +61,8 @@ public class RelatorioSemanalService {
     }
 
     public RelatorioSemanalDTO gerarRelatorioSemanal(String nomeUsuario) {
+
+        Integer numero = 100000 + random.nextInt(900000);
 
         String relatorioIA = this.gerarRelatorioIA(nomeUsuario);
 
@@ -89,6 +94,7 @@ public class RelatorioSemanalService {
             relatorioSemanal.setTotalPositivos(countPontosPositivos);
             relatorioSemanal.setTotalNegativos(countDificuldadesDesafios);
             relatorioSemanal.setRegistrosDiarios(registrosDiarios);
+            relatorioSemanal.setNumber(numero.toString());
             relatorioSemanalRepository.save(relatorioSemanal);
             return RelatorioSemanalMapper.convertModelToDTO(relatorioSemanal);
         } else {
@@ -108,7 +114,7 @@ public class RelatorioSemanalService {
     public void atualizarRelatorioSemanal(RelatorioSemanalDTO relatorioSemanalDTO) {
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(relatorioSemanalDTO.getPaciente().getNomeUsuario());
         if(optionalPaciente.isPresent()) {
-            Optional<RelatorioSemanal> relatorioSemanalOptional = this.relatorioSemanalRepository.findByPacienteAndFaixaDeDatas(optionalPaciente.get(), relatorioSemanalDTO.getFaixaDeDatas());
+            Optional<RelatorioSemanal> relatorioSemanalOptional = this.relatorioSemanalRepository.findByPacienteAndNumber(optionalPaciente.get(), relatorioSemanalDTO.getNumber());
             if(relatorioSemanalOptional.isPresent()) {
                 RelatorioSemanal relatorioSemanal = relatorioSemanalOptional.get();
                 relatorioSemanal.setRecomendacoes(relatorioSemanalDTO.getRecomendacoes());

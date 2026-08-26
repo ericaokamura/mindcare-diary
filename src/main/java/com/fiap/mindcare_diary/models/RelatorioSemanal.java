@@ -17,6 +17,8 @@ public class RelatorioSemanal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String number;
+
     @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;

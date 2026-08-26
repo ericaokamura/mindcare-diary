@@ -14,6 +14,8 @@ import java.util.List;
 @Setter
 public class RelatorioSemanalDTO {
 
+    private String number;
+
     private PacienteDTO paciente;
 
     private String faixaDeDatas;

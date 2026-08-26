@@ -1,6 +1,6 @@
 ### Instruções: 
 - Utilizar branch master
-- Instalar banco de dados PostgreSQL ou subir uma imagem Docker do PostgreSQL utilizando o docker-compose.yaml 
+- Instalar banco de dados PostgreSQL ou subir uma imagem Docker do PostgreSQL utilizando o docker-compose.yaml, que se encontra na raiz do projeto
 - Criar banco de dados mindcare_db (connection string: jdbc:postgresql://localhost:5432/mindcare_db, username: postgres, password: 12345678)
 - Restaurar dados usando o seguinte comando Bash (file:src/main/resources/mindcare_db.dump):
   - pg_restore \

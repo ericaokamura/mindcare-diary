@@ -16,6 +16,11 @@ import java.util.List;
 public class Paciente extends Usuario {
 
     @ManyToMany
+    @JoinTable(
+            name = "paciente_profissional",
+            joinColumns = @JoinColumn(name = "paciente_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "profissional_id", referencedColumnName = "id")
+    )
     private List<Profissional> profissionais = new ArrayList<>();
 
     @ManyToMany

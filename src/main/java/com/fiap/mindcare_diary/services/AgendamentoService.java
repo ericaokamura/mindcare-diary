@@ -45,7 +45,7 @@ public class AgendamentoService {
 
     public void salvarAgendamento(ConsultaDTO consultaDTO) {
 
-        LocalDateTime dataHoraAgendamento = LocalDateTime.parse(consultaDTO.getDataHoraConsulta());
+        LocalDateTime dataHoraAgendamento = LocalDateTime.parse(consultaDTO.getDataHoraConsulta(), formatter);
         LocalDate dataAgendamento = dataHoraAgendamento.toLocalDate();
 
         if (dataHoraAgendamento.getDayOfWeek().getValue() >= 6) {
@@ -73,25 +73,15 @@ public class AgendamentoService {
                 }
                 paciente.getProfissionais().add(optionalProfissional.get());
                 profissional.getPacientes().add(paciente);
+                Clinica clinica = profissional.getClinica();
                 Consulta consulta = ConsultaMapper.convertDTOToModel(consultaDTO);
                 consulta.setProfissional(optionalProfissional.get());
                 consulta.setPaciente(paciente);
                 consulta.setDataHoraConsulta(LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
+                consulta.setClinica(clinica);
                 this.agendamentoRepository.save(consulta);
                 this.pacienteRepository.save(paciente);
                 this.profissionalRepository.save(profissional);
-
-                if (paciente.getToken() != null) {
-                    Message message = Message.builder()
-                            .setToken(paciente.getToken())
-                            .setNotification(Notification.builder()
-                                    .setTitle("Consulta Agendada")
-                                    .setBody("Sua consulta foi marcada para " + consulta.getDataHoraConsulta() + " com o profissional " + consulta.getProfissional().getNomeCompleto())
-                                    .build())
-                            .build();
-
-                    pushNotificationService.sendNotification(message);
-                }
             } else {
                 throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
             }

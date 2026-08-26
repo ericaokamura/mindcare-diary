@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface ClinicaRepository extends JpaRepository<Clinica, Long> {
 
     Optional<Clinica> findById(Long id);
+
+    Optional<Clinica> findByCnpj(String clinicaCnpj);
+
+    Optional<Clinica> findByNome(String nome);
 }

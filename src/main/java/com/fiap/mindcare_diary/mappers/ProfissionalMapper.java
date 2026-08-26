@@ -18,48 +18,49 @@ import java.util.List;
 public class ProfissionalMapper {
 
     public static ProfissionalDTO convertModelToDTO(Profissional profissional) {
+        if(profissional == null) return null;
         ProfissionalDTO profissionalDTO = new ProfissionalDTO();
         profissionalDTO.setNomeUsuario(profissional.getNomeUsuario());
         profissionalDTO.setSenha(profissional.getSenha());
         profissionalDTO.setNomeCompleto(profissional.getNomeCompleto());
         profissionalDTO.setDataHoraAtivacao(String.valueOf(profissional.getDataHoraAtivacao()));
-        profissionalDTO.setDataNascimento(String.valueOf(profissional.getDataNascimento()));
-        profissionalDTO.setGenero(profissional.getGenero().name());
+        profissionalDTO.setDataNascimento(profissional.getDataNascimento() == null ? "" : String.valueOf(profissional.getDataNascimento()));
+        profissionalDTO.setGenero(profissional.getGenero() == null ? null : profissional.getGenero().name());
         profissionalDTO.setAtivo(profissional.isAtivo());
         profissionalDTO.setToken(profissional.getToken());
-        profissionalDTO.setPacientes(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
+        //profissionalDTO.getPacientes().addAll(PacienteMapper.convertModelListToDTOList(profissional.getPacientes()));
         profissionalDTO.setTipoProfissional(profissional.getTipoProfissional().name());
-        profissionalDTO.setConsultas(ConsultaMapper.convertModelListToDTOList(profissional.getConsultas()));
+        //profissionalDTO.getConsultas().addAll(ConsultaMapper.convertModelListToDTOList(profissional.getConsultas()));
         profissionalDTO.setRegistroProfissional(profissional.getRegistroProfissional());
-        profissionalDTO.setAbordagens(profissional.getAbordagens());
-        profissionalDTO.setEspecialidades(profissional.getEspecialidades());
-        profissionalDTO.setModalidades(profissional.getModalidades());
-        profissionalDTO.setUserRole(profissional.getUserRole().name());
+        profissionalDTO.getAbordagens().addAll(profissional.getAbordagens());
+        profissionalDTO.getEspecialidades().addAll(profissional.getEspecialidades());
+        profissionalDTO.getModalidades().addAll(profissional.getModalidades());
+        profissionalDTO.setUserRole(profissional.getUserRole() == null ? null : profissional.getUserRole().name());
+        //profissionalDTO.getClinicas().addAll(ClinicaMapper.convertModelListToDTOList(profissional.getClinicas()));
         return profissionalDTO;
     }
 
     public static Profissional convertDTOToModel(ProfissionalDTO dto) {
+        if(dto == null) return null;
         Profissional profissional = new Profissional();
         profissional.setNomeUsuario(dto.getNomeUsuario());
         profissional.setSenha(dto.getSenha());
         profissional.setNomeCompleto(dto.getNomeCompleto());
-        profissional.setDataNascimento(LocalDate.parse(dto.getDataNascimento()));
-        profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
-        profissional.setGenero(Sexo.valueOf(dto.getGenero()));
+        profissional.setDataNascimento(dto.getDataNascimento() == null ? null : LocalDate.parse(dto.getDataNascimento()));
+        //profissional.getPacientes().addAll(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
+        profissional.setGenero(dto.getGenero() == null ? null : Sexo.valueOf(dto.getGenero()));
         profissional.setToken(dto.getToken());
-        profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
+        //profissional.getConsultas().addAll(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         profissional.setAtivo(dto.isAtivo());
         profissional.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
-        profissional.setPacientes(PacienteMapper.convertDTOListToModelList(dto.getPacientes()));
-        profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(dto.getConsultas()));
         profissional.setRegistroProfissional(dto.getRegistroProfissional());
-        profissional.setModalidades(dto.getModalidades());
-        profissional.setAbordagens(dto.getAbordagens());
-        profissional.setEspecialidades(dto.getEspecialidades());
-        profissional.setUserRole(UserRole.valueOf(dto.getUserRole()));
+        profissional.getModalidades().addAll(dto.getModalidades());
+        profissional.getAbordagens().addAll(dto.getAbordagens());
+        profissional.getEspecialidades().addAll(dto.getEspecialidades());
+        profissional.setUserRole(dto.getUserRole() == null ? null : UserRole.valueOf(dto.getUserRole()));
+        //profissional.getClinicas().addAll(ClinicaMapper.convertDTOListToModelList(dto.getClinicas()));
         return profissional;
     }
-
 
     public static List<ProfissionalDTO> convertModelListToDTOList(List<Profissional> profissionais) {
         List<ProfissionalDTO> dtos = new ArrayList<>();

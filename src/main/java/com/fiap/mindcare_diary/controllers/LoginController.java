@@ -23,7 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("login")@CrossOrigin(value = "*", allowedHeaders = "*")
+@RequestMapping("login")
+@CrossOrigin(value = "http://localhost:4200", allowedHeaders = "*")
 @Tag(
         name = "Login",
         description = "Efetua login de usuários."

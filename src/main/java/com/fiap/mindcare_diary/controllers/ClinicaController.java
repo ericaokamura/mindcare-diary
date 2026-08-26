@@ -26,57 +26,75 @@ public class ClinicaController {
     private ClinicaService clinicaService;
 
     @Operation(
-            summary = "Retorna clínica por id",
-            description = "Retorna dados da clínica por id."
+            summary = "Retorna clínica por cnpj",
+            description = "Retorna dados da clínica por cnpj."
     )
-    @GetMapping("/{clinicaId}")
-    public ResponseEntity<ClinicaDTO> retornarClinicaPorId(@PathVariable("clinicaId") Long clinicaId) {
-        return ResponseEntity.ok(clinicaService.retornarClinicaPorId(clinicaId));
+    @GetMapping("/{clinicaCnpj}/cnpj")
+    public ResponseEntity<ClinicaDTO> retornarClinicaPorCnpj(@PathVariable("clinicaCnpj") String clinicaCnpj) {
+        return ResponseEntity.ok(clinicaService.retornarClinicaPorCnpj(clinicaCnpj));
     }
 
     @Operation(
-            summary = "Retorna pacientes de clínica por id",
-            description = "Retorna pacientes de clínica por id."
+            summary = "Retorna clínica por nome",
+            description = "Retorna dados da clínica por nome."
     )
-    @GetMapping("/{clinicaId}/pacientes")
-    public ResponseEntity<List<PacienteDTO>> retornarPacientesPorClinicaId(@PathVariable("clinicaId") Long clinicaId) {
-        return ResponseEntity.ok(clinicaService.retornarPacientesPorClinicaId(clinicaId));
+    @GetMapping("/{nome}/nome")
+    public ResponseEntity<ClinicaDTO> retornarClinicaPorNome(@PathVariable("nome") String nome) {
+        return ResponseEntity.ok(clinicaService.retornarClinicaPorNome(nome));
     }
 
     @Operation(
-            summary = "Retorna profissionais de clínica por id",
-            description = "Retorna profissionais de clínica por id."
+            summary = "Retorna clínicas",
+            description = "Retorna todas as clínicas."
     )
-    @GetMapping("/{clinicaId}/profissionais")
-    public ResponseEntity<List<ProfissionalDTO>> retornarProfissionaisPorClinicaId(@PathVariable("clinicaId") Long clinicaId) {
-        return ResponseEntity.ok(clinicaService.retornarProfissionaisPorClinicaId(clinicaId));
+    @GetMapping()
+    public ResponseEntity<List<ClinicaDTO>> retornarClinicas() {
+        return ResponseEntity.ok(clinicaService.retornarClinicas());
     }
 
     @Operation(
-            summary = "Retorna consultas de clínica por id",
-            description = "Retorna consultas de clínica por id."
+            summary = "Retorna pacientes de clínica por cnpj",
+            description = "Retorna pacientes de clínica por cnpj."
     )
-    @GetMapping("/{clinicaId}/consultas")
-    public ResponseEntity<List<ConsultaDTO>> retornarConsultasPorClinicaId(@PathVariable("clinicaId") Long clinicaId) {
-        return ResponseEntity.ok(clinicaService.retornarConsultasPorClinicaId(clinicaId));
+    @GetMapping("/{clinicaCnpj}/pacientes")
+    public ResponseEntity<List<PacienteDTO>> retornarPacientesPorclinicaCnpj(@PathVariable("clinicaCnpj") String clinicaCnpj) {
+        return ResponseEntity.ok(clinicaService.retornarPacientesPorClinicaCnpj(clinicaCnpj));
+    }
+
+    @Operation(
+            summary = "Retorna profissionais de clínica por cnpj",
+            description = "Retorna profissionais de clínica por cnpj."
+    )
+    @GetMapping("/{clinicaCnpj}/profissionais")
+    public ResponseEntity<List<ProfissionalDTO>> retornarProfissionaisPorclinicaCnpj(@PathVariable("clinicaCnpj") String clinicaCnpj) {
+        return ResponseEntity.ok(clinicaService.retornarProfissionaisPorClinicaCnpj(clinicaCnpj));
+    }
+
+    @Operation(
+            summary = "Retorna consultas de clínica por cnpj",
+            description = "Retorna consultas de clínica por cnpj."
+    )
+    @GetMapping("/{clinicaCnpj}/consultas")
+    public ResponseEntity<List<ConsultaDTO>> retornarConsultasPorclinicaCnpj(@PathVariable("clinicaCnpj") String clinicaCnpj) {
+        return ResponseEntity.ok(clinicaService.retornarConsultasPorClinicaCnpj(clinicaCnpj));
     }
 
     @Operation(
             summary = "Retorna faturamento da clínica por ano e mês",
             description = "Retorna faturamento da clínica antes do desconto de comissão por ano e mês."
     )
-    @GetMapping("/{clinicaId}/faturamento")
-    public ResponseEntity<Double> retornarFaturamentoPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
-        return ResponseEntity.ok(clinicaService.retornarFaturamentoPorClinicaIdPorAnoMes(clinicaId, ano, mes));
+    @GetMapping("/faturamento")
+    public ResponseEntity<Double> retornarFaturamentoPorclinicaCnpjPorAnoMes(@RequestParam("clinicaCnpj") String clinicaCnpj, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
+        return ResponseEntity.ok(clinicaService.retornarFaturamentoPorClinicaCnpjPorAnoMes(clinicaCnpj, ano, mes));
     }
 
     @Operation(
             summary = "Retorna faturamento da clínica por ano e mês",
             description = "Retorna faturamento da clínica após desconto de comissão por ano e mês."
     )
-    @GetMapping("/{clinicaId}/receita/descontos")
-    public ResponseEntity<Double> retornarReceitaAposDescontosPorClinicaIdPorAnoMes(@PathVariable("clinicaId") Long clinicaId, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
-        return ResponseEntity.ok(clinicaService.retornarReceitaAposDescontosPorClinicaIdPorAnoMes(clinicaId, ano, mes));
+    @GetMapping("/receita/descontos")
+    public ResponseEntity<Double> retornarReceitaAposDescontosPorclinicaCnpjPorAnoMes(@RequestParam("clinicaCnpj") String clinicaCnpj, @RequestParam("ano") Long ano, @RequestParam("mes") Long mes) {
+        return ResponseEntity.ok(clinicaService.retornarReceitaAposDescontosPorClinicaCnpjPorAnoMes(clinicaCnpj, ano, mes));
     }
 
     @Operation(
@@ -93,9 +111,9 @@ public class ClinicaController {
             summary = "Atualiza clínica",
             description = "Atualiza dados da clínica."
     )
-    @PatchMapping("{clinicaId}")
-    public ResponseEntity<Void> atualizarDadosClinica(@PathVariable("clinicaId") Long clinicaId, @RequestBody ClinicaDTO clinicaDTO) {
-        clinicaService.atualizarDadosClinica(clinicaId, clinicaDTO);
+    @PatchMapping("{clinicaCnpj}")
+    public ResponseEntity<Void> atualizarDadosClinica(@PathVariable("clinicaCnpj") String clinicaCnpj, @RequestBody ClinicaDTO clinicaDTO) {
+        clinicaService.atualizarDadosClinica(clinicaCnpj, clinicaDTO);
         return ResponseEntity.ok().build();
     }
 }

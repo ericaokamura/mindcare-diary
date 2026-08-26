@@ -18,7 +18,7 @@ import java.util.List;
 @Setter
 public class Profissional extends Usuario {
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "profissionais")
     private List<Paciente> pacientes = new ArrayList<>();
 
     @OneToMany(mappedBy = "profissional")
@@ -29,13 +29,31 @@ public class Profissional extends Usuario {
 
     private String registroProfissional;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "prescription_abordagens",
+            joinColumns = @JoinColumn(name = "profissional_id")
+    )
+    @Column(name = "abordagens")
     private List<AbordagemPsicologia> abordagens = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(
+            name = "prescription_especialidades",
+            joinColumns = @JoinColumn(name = "profissional_id")
+    )
+    @Column(name = "especialidades")
     private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(
+            name = "prescription_modalidades",
+            joinColumns = @JoinColumn(name = "profissional_id")
+    )
+    @Column(name = "modalidades")
     private List<ConsultaModalidade> modalidades = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<Clinica> clinicas = new ArrayList<>();
+    @ManyToOne
+    private Clinica clinica;
 
 }

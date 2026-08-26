@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.repositories;
 
+import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ import java.util.Optional;
 public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
 
     Optional<Profissional> findByNomeUsuario(String nomeUsuario);
+
+    List<Profissional> findByClinica(Clinica clinica);
 }

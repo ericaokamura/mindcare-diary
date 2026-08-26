@@ -16,6 +16,8 @@ public class ClinicaDTO {
 
     private String nome;
 
+    private String cnpj;
+
     private String endereco;
 
     private List<ProfissionalDTO> profissionais = new ArrayList<>();

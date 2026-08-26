@@ -98,9 +98,9 @@ public class ProfissionalService {
             profissional.setUserRole(UserRole.valueOf(profissionalDTO.getUserRole()));
             profissional.setDataNascimento(LocalDate.parse(profissionalDTO.getDataNascimento()));
             profissional.setDataHoraAtivacao(LocalDateTime.parse(profissionalDTO.getDataHoraAtivacao()));
-            profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(profissionalDTO.getConsultas()));
-            profissional.setPacientes(PacienteMapper.convertDTOListToModelList(profissionalDTO.getPacientes()));
-            profissional.setClinicas(ClinicaMapper.convertDTOListToModelList(profissionalDTO.getClinicas()));
+            //profissional.setConsultas(ConsultaMapper.convertDTOListToModelList(profissionalDTO.getConsultas()));
+            //profissional.setPacientes(PacienteMapper.convertDTOListToModelList(profissionalDTO.getPacientes()));
+            //profissional.getClinicas().addAll(ClinicaMapper.convertDTOListToModelList(profissionalDTO.getClinicas()));
             profissional.setRegistroProfissional(profissional.getRegistroProfissional());
             profissional.setTipoProfissional(TipoProfissional.valueOf(profissionalDTO.getTipoProfissional()));
             profissional.setEspecialidades(profissionalDTO.getEspecialidades());

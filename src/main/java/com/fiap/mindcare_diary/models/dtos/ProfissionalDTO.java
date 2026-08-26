@@ -28,6 +28,6 @@ public class ProfissionalDTO extends UsuarioDTO {
 
     private List<ConsultaModalidade> modalidades = new ArrayList<>();
 
-    private List<ClinicaDTO> clinicas = new ArrayList<>();
+    private ClinicaDTO clinica;
 
 }

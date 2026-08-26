@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.models;
 
+import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,9 +20,11 @@ public class Clinica {
 
     private String nome;
 
+    private String cnpj;
+
     private String endereco;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "clinica")
     private List<Profissional> profissionais = new ArrayList<>();
 
     @ManyToMany
@@ -32,6 +35,7 @@ public class Clinica {
 
     private Double taxaComissao;
 
+    @Enumerated(EnumType.STRING)
     private PlanoAssinatura planoAssinatura;
 
 }

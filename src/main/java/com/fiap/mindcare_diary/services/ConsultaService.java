@@ -51,8 +51,8 @@ public class ConsultaService {
         throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
     }
 
-    public void atualizarConsulta(Long consultaId, ConsultaDTO consultaDTO) {
-        Optional<Consulta> consulta = consultaRepository.findById(consultaId);
+    public void atualizarConsulta(String number, ConsultaDTO consultaDTO) {
+        Optional<Consulta> consulta = consultaRepository.findByNumber(number);
         if(consulta.isPresent()) {
             Consulta consultaConsulta = consulta.get();
             consultaConsulta.setAtendida(consultaDTO.isAtendida());
@@ -61,6 +61,7 @@ public class ConsultaService {
             consultaConsulta.setProfissional(ProfissionalMapper.convertDTOToModel(consultaDTO.getProfissional()));
             consultaConsulta.setCancelada(consultaDTO.isCancelada());
             consultaRepository.save(consultaConsulta);
+            return;
         }
         throw new ConsultaNaoEncontradaException("Consulta não encontrada.");
     }

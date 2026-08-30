@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
@@ -17,4 +18,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findAllByProfissional(Profissional profissional);
 
     List<Consulta> findAllByClinica(Clinica clinica);
+
+    Optional<Consulta> findByNumber(String number);
 }

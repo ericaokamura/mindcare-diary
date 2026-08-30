@@ -2,8 +2,6 @@ package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.ProfissionalJaCadastradoException;
 import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
-import com.fiap.mindcare_diary.mappers.ClinicaMapper;
-import com.fiap.mindcare_diary.mappers.ConsultaMapper;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
 import com.fiap.mindcare_diary.models.Paciente;

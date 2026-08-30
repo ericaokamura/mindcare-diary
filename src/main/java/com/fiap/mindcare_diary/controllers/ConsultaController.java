@@ -46,9 +46,9 @@ public class ConsultaController {
             summary = "Atualiza consulta",
             description = "Atualiza dados de consulta."
     )
-    @PatchMapping("/{consultaId}")
-    public ResponseEntity<Void> atualizarConsulta(@PathVariable("consultaId") Long consultaId, @RequestBody ConsultaDTO consultaDTO) {
-        consultaService.atualizarConsulta(consultaId, consultaDTO);
+    @PatchMapping("/{number}")
+    public ResponseEntity<Void> atualizarConsulta(@PathVariable("number") String number, @RequestBody ConsultaDTO consultaDTO) {
+        consultaService.atualizarConsulta(number, consultaDTO);
         return ResponseEntity.ok().build();
     }
 }

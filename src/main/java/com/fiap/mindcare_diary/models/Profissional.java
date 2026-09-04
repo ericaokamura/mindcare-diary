@@ -44,14 +44,6 @@ public class Profissional extends Usuario {
     @Column(name = "especialidades")
     private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(
-            name = "prescription_modalidades",
-            joinColumns = @JoinColumn(name = "profissional_id")
-    )
-    @Column(name = "modalidades")
-    private List<ConsultaModalidade> modalidades = new ArrayList<>();
-
     @ManyToOne
     private Clinica clinica;
 

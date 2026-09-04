@@ -34,7 +34,6 @@ public class ProfissionalMapper {
         profissionalDTO.setRegistroProfissional(profissional.getRegistroProfissional());
         profissionalDTO.getAbordagens().addAll(profissional.getAbordagens());
         profissionalDTO.getEspecialidades().addAll(profissional.getEspecialidades());
-        profissionalDTO.getModalidades().addAll(profissional.getModalidades());
         profissionalDTO.setUserRole(profissional.getUserRole() == null ? null : profissional.getUserRole().name());
         //profissionalDTO.getClinicas().addAll(ClinicaMapper.convertModelListToDTOList(profissional.getClinicas()));
         return profissionalDTO;
@@ -54,7 +53,6 @@ public class ProfissionalMapper {
         profissional.setAtivo(dto.isAtivo());
         profissional.setDataHoraAtivacao(dto.getDataHoraAtivacao() == null ? null : LocalDateTime.parse(dto.getDataHoraAtivacao()));
         profissional.setRegistroProfissional(dto.getRegistroProfissional());
-        profissional.getModalidades().addAll(dto.getModalidades());
         profissional.getAbordagens().addAll(dto.getAbordagens());
         profissional.getEspecialidades().addAll(dto.getEspecialidades());
         profissional.setUserRole(dto.getUserRole() == null ? null : UserRole.valueOf(dto.getUserRole()));

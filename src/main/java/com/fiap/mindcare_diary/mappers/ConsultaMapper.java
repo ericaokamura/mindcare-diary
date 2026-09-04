@@ -4,6 +4,7 @@ import com.fiap.mindcare_diary.models.Consulta;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
+import com.fiap.mindcare_diary.models.enums.ConsultaModalidade;
 import com.fiap.mindcare_diary.models.enums.TipoProfissional;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class ConsultaMapper {
         consulta.setCancelada(dto.isCancelada());
         consulta.setPaciente(PacienteMapper.convertDTOToModel(dto.getPaciente()));
         consulta.setValorConsulta(dto.getValorConsulta());
+        consulta.setConsultaModalidade(ConsultaModalidade.valueOf(dto.getConsultaModalidade()));
         consulta.setNumber(dto.getNumber());
         return consulta;
     }
@@ -33,6 +35,7 @@ public class ConsultaMapper {
         dto.setCancelada(model.isCancelada());
         dto.setPaciente(PacienteMapper.convertModelToDTO(model.getPaciente()));
         dto.setValorConsulta(model.getValorConsulta());
+        dto.setConsultaModalidade(model.getConsultaModalidade().name());
         dto.setNumber(model.getNumber());
         return dto;
     }

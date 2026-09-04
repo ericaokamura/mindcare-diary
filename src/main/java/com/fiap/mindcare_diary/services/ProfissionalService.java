@@ -102,7 +102,6 @@ public class ProfissionalService {
             profissional.setTipoProfissional(TipoProfissional.valueOf(profissionalDTO.getTipoProfissional()));
             profissional.setEspecialidades(profissionalDTO.getEspecialidades());
             profissional.setAbordagens(profissionalDTO.getAbordagens());
-            profissional.setModalidades(profissionalDTO.getModalidades());
             profissionalRepository.save(profissional);
         } else {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");

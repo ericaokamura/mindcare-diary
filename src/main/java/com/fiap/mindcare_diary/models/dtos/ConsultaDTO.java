@@ -20,6 +20,8 @@ public class ConsultaDTO {
 
     private Double valorConsulta;
 
+    private String consultaModalidade;
+
     private String dataHoraConsulta;
 
     private boolean atendida;

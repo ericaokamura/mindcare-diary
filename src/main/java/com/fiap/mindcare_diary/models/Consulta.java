@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.models;
 
+import com.fiap.mindcare_diary.models.enums.ConsultaModalidade;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class Consulta {
     private Clinica clinica;
 
     private Double valorConsulta;
+
+    private ConsultaModalidade consultaModalidade;
 
     private LocalDateTime dataHoraConsulta;
 

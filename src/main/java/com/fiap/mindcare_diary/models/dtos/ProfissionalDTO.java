@@ -26,8 +26,6 @@ public class ProfissionalDTO extends UsuarioDTO {
 
     private List<EspecialidadePsiquiatria> especialidades = new ArrayList<>();
 
-    private List<ConsultaModalidade> modalidades = new ArrayList<>();
-
     private ClinicaDTO clinica;
 
 }

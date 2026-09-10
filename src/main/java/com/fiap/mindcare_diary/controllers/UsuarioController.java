@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,17 @@ public class UsuarioController {
     @PostMapping("/token/{nomeUsuario}")
     public ResponseEntity<Void> salvarToken(@PathVariable("nomeUsuario") String nomeUsuario, @RequestParam("token") String token) {
         usuarioService.salvarToken(nomeUsuario, token);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Cadastra um usuário administrador",
+            description = "Cadastra um novo usuário com papel ADMIN. Só pode ser chamado por um usuário já autenticado como ADMIN."
+    )
+    @PreAuthorize("hasAuthority('USER_CREATE')")
+    @PostMapping("/admin")
+    public ResponseEntity<Void> salvarCadastroAdmin(@RequestBody UsuarioDTO usuarioDTO) {
+        usuarioService.salvarCadastroAdmin(usuarioDTO);
         return ResponseEntity.ok().build();
     }
 

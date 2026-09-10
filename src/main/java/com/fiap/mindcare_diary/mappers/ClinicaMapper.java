@@ -19,6 +19,7 @@ public class ClinicaMapper {
         dto.setTaxaComissao(model.getTaxaComissao());
         dto.setPlanoAssinatura(model.getPlanoAssinatura().name());
         dto.setCnpj(model.getCnpj());
+        dto.setAdminNomeUsuario(model.getAdmin() == null ? null : model.getAdmin().getNomeUsuario());
         return dto;
     }
 

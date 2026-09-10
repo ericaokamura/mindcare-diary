@@ -67,4 +67,9 @@ public class CustomControllerAdvice {
         return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
     }
 
+    @ExceptionHandler(value = { AdminJaPossuiClinicaException.class })
+    public ResponseEntity<ErrorDTO> handleAdminJaPossuiClinicaException(AdminJaPossuiClinicaException exception) {
+        return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
+    }
+
 }

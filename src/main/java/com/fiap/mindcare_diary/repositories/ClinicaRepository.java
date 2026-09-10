@@ -14,4 +14,6 @@ public interface ClinicaRepository extends JpaRepository<Clinica, Long> {
     Optional<Clinica> findByCnpj(String clinicaCnpj);
 
     Optional<Clinica> findByNome(String nome);
+
+    Optional<Clinica> findByAdmin_NomeUsuario(String nomeUsuario);
 }

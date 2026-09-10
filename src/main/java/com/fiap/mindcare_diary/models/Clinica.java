@@ -38,4 +38,8 @@ public class Clinica {
     @Enumerated(EnumType.STRING)
     private PlanoAssinatura planoAssinatura;
 
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Usuario admin;
+
 }

@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.controllers;
 
+import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
@@ -9,9 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("clinicas")
@@ -41,6 +45,19 @@ public class ClinicaController {
     @GetMapping("/{nome}/nome")
     public ResponseEntity<ClinicaDTO> retornarClinicaPorNome(@PathVariable("nome") String nome) {
         return ResponseEntity.ok(clinicaService.retornarClinicaPorNome(nome));
+    }
+
+    @Operation(
+            summary = "Retorna a clínica de um admin",
+            description = "Retorna a clínica associada ao usuário admin informado, ou 404 se ele ainda não tiver nenhuma."
+    )
+    @GetMapping("/admin/{nomeUsuario}")
+    public ResponseEntity<ClinicaDTO> retornarClinicaPorAdmin(@PathVariable("nomeUsuario") String nomeUsuario) {
+        ClinicaDTO clinicaDTO = clinicaService.retornarClinicaPorAdmin(nomeUsuario);
+        if (clinicaDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(clinicaDTO);
     }
 
     @Operation(
@@ -99,11 +116,16 @@ public class ClinicaController {
 
     @Operation(
             summary = "Cadastra clínica",
-            description = "Cadastra dados da clínica."
+            description = "Cadastra dados da clínica associando-a ao admin autenticado. Falha se o admin já tiver uma clínica."
     )
+    @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping()
     public ResponseEntity<Void> cadastrarClinica(@RequestBody ClinicaDTO clinicaDTO) {
-        clinicaService.cadastrarClinica(clinicaDTO);
+        Optional<Usuario> optionalAdmin = (Optional<Usuario>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (optionalAdmin.isEmpty()) {
+            return ResponseEntity.status(401).build();
+        }
+        clinicaService.cadastrarClinica(clinicaDTO, optionalAdmin.get());
         return ResponseEntity.ok().build();
     }
 

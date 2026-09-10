@@ -30,4 +30,6 @@ public class ClinicaDTO {
 
     private String planoAssinatura;
 
+    private String adminNomeUsuario;
+
 }

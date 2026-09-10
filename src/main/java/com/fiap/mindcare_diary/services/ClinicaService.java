@@ -1,5 +1,6 @@
 package com.fiap.mindcare_diary.services;
 
+import com.fiap.mindcare_diary.exceptions.AdminJaPossuiClinicaException;
 import com.fiap.mindcare_diary.exceptions.ClinicaNaoExistenteException;
 import com.fiap.mindcare_diary.mappers.ClinicaMapper;
 import com.fiap.mindcare_diary.mappers.ConsultaMapper;
@@ -9,6 +10,7 @@ import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Consulta;
 import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.models.Profissional;
+import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
@@ -46,6 +48,11 @@ public class ClinicaService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public ClinicaDTO retornarClinicaPorAdmin(String nomeUsuarioAdmin) {
+        Optional<Clinica> clinicaOptional = clinicaRepository.findByAdmin_NomeUsuario(nomeUsuarioAdmin);
+        return clinicaOptional.map(ClinicaMapper::convertModelToDTO).orElse(null);
+    }
 
     public ClinicaDTO retornarClinicaPorCnpj(String clinicaCnpj) {
         Optional<Clinica> clinicaOptional = clinicaRepository.findByCnpj(clinicaCnpj);
@@ -103,8 +110,12 @@ public class ClinicaService {
     }
 
     @Transactional
-    public void cadastrarClinica(ClinicaDTO clinicaDTO) {
+    public void cadastrarClinica(ClinicaDTO clinicaDTO, Usuario admin) {
+        if(clinicaRepository.findByAdmin_NomeUsuario(admin.getNomeUsuario()).isPresent()) {
+            throw new AdminJaPossuiClinicaException("Este usuário já possui uma clínica cadastrada.");
+        }
         Clinica clinica = ClinicaMapper.convertDTOToModel(clinicaDTO);
+        clinica.setAdmin(admin);
         clinicaRepository.save(clinica);
         List<Profissional> profissionals = clinicaDTO.getProfissionais().stream().map(profissionalDTO -> ProfissionalMapper.convertDTOToModel(profissionalDTO)).collect(Collectors.toList());
         profissionals.forEach(profissional -> {

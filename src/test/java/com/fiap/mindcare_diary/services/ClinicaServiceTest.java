@@ -1,7 +1,10 @@
 package com.fiap.mindcare_diary.services;
 
+import com.fiap.mindcare_diary.exceptions.AdminJaPossuiClinicaException;
 import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Consulta;
+import com.fiap.mindcare_diary.models.Usuario;
+import com.fiap.mindcare_diary.models.dtos.ClinicaDTO;
 import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
 import com.fiap.mindcare_diary.repositories.*;
 import org.junit.jupiter.api.Test;
@@ -82,5 +85,51 @@ class ClinicaServiceTest {
         when(clinicaRepository.findAll()).thenReturn(List.of(clinica));
 
         assertEquals(1, service.retornarClinicas().size());
+    }
+
+    @Test
+    void deveLancarExcecaoAoCadastrarClinicaQuandoAdminJaPossuiUma() {
+        Usuario admin = new Usuario();
+        admin.setNomeUsuario("admin1");
+        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.of(new Clinica()));
+
+        ClinicaDTO clinicaDTO = new ClinicaDTO();
+        clinicaDTO.setPlanoAssinatura(PlanoAssinatura.BASICO.name());
+
+        assertThrows(AdminJaPossuiClinicaException.class, () -> service.cadastrarClinica(clinicaDTO, admin));
+        verify(clinicaRepository, never()).save(any());
+    }
+
+    @Test
+    void deveAssociarClinicaAoAdminAutenticadoAoCadastrar() {
+        Usuario admin = new Usuario();
+        admin.setNomeUsuario("admin1");
+        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.empty());
+
+        ClinicaDTO clinicaDTO = new ClinicaDTO();
+        clinicaDTO.setPlanoAssinatura(PlanoAssinatura.BASICO.name());
+
+        service.cadastrarClinica(clinicaDTO, admin);
+
+        verify(clinicaRepository, atLeastOnce()).save(argThat(c -> c.getAdmin() == admin));
+    }
+
+    @Test
+    void deveRetornarNullQuandoAdminNaoPossuiClinica() {
+        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.empty());
+
+        assertNull(service.retornarClinicaPorAdmin("admin1"));
+    }
+
+    @Test
+    void deveRetornarClinicaDoAdmin() {
+        Clinica clinica = new Clinica();
+        clinica.setNome("Clínica A");
+        clinica.setPlanoAssinatura(PlanoAssinatura.CLINICA);
+        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.of(clinica));
+
+        ClinicaDTO dto = service.retornarClinicaPorAdmin("admin1");
+
+        assertEquals("Clínica A", dto.getNome());
     }
 }

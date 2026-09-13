@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.repositories;
 
 import com.fiap.mindcare_diary.models.Clinica;
+import com.fiap.mindcare_diary.models.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +16,5 @@ public interface ClinicaRepository extends JpaRepository<Clinica, Long> {
 
     Optional<Clinica> findByNome(String nome);
 
-    Optional<Clinica> findByAdmin_NomeUsuario(String nomeUsuario);
+    Optional<Clinica> findByAdmin(Usuario usuario);
 }

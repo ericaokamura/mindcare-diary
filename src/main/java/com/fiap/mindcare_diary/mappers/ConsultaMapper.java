@@ -35,7 +35,7 @@ public class ConsultaMapper {
         dto.setCancelada(model.isCancelada());
         dto.setPaciente(PacienteMapper.convertModelToDTO(model.getPaciente()));
         dto.setValorConsulta(model.getValorConsulta());
-        dto.setConsultaModalidade(model.getConsultaModalidade().name());
+        dto.setConsultaModalidade(model.getConsultaModalidade() == null ? "": model.getConsultaModalidade().name());
         dto.setNumber(model.getNumber());
         return dto;
     }

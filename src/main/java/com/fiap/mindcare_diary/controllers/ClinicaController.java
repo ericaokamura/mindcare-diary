@@ -42,9 +42,9 @@ public class ClinicaController {
             summary = "Retorna clínica por nome",
             description = "Retorna dados da clínica por nome."
     )
-    @GetMapping("/{nome}/nome")
-    public ResponseEntity<ClinicaDTO> retornarClinicaPorNome(@PathVariable("nome") String nome) {
-        return ResponseEntity.ok(clinicaService.retornarClinicaPorNome(nome));
+    @GetMapping("/{nomeClinica}/nome")
+    public ResponseEntity<ClinicaDTO> retornarClinicaPorNome(@PathVariable("nomeClinica") String nomeClinica) {
+        return ResponseEntity.ok(clinicaService.retornarClinicaPorNome(nomeClinica));
     }
 
     @Operation(
@@ -91,9 +91,9 @@ public class ClinicaController {
             summary = "Retorna consultas de clínica por cnpj",
             description = "Retorna consultas de clínica por cnpj."
     )
-    @GetMapping("/{clinicaCnpj}/consultas")
-    public ResponseEntity<List<ConsultaDTO>> retornarConsultasPorclinicaCnpj(@PathVariable("clinicaCnpj") String clinicaCnpj) {
-        return ResponseEntity.ok(clinicaService.retornarConsultasPorClinicaCnpj(clinicaCnpj));
+    @GetMapping("/{nomeClinica}/consultas")
+    public ResponseEntity<List<ConsultaDTO>> retornarConsultasPorNomeClinica(@PathVariable("nomeClinica") String nomeClinica) {
+        return ResponseEntity.ok(clinicaService.retornarConsultasPorNomeClinica(nomeClinica));
     }
 
     @Operation(

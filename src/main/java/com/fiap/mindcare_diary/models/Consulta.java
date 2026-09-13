@@ -33,6 +33,7 @@ public class Consulta {
 
     private Double valorConsulta;
 
+    @Enumerated(EnumType.STRING)
     private ConsultaModalidade consultaModalidade;
 
     private LocalDateTime dataHoraConsulta;

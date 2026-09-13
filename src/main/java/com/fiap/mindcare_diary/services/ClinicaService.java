@@ -2,6 +2,7 @@ package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.AdminJaPossuiClinicaException;
 import com.fiap.mindcare_diary.exceptions.ClinicaNaoExistenteException;
+import com.fiap.mindcare_diary.exceptions.UsuarioNaoEncontradoException;
 import com.fiap.mindcare_diary.mappers.ClinicaMapper;
 import com.fiap.mindcare_diary.mappers.ConsultaMapper;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
@@ -16,10 +17,7 @@ import com.fiap.mindcare_diary.models.dtos.ConsultaDTO;
 import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
 import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
-import com.fiap.mindcare_diary.repositories.ClinicaRepository;
-import com.fiap.mindcare_diary.repositories.ConsultaRepository;
-import com.fiap.mindcare_diary.repositories.PacienteRepository;
-import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
+import com.fiap.mindcare_diary.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,8 +47,15 @@ public class ClinicaService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public ClinicaDTO retornarClinicaPorAdmin(String nomeUsuarioAdmin) {
-        Optional<Clinica> clinicaOptional = clinicaRepository.findByAdmin_NomeUsuario(nomeUsuarioAdmin);
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByNomeUsuario(nomeUsuarioAdmin);
+        if(usuarioOptional.isEmpty()) {
+            throw new UsuarioNaoEncontradoException("Usuário não encontrado.");
+        }
+        Optional<Clinica> clinicaOptional = clinicaRepository.findByAdmin(usuarioOptional.get());
         return clinicaOptional.map(ClinicaMapper::convertModelToDTO).orElse(null);
     }
 
@@ -79,8 +84,8 @@ public class ClinicaService {
         return PacienteMapper.convertModelListToDTOList(clinicaOptional.get().getPacientes());
     }
 
-    public List<ConsultaDTO> retornarConsultasPorClinicaCnpj(String clinicaCnpj) {
-        Optional<Clinica> clinicaOptional = clinicaRepository.findByCnpj(clinicaCnpj);
+    public List<ConsultaDTO> retornarConsultasPorNomeClinica(String nomeClinica) {
+        Optional<Clinica> clinicaOptional = clinicaRepository.findByNome(nomeClinica);
         if(clinicaOptional.isEmpty()) {
             throw new ClinicaNaoExistenteException("Clínica não existente.");
         }
@@ -111,7 +116,7 @@ public class ClinicaService {
 
     @Transactional
     public void cadastrarClinica(ClinicaDTO clinicaDTO, Usuario admin) {
-        if(clinicaRepository.findByAdmin_NomeUsuario(admin.getNomeUsuario()).isPresent()) {
+        if(clinicaRepository.findByAdmin(admin).isPresent()) {
             throw new AdminJaPossuiClinicaException("Este usuário já possui uma clínica cadastrada.");
         }
         Clinica clinica = ClinicaMapper.convertDTOToModel(clinicaDTO);

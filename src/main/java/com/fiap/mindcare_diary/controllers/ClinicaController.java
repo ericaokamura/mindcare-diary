@@ -54,9 +54,6 @@ public class ClinicaController {
     @GetMapping("/admin/{nomeUsuario}")
     public ResponseEntity<ClinicaDTO> retornarClinicaPorAdmin(@PathVariable("nomeUsuario") String nomeUsuario) {
         ClinicaDTO clinicaDTO = clinicaService.retornarClinicaPorAdmin(nomeUsuario);
-        if (clinicaDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(clinicaDTO);
     }
 

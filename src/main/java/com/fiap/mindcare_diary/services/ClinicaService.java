@@ -56,7 +56,10 @@ public class ClinicaService {
             throw new UsuarioNaoEncontradoException("Usuário não encontrado.");
         }
         Optional<Clinica> clinicaOptional = clinicaRepository.findByAdmin(usuarioOptional.get());
-        return clinicaOptional.map(ClinicaMapper::convertModelToDTO).orElse(null);
+        if(clinicaOptional.isEmpty()) {
+            throw new ClinicaNaoExistenteException("Clínica não existente.");
+        }
+        return ClinicaMapper.convertModelToDTO(clinicaOptional.get());
     }
 
     public ClinicaDTO retornarClinicaPorCnpj(String clinicaCnpj) {

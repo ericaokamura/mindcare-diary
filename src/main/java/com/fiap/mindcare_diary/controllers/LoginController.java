@@ -1,14 +1,13 @@
 package com.fiap.mindcare_diary.controllers;
 
-import com.fiap.mindcare_diary.exceptions.UsuarioBloqueadoException;
 import com.fiap.mindcare_diary.models.DadosAutenticacao;
 import com.fiap.mindcare_diary.models.DadosTokenJWT;
 import com.fiap.mindcare_diary.models.Usuario;
 import com.fiap.mindcare_diary.repositories.UsuarioRepository;
 import com.fiap.mindcare_diary.services.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RestController

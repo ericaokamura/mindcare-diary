@@ -91,7 +91,7 @@ class ClinicaServiceTest {
     void deveLancarExcecaoAoCadastrarClinicaQuandoAdminJaPossuiUma() {
         Usuario admin = new Usuario();
         admin.setNomeUsuario("admin1");
-        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.of(new Clinica()));
+        when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.of(new Clinica()));
 
         ClinicaDTO clinicaDTO = new ClinicaDTO();
         clinicaDTO.setPlanoAssinatura(PlanoAssinatura.BASICO.name());
@@ -104,7 +104,7 @@ class ClinicaServiceTest {
     void deveAssociarClinicaAoAdminAutenticadoAoCadastrar() {
         Usuario admin = new Usuario();
         admin.setNomeUsuario("admin1");
-        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.empty());
+        when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.empty());
 
         ClinicaDTO clinicaDTO = new ClinicaDTO();
         clinicaDTO.setPlanoAssinatura(PlanoAssinatura.BASICO.name());
@@ -116,7 +116,9 @@ class ClinicaServiceTest {
 
     @Test
     void deveRetornarNullQuandoAdminNaoPossuiClinica() {
-        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.empty());
+        Usuario admin = new Usuario();
+        admin.setNomeUsuario("admin1");
+        when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.empty());
 
         assertNull(service.retornarClinicaPorAdmin("admin1"));
     }
@@ -126,7 +128,9 @@ class ClinicaServiceTest {
         Clinica clinica = new Clinica();
         clinica.setNome("Clínica A");
         clinica.setPlanoAssinatura(PlanoAssinatura.CLINICA);
-        when(clinicaRepository.findByAdmin_NomeUsuario("admin1")).thenReturn(Optional.of(clinica));
+        Usuario admin = new Usuario();
+        admin.setNomeUsuario("admin1");
+        when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.of(clinica));
 
         ClinicaDTO dto = service.retornarClinicaPorAdmin("admin1");
 

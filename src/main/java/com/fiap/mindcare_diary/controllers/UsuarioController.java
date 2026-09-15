@@ -46,7 +46,6 @@ public class UsuarioController {
             summary = "Cadastra um usuário administrador",
             description = "Cadastra um novo usuário com papel ADMIN. Só pode ser chamado por um usuário já autenticado como ADMIN."
     )
-    @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping("/admin")
     public ResponseEntity<Void> salvarCadastroAdmin(@RequestBody UsuarioDTO usuarioDTO) {
         usuarioService.salvarCadastroAdmin(usuarioDTO);

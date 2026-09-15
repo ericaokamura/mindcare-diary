@@ -59,7 +59,11 @@ public class ClinicaService {
         if(clinicaOptional.isEmpty()) {
             throw new ClinicaNaoExistenteException("Clínica não existente.");
         }
-        return ClinicaMapper.convertModelToDTO(clinicaOptional.get());
+        ClinicaDTO dto = ClinicaMapper.convertModelToDTO(clinicaOptional.get());
+        dto.setPacientes(PacienteMapper.convertModelListToDTOList(clinicaOptional.get().getPacientes()));
+        dto.setConsultas(ConsultaMapper.convertModelListToDTOList(clinicaOptional.get().getConsultas()));
+        dto.setProfissionais(ProfissionalMapper.convertModelListToDTOList(clinicaOptional.get().getProfissionais()));
+        return dto;
     }
 
     public ClinicaDTO retornarClinicaPorCnpj(String clinicaCnpj) {

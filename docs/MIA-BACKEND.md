@@ -157,3 +157,22 @@ nem serviços externos.
 
 Referências: [Spring AI ChatModel](https://docs.spring.io/spring-ai/reference/1.0/api/chatmodel.html)
 e [OpenAI Safety best practices](https://developers.openai.com/api/docs/guides/safety-best-practices).
+
+## Resumo semanal com diário e Chat
+
+O resumo usa todos os registros salvos do paciente nos últimos sete dias, em ordem
+cronológica, incluindo textoConfirmado (Chat), pontos positivos e dificuldades
+(diário tradicional), data e humor informado. O mesmo conjunto é vinculado ao
+relatório salvo. Não há limite de sete registros: mais de um registro no mesmo
+dia também entra. Registros futuros e anteriores ao período ficam fora.
+
+Esta geração recebe diretamente o conjunto filtrado, sem busca por similaridade,
+sem inserir embeddings e sem apagar a tabela vector_store. Assim, nenhum dia é
+omitido por uma seleção de documentos semelhantes. O modelo de IA configurado
+no backend continua sendo utilizado. Os contadores de positivos/negativos mantêm
+a regra dos campos tradicionais; o texto livre do Chat não é classificado nesses
+contadores. Sem registros, retorna uma mensagem informativa sem chamar a IA.
+
+No Chat é necessário confirmar e salvar: rascunhos e falas da MIA não entram.
+Relatórios anteriores não são recalculados; gere um novo relatório após atualizar
+e reiniciar o backend. Não é necessário atualizar o APK nem recriar o banco.

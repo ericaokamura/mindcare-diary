@@ -8,6 +8,12 @@ import lombok.Setter;
 @Setter
 public class RegistroDiarioDTO {
 
+    private Long id;
+
+    private String textoConfirmado;
+
+    private String origem;
+
     private PacienteDTO paciente;
 
     private String nivelHumor;

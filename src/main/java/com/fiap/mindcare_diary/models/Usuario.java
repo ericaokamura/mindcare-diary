@@ -47,6 +47,10 @@ public class Usuario implements UserDetails {
 
     private boolean bloqueado;
 
+    private LocalDateTime encerradaEm;
+
+    private String protocoloEliminacao;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authoritiesList = new ArrayList<>();

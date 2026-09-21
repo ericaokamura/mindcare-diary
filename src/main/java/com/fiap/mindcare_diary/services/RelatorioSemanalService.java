@@ -57,6 +57,7 @@ public class RelatorioSemanalService {
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
+            if (paciente.getEncerradaEm() != null) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.GONE, "Conta encerrada.");
             List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.findAllByPaciente(paciente).stream()
                     .filter(r -> r.getDataHoraCriacao() != null
                             && !r.getDataHoraCriacao().isBefore(inicio)

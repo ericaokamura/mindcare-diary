@@ -1,0 +1,129 @@
+# MindCare Diary — Termos de Uso
+
+Versão 2026-09-21.1 — 21 de setembro de 2026
+
+## 1. Plataforma e contato
+
+O MindCare Diary é uma plataforma de registro pessoal e apoio ao acompanhamento
+por profissionais. Neste documento, “MindCare” designa a equipe responsável pela
+plataforma. O canal de contato e privacidade é mindcare.diary@gmail.com.
+
+Estes Termos descrevem as condições de uso e as responsabilidades de pacientes,
+profissionais e da plataforma. Não substituem o contrato de atendimento clínico
+nem afastam direitos previstos na legislação brasileira.
+
+## 2. Funcionalidades
+
+O aplicativo oferece diário tradicional, Chat MIA, transcrição de voz, consulta
+de registros, relatórios, agendamentos e prescrições, conforme o perfil de acesso
+e as funcionalidades disponíveis. O resumo semanal considera os registros salvos
+nos últimos sete dias, incluindo diário tradicional e texto confirmado do Chat.
+
+A MIA auxilia a registrar vivências. Não é profissional de saúde, não diagnostica,
+não prescreve medicamentos e não substitui consultas. A plataforma não oferece
+monitoramento contínuo de crises nem atendimento de emergência.
+
+## 3. Responsabilidades do paciente
+
+O paciente deve usar uma conta própria, proteger sua senha, manter corretos os
+dados necessários ao cadastro e não acessar informações de outras pessoas sem
+permissão. Deve revisar transcrições e textos antes de confirmar seu salvamento.
+
+O paciente decide o que deseja relatar e não é obrigado a escrever diariamente.
+Relatos subjetivos não precisam de comprovação. Recomenda-se evitar dados de
+terceiros que não sejam necessários. O paciente não deve tomar respostas da IA
+como avaliação clínica ou alterar tratamento exclusivamente por causa delas.
+
+O cuidado com a própria conta não transfere ao paciente a responsabilidade pelas
+falhas de segurança da plataforma. Seus direitos de privacidade permanecem
+assegurados independentemente da frequência de uso.
+
+## 4. Responsabilidades do profissional e da clínica
+
+O profissional deve atuar dentro de sua habilitação, manter sigilo e acessar
+somente informações necessárias de pacientes legitimamente vinculados. Não é
+permitido compartilhar credenciais, consultar dados por curiosidade ou divulgar
+relatos fora das finalidades autorizadas e das hipóteses legais aplicáveis.
+
+O profissional responde pelas avaliações, orientações, anotações e prescrições
+que realizar. Deve conferir os resumos de IA antes de utilizá-los e não apresentar
+conteúdo automático como conclusão clínica verificada. Cabe ao responsável pelo
+atendimento cumprir as regras profissionais de documentação e guarda.
+
+Profissionais e clínicas devem cooperar com solicitações de acesso, correção e
+outros direitos do paciente, respeitando as competências de cada responsável, e
+comunicar problemas de segurança pelo canal informado.
+
+## 5. Responsabilidades da MindCare
+
+Cabe à MindCare informar como os dados são utilizados, limitar o acesso às
+finalidades legítimas, adotar medidas de proteção proporcionais aos riscos e
+avaliar os serviços externos utilizados. Deve tratar falhas e solicitações de
+privacidade, estabelecer critérios de retenção e manter informação clara sobre
+as limitações das funcionalidades.
+
+A utilização de fornecedores não elimina as responsabilidades próprias da
+MindCare. A plataforma não garante ausência absoluta de falhas nem resultados
+clínicos, mas essas limitações não excluem deveres legais de segurança, qualidade,
+informação e reparação quando cabíveis.
+
+## 6. Diário, voz e inteligência artificial
+
+No Chat, o texto só é incorporado ao diário após revisão e confirmação. Mensagens
+enviadas à MIA podem ser processadas pela OpenAI antes desse salvamento. Resumos
+semanais também utilizam processamento externo de IA.
+
+O microfone é opcional. O serviço de reconhecimento do Android pode processar voz
+pela internet; o usuário pode digitar e revogar a permissão nas configurações do
+aparelho. O Chat não armazena um arquivo de áudio no backend. Transcrições e
+resultados de IA podem conter erros e devem ser conferidos.
+
+Rascunhos podem ser perdidos ao sair da sessão. Eles não substituem registros
+confirmados. As perguntas da MIA não integram o texto salvo como relato pessoal.
+
+## 7. Privacidade e escolhas
+
+A Política de Privacidade explica os dados, finalidades e destinatários.
+Aceitar estes Termos não constitui autorização genérica para qualquer uso de
+informações de saúde. Quando consentimento for necessário, deverá ser específico
+e separado das demais condições. A recusa e a revogação devem ter consequências
+explicadas ao usuário e respeitadas pelo serviço.
+
+O cadastro, por si só, não autoriza uso de relatos para publicidade, venda de dados
+ou treinamento próprio de modelos pela equipe. Novas finalidades exigem avaliação
+e informação próprias e a base legal correspondente.
+
+## 8. Encerramento da conta e solicitações de dados
+
+Solicitações podem ser encaminhadas a mindcare.diary@gmail.com. Informe o e-mail
+da conta e o pedido, sem enviar senha ou chave de acesso. Poderá ser necessária
+verificação proporcional de identidade para proteger o titular.
+
+Desinstalar o aplicativo não exclui a conta ou os registros do servidor. O pedido
+de encerramento deve ser distinguido da eliminação de dados. A MindCare deverá
+informar os efeitos do encerramento e eventual conservação legalmente necessária.
+Não haverá uso operacional incompatível dos dados conservados exclusivamente para
+cumprir obrigações de guarda.
+
+O usuário pode solicitar acesso e cópia de seus dados e a eliminação quando
+cabível. A resposta deve explicar limitações, eventuais dados conservados e os
+motivos aplicáveis. Não é necessário aguardar a existência de um botão automático
+para encaminhar o pedido. O perfil permite exportar dados em ZIP e encerrar o acesso, registrando um pedido de eliminação sujeito à análise de conservação.
+
+## 9. Uso indevido, disponibilidade e mudanças
+
+É proibido explorar vulnerabilidades, introduzir código malicioso, impersonar
+outras pessoas ou utilizar o serviço para violar direitos. Restrições de acesso
+devem ser proporcionais e não eliminar o direito de solicitar informações sobre
+os próprios dados.
+
+Manutenção, falhas de rede e serviços externos podem afetar a disponibilidade.
+Alterações relevantes nas condições deverão ser comunicadas. Quando necessário,
+será solicitada nova manifestação do usuário; continuar usando o aplicativo não
+substitui consentimento específico exigido por lei.
+
+## 10. Legislação e solução de dúvidas
+
+Aplicam-se as normas brasileiras pertinentes, inclusive as de proteção de dados
+e de defesa do consumidor quando cabíveis. O canal de contato não impede o acesso
+às autoridades competentes nem restringe os meios legais de exercício de direitos.

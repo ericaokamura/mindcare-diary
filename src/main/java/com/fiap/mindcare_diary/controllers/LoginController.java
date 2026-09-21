@@ -34,14 +34,19 @@ public class LoginController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private com.fiap.mindcare_diary.services.PrivacidadeService privacidadeService;
+
     @PostMapping()
     public ResponseEntity efetuarLogin(@RequestBody @Valid DadosAutenticacao dados) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByNomeUsuario(dados.nomeUsuario());
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
+            if (usuario.getEncerradaEm() != null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             if (BCrypt.checkpw(dados.senha(), usuario.getSenha())) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dados.nomeUsuario(), dados.senha(), usuario.getAuthorities());
                 Authentication authentication = manager.authenticate(authenticationToken);
+                if (dados.versaoTermos() != null) privacidadeService.registrarAceite(usuario, dados.versaoTermos());
                 String tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
                 return ResponseEntity.ok(new DadosTokenJWT(tokenJWT, usuario.getUserRole().name()));
             }

@@ -36,7 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             String subject = tokenService.getSubject(tokenJWT);
             Date expirationDate = tokenService.getExpirationDate(tokenJWT);
             Optional<Usuario> usuario = usuarioRepository.findByNomeUsuario(subject);
-            if(usuario.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if(usuario.isPresent() && usuario.get().getEncerradaEm() == null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (new JWTUtils().validateToken(subject, expirationDate, usuario.get())) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usuario, usuario.get().getPassword(), usuario.get().getAuthorities());
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

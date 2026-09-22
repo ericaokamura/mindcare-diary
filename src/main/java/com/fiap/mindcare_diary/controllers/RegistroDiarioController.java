@@ -2,6 +2,9 @@ package com.fiap.mindcare_diary.controllers;
 
 import com.fiap.mindcare_diary.models.dtos.RegistroDiarioDTO;
 import com.fiap.mindcare_diary.services.RegistroDiarioService;
+import com.fiap.mindcare_diary.services.DiarioAccessService;
+import org.springframework.security.core.Authentication;
+import org.springframework.http.CacheControl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +25,17 @@ public class RegistroDiarioController {
     @Autowired
     private RegistroDiarioService registroDiarioService;
 
+    @Autowired
+    private DiarioAccessService access;
+
     @Operation(
             summary = "Retorna registros diários por paciente",
             description = "Retorna registros diários por paciente."
     )
     @GetMapping("/{nomeUsuario}")
-    public ResponseEntity<List<RegistroDiarioDTO>> retornarRegistrosDiarios(@PathVariable("nomeUsuario") String nomeUsuario) {
-        return ResponseEntity.ok(registroDiarioService.retornarRegistrosDiarios(nomeUsuario));
+    public ResponseEntity<List<RegistroDiarioDTO>> retornarRegistrosDiarios(@PathVariable("nomeUsuario") String nomeUsuario, Authentication authentication) {
+        access.requireRead(authentication, nomeUsuario);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(registroDiarioService.retornarRegistrosDiarios(nomeUsuario));
     }
 
     @Operation(
@@ -36,7 +43,8 @@ public class RegistroDiarioController {
             description = "Cadastra registro diário de paciente."
     )
     @PostMapping("/cadastrarRegistroDiario/{nomeUsuario}")
-    public ResponseEntity<Void> salvarRegistroDiario(@PathVariable("nomeUsuario") String nomeUsuario, @RequestBody RegistroDiarioDTO registroDiarioDTO) {
+    public ResponseEntity<Void> salvarRegistroDiario(@PathVariable("nomeUsuario") String nomeUsuario, @RequestBody RegistroDiarioDTO registroDiarioDTO, Authentication authentication) {
+        access.requireWrite(authentication, nomeUsuario);
         registroDiarioService.salvarRegistroDiario(nomeUsuario, registroDiarioDTO);
         return ResponseEntity.ok().build();
     }

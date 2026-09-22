@@ -24,7 +24,12 @@ public class RegistroDiarioService {
     private PacienteRepository pacienteRepository;
 
     public void salvarRegistroDiario(String nomeUsuario, RegistroDiarioDTO registroDiarioDTO) {
-        RegistroDiario registroDiario = RegistroDiarioMapper.convertDTOToModel(registroDiarioDTO);
+        RegistroDiario registroDiario;
+        try {
+            registroDiario = RegistroDiarioMapper.convertDTOToModel(registroDiarioDTO);
+        } catch (IllegalArgumentException exception) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Humor inválido.");
+        }
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             registroDiario.setPaciente(optionalPaciente.get());

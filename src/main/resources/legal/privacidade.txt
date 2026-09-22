@@ -1,0 +1,136 @@
+# MindCare Diary — Política de Privacidade
+
+Versão 2026-09-21.1 — 21 de setembro de 2026
+
+## 1. Apresentação e contato
+
+Esta Política explica o tratamento de informações no MindCare Diary. O canal da
+equipe responsável pela plataforma é mindcare.diary@gmail.com. Dúvidas e pedidos
+sobre dados pessoais podem ser enviados por esse endereço, sem informar senhas.
+
+A plataforma reúne diário pessoal, Chat de apoio ao registro e funcionalidades
+de acompanhamento por profissionais. Dados de saúde exigem proteção especial.
+Os papéis e obrigações de MindCare, profissionais e clínicas decorrem das decisões
+e atividades efetivamente realizadas, e não apenas do nome dado a cada parte.
+
+## 2. Dados tratados e finalidades
+
+| Informações | Uso na plataforma |
+|---|---|
+| Nome, e-mail/identificador, nascimento, gênero quando informado e perfil | Cadastro, identificação e organização do acesso |
+| Credenciais, token de sessão e situação da conta | Autenticação e controle de acesso |
+| Humor, pontos positivos, dificuldades e relatos confirmados | Registro e consulta do diário |
+| Mensagem enviada à MIA | Apoio à elaboração do relato com processamento por IA |
+| Registros salvos dos últimos sete dias | Produção de resumo semanal por IA |
+| Vínculos, consultas, agendamentos, prescrições e documentos associados | Funcionalidades de acompanhamento e atendimento profissional |
+| Token de notificação | Entrega de avisos pelo Firebase |
+| Voz e transcrição ao acionar o microfone | Conversão de fala em texto pelo serviço Android |
+| Informações necessárias ao atendimento de pedidos e à segurança | Verificação de identidade, suporte e tratamento de ocorrências |
+
+O usuário deve evitar inserir dados de terceiros sem necessidade. O relato pode
+revelar informações sensíveis mesmo sem preencher um campo chamado “saúde”.
+
+## 3. Fundamentos e limites do tratamento
+
+Cada finalidade deve estar apoiada em uma hipótese legal adequada. Dados de saúde
+não recebem automaticamente a mesma justificativa dos dados de cadastro. O aceite
+dos Termos e a ciência desta Política não constituem autorização irrestrita.
+
+Quando utilizada, a autorização do titular deve ser específica, informada e
+revogável. Obrigações de guarda e atividades assistenciais precisam observar suas
+regras próprias. A origem acadêmica do projeto não autoriza livre utilização de
+relatos reais. Não há autorização, por este documento, para venda de informações,
+publicidade baseada em relatos ou treinamento próprio de IA pela equipe.
+
+## 4. Diário, Chat e resumos
+
+O diário tradicional e o texto confirmado do Chat são guardados no backend.
+No Chat, mensagens e rascunhos ficam na sessão do aplicativo; a confirmação é
+necessária para salvar o relato no diário. Enviar uma mensagem à MIA pode provocar
+processamento pela OpenAI mesmo antes dessa confirmação.
+
+O resumo semanal usa o conteúdo dos registros salvos do período. As respostas
+podem conter erros e não são diagnósticos. Não se presume acompanhamento humano
+em tempo real nem acionamento automático de emergência.
+
+## 5. Voz e notificações
+
+O ditado depende da permissão de microfone. O usuário pode digitar em seu lugar e
+retirar a permissão no Android. A transcrição deve ser revisada antes do envio.
+O código do Chat não envia áudio ao backend nem cria ali um arquivo da gravação.
+O serviço de reconhecimento instalado no aparelho pode usar processamento remoto.
+
+As notificações utilizam Firebase e identificadores de entrega. A configuração
+de permissões no dispositivo controla sua apresentação conforme o sistema.
+
+## 6. Acesso e serviços externos
+
+As informações podem ser utilizadas por profissionais e clínicas no contexto do
+vínculo e da finalidade de acompanhamento, pela equipe para atividades legítimas
+de operação e atendimento e pelos serviços necessários às funcionalidades.
+O acesso deve ser limitado por função e necessidade.
+
+OpenAI participa dos recursos de IA; Firebase participa das notificações; o serviço
+de reconhecimento do Android participa do ditado. Não é correto presumir que todo
+processamento ocorre no celular ou que nenhum fornecedor conserva informações.
+Processamento fora do Brasil deve observar as regras de transferência internacional
+aplicáveis e as condições dos fornecedores, que precisam ser informadas na operação.
+
+A migração para AWS ainda não ocorreu. Este documento não declara hospedagem,
+criptografia ou certificações da AWS como características já implantadas.
+
+## 7. Armazenamento e segurança
+
+Os registros são armazenados no banco do backend e o aplicativo mantém um token
+de sessão no dispositivo. A implantação de desenvolvimento utiliza conexão local
+HTTP; não equivale a ambiente público de produção com transporte protegido.
+
+Cabe à MindCare adequar controles de acesso, credenciais, transmissão, logs,
+backups e resposta a incidentes aos riscos das informações tratadas. Informações
+sobre incidentes devem ser prestadas nos casos e condições exigidos pela legislação.
+Nenhuma declaração neste documento representa garantia de segurança absoluta.
+
+## 8. Conservação e encerramento
+
+Parar de usar ou desinstalar o aplicativo não apaga os dados do servidor. O titular
+pode solicitar encerramento e eliminação pelo canal de privacidade. O atendimento
+deve distinguir dados elimináveis de informações sujeitas a conservação legítima,
+com explicação dos motivos, responsáveis e prazo ou critério aplicável.
+
+A conservação deve durar somente o necessário para a finalidade e as obrigações
+pertinentes. Um dever de guarda de documento clínico não autoriza conservar todos
+os demais dados indefinidamente. Informações conservadas para obrigação específica
+não devem ser reutilizadas para finalidade incompatível.
+
+Eliminação deve considerar arquivos associados, dados derivados e fornecedores.
+Backups precisam de política de expiração e tratamento de restaurações que impeça
+reativar dados eliminados. Não se promete eliminação instantânea de todas as cópias.
+
+## 9. Direitos, acesso e cópia
+
+O titular pode pedir informações sobre o tratamento, acesso, correção e os demais
+direitos legalmente aplicáveis, inclusive eliminação e revogação quando cabíveis.
+Pedidos devem ser enviados a mindcare.diary@gmail.com. A identificação solicitada
+deve ser proporcional ao risco; não é necessário fornecer a senha da conta.
+
+A resposta deverá informar as providências e justificar eventual impossibilidade,
+observando os prazos legais aplicáveis. Os direitos não dependem de pagamento.
+Pedidos podem ser feitos por representante devidamente habilitado.
+
+Uma cópia pode abranger registros pessoais do diário e do Chat confirmado,
+humor, datas, relatórios e demais informações pertinentes ao titular. Ela não deve
+expor senhas, tokens ou dados de terceiros indevidamente. Áudio não armazenado e
+conversas descartadas não podem ser recuperados. No perfil, o usuário pode exportar uma cópia em ZIP, com dados estruturados e PDFs de prescrições disponíveis. Também pode encerrar o acesso e registrar pedido de eliminação. Esse pedido não apaga automaticamente documentos sujeitos à análise de conservação.
+
+## 10. Crianças e adolescentes
+
+O cadastro não substitui os requisitos de proteção de crianças e adolescentes.
+Eventual atendimento desse público exige avaliação específica, informação adequada
+à idade e participação do responsável quando exigida. Este documento não institui
+um fluxo de autorização de responsáveis que o aplicativo ainda não oferece.
+
+## 11. Atualizações
+
+Mudanças relevantes nas finalidades, destinatários e condições devem ser
+informadas ao usuário. Quando necessário, a autorização será renovada para a
+finalidade específica. A versão e a data identificam o texto apresentado.

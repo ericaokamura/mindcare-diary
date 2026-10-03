@@ -26,7 +26,6 @@ class AgendamentoServiceTest {
     @Mock ProfissionalRepository profissionalRepository;
     @Mock AgendamentoRepository agendamentoRepository;
     @Mock PacienteRepository pacienteRepository;
-    @Mock PushNotificationService pushNotificationService;
     @InjectMocks AgendamentoService service;
 
     @Test

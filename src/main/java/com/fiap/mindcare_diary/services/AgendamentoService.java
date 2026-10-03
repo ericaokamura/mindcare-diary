@@ -35,9 +35,6 @@ public class AgendamentoService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    @Autowired
-    private PushNotificationService pushNotificationService;
-
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     private Random random = new Random();

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest(properties = {"spring.sql.init.mode=never", "spring.jpa.hibernate.ddl-auto=create-drop", "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"}, showSql = false)
 @Import({PrivacidadeService.class, PrivacidadeServiceTest.Config.class})
 class PrivacidadeServiceTest {
+
     @TestConfiguration static class Config {
         @Bean PasswordEncoder passwords() { return new BCryptPasswordEncoder(); }
         @Bean ObjectMapper json() { return new ObjectMapper().findAndRegisterModules(); }
@@ -32,6 +33,7 @@ class PrivacidadeServiceTest {
     @Autowired RegistroDiarioRepository registros;
     @Autowired EntityManager em;
     @Autowired PasswordEncoder passwords;
+
     private Paciente paciente(String nome) {
         var p = new Paciente(); p.setNomeUsuario(nome); p.setAtivo(true); p.setUserRole(UserRole.PACIENTE);
         p.setSenha(passwords.encode("senha-teste")); p.setToken("SEGREDO-FCM");

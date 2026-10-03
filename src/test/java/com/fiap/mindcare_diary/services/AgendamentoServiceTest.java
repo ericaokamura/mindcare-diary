@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AgendamentoServiceTest {
+
     @Mock ProfissionalRepository profissionalRepository;
     @Mock AgendamentoRepository agendamentoRepository;
     @Mock PacienteRepository pacienteRepository;

@@ -1,4 +1,5 @@
 package com.fiap.mindcare_diary.services;
+
 import com.fiap.mindcare_diary.configuration.SecurityFilter;
 import com.fiap.mindcare_diary.controllers.LoginController;
 import com.fiap.mindcare_diary.models.*;
@@ -11,7 +12,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 class ContaEncerradaSecurityTest {
+
     @AfterEach void limpar() { SecurityContextHolder.clearContext(); }
     @Test void jwtAnteriorNaoAutenticaContaEncerrada() throws Exception {
         var usuario = new Usuario();
@@ -29,6 +32,7 @@ class ContaEncerradaSecurityTest {
         filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain());
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
+
     @Test void loginRecusaContaEncerradaAntesDeGerarToken() {
         var usuario = new Usuario();
         usuario.setEncerradaEm(LocalDateTime.now());

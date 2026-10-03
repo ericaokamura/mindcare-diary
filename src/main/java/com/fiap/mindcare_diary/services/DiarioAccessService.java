@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class DiarioAccessService {
+
     private final PacienteRepository patients;
     public DiarioAccessService(PacienteRepository patients) { this.patients = patients; }
 

@@ -15,7 +15,6 @@ import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
 import com.fiap.mindcare_diary.utils.DataLoader;
 import org.springframework.ai.chat.client.ChatClient;
 
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;

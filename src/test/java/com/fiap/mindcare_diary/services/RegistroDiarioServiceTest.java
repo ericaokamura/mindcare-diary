@@ -1,6 +1,5 @@
 package com.fiap.mindcare_diary.services;
 
-import com.fiap.mindcare_diary.models.Paciente;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RegistroDiarioServiceTest {
+
     @Mock RegistroDiarioRepository registroDiarioRepository;
     @Mock PacienteRepository pacienteRepository;
     @InjectMocks RegistroDiarioService service;

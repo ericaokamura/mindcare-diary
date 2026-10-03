@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProfissionalServiceTest {
+
     @Mock ProfissionalRepository profissionalRepository;
     @Mock PacienteRepository pacienteRepository;
     @Mock PasswordEncoder passwordEncoder;

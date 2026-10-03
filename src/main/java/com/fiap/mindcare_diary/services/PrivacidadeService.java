@@ -21,6 +21,7 @@ import java.util.zip.*;
 
 @Service
 public class PrivacidadeService {
+
     public static final String VERSAO = "2026-09-21.1";
     private final EntityManager em;
     private final UsuarioRepository usuarios;

@@ -1,7 +1,6 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.models.Paciente;
-import com.fiap.mindcare_diary.models.Prescription;
 import com.fiap.mindcare_diary.models.Profissional;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.PrescriptionRepository;

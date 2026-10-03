@@ -19,7 +19,7 @@ public class PrescriptionDocument {
     @JoinColumn(name = "prescription_id")
     private Prescription prescription;
 
-    @Column(name = "arquivo_pdf", columnDefinition = "bytea")
+    @Column(name = "arquivo_pdf")
     private byte[] arquivoPdf;
 
     @Column(name = "nome_arquivo")

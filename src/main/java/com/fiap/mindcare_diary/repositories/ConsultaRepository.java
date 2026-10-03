@@ -19,5 +19,5 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     List<Consulta> findAllByClinica(Clinica clinica);
 
-    Optional<Consulta> findByNumber(String number);
+    Optional<Consulta> findByNumero(String numero);
 }

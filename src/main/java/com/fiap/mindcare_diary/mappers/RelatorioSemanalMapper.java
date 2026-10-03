@@ -22,7 +22,7 @@ public class RelatorioSemanalMapper {
             dto.setTotalNegativos(relatorio.getTotalNegativos());
             dto.setTotalPositivos(relatorio.getTotalPositivos());
             dto.setResumo(relatorio.getResumo());
-            dto.setNumber(relatorio.getNumber());
+            dto.setNumero(relatorio.getNumero());
             dtos.add(dto);
         }
         return dtos;
@@ -40,7 +40,7 @@ public class RelatorioSemanalMapper {
         dto.setTotalNegativos(relatorio.getTotalNegativos());
         dto.setTotalPositivos(relatorio.getTotalPositivos());
         dto.setResumo(relatorio.getResumo());
-        dto.setNumber(relatorio.getNumber());
+        dto.setNumero(relatorio.getNumero());
         return dto;
     }
 }

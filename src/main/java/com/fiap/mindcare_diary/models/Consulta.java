@@ -17,7 +17,7 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String number;
+    private String numero;
 
     @ManyToOne
     @JoinColumn(name = "profissional_id")

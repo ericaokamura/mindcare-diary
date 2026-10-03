@@ -131,7 +131,7 @@ public class PacienteService {
             prescription.setIssueDate(LocalDate.parse(issueDate.trim(), formatter));
             prescription.setExpirationDate(LocalDate.parse(expirationDate, formatter));
             prescription.setControlled(controlled);
-            prescription.setNumber(numero.toString());
+            prescription.setNumero(numero.toString());
             prescription.getMedicines().addAll(Arrays.stream(medicines.split(","))
                                     .map(String::trim)
                                     .filter(s -> !s.isBlank())

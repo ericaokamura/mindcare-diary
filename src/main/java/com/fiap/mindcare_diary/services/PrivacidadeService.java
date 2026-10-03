@@ -87,13 +87,13 @@ public class PrivacidadeService {
                     .setParameter("id", id).getResultList().stream().map(r -> campos("id", r.getId(), "data", r.getDataHoraCriacao(), "periodo", r.getFaixaDeDatas(),
                             "resumoIA", r.getRelatorioIA(), "resumo", r.getResumo(), "observacoes", r.getObservacoes(), "recomendacoes", r.getRecomendacoes())).toList());
             dados.put("consultas", em.createQuery("select c from Consulta c where c.paciente.id = :id order by c.dataHoraConsulta", Consulta.class)
-                    .setParameter("id", id).getResultList().stream().map(c -> campos("id", c.getId(), "numero", c.getNumber(), "data", c.getDataHoraConsulta(),
+                    .setParameter("id", id).getResultList().stream().map(c -> campos("id", c.getId(), "numero", c.getNumero(), "data", c.getDataHoraConsulta(),
                             "modalidade", c.getConsultaModalidade(), "valor", c.getValorConsulta(), "atendida", c.isAtendida(), "cancelada", c.isCancelada())).toList());
             dados.put("prescricoes", em.createQuery("select p from Prescription p where p.paciente.id = :id order by p.issueDate", Prescription.class)
                     .setParameter("id", id).getResultList().stream().map(p -> {
                         var doc = p.getPrescriptionDocument();
                         if (doc != null && doc.getArquivoPdf() != null) anexos.add(doc);
-                        return campos("id", p.getId(), "numero", p.getNumber(), "emissao", p.getIssueDate(), "validade", p.getExpirationDate(),
+                        return campos("id", p.getId(), "numero", p.getNumero(), "emissao", p.getIssueDate(), "validade", p.getExpirationDate(),
                                 "medicamentos", new ArrayList<>(p.getMedicines()), "controlada", p.isControlled(), "valida", p.isValid(),
                                 "arquivo", doc != null && doc.getArquivoPdf() != null ? "prescricoes/" + doc.getId() + ".pdf" : null);
                     }).toList());

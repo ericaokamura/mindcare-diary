@@ -81,7 +81,7 @@ public class RelatorioSemanalService {
             relatorioSemanal.setTotalPositivos(countPontosPositivos);
             relatorioSemanal.setTotalNegativos(countDificuldadesDesafios);
             relatorioSemanal.setRegistrosDiarios(registrosDiarios);
-            relatorioSemanal.setNumber(numero.toString());
+            relatorioSemanal.setNumero(numero.toString());
             relatorioSemanalRepository.save(relatorioSemanal);
             return RelatorioSemanalMapper.convertModelToDTO(relatorioSemanal);
         } else {
@@ -101,7 +101,7 @@ public class RelatorioSemanalService {
     public void atualizarRelatorioSemanal(RelatorioSemanalDTO relatorioSemanalDTO) {
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(relatorioSemanalDTO.getPaciente().getNomeUsuario());
         if(optionalPaciente.isPresent()) {
-            Optional<RelatorioSemanal> relatorioSemanalOptional = this.relatorioSemanalRepository.findByPacienteAndNumber(optionalPaciente.get(), relatorioSemanalDTO.getNumber());
+            Optional<RelatorioSemanal> relatorioSemanalOptional = this.relatorioSemanalRepository.findByPacienteAndNumero(optionalPaciente.get(), relatorioSemanalDTO.getNumero());
             if(relatorioSemanalOptional.isPresent()) {
                 RelatorioSemanal relatorioSemanal = relatorioSemanalOptional.get();
                 relatorioSemanal.setRecomendacoes(relatorioSemanalDTO.getRecomendacoes());

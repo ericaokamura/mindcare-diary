@@ -39,7 +39,7 @@ public class PrescricaoService {
             throw new PacienteNaoEncontradoException("Paciente não encontrado.");
         }
 
-        Optional<Prescription> optionalPrescription = prescriptionRepository.findByPacienteAndProfissionalAndNumber(optionalPaciente.get(), optionalProfissional.get(), number);
+        Optional<Prescription> optionalPrescription = prescriptionRepository.findByPacienteAndProfissionalAndNumero(optionalPaciente.get(), optionalProfissional.get(), number);
         if(optionalPrescription.isEmpty()) {
             throw new PrescricaoNaoEncontradaException("Prescrição não encontrada para esse número, paciente e profissional.");
         }

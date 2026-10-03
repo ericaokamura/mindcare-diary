@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 public class PrescriptionDTO {
 
-    private String number;
+    private String numero;
 
     private String issueDate;
 

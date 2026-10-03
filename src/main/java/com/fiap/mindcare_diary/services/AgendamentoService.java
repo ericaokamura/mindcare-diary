@@ -80,7 +80,7 @@ public class AgendamentoService {
                 consulta.setPaciente(paciente);
                 consulta.setDataHoraConsulta(LocalDateTime.parse(consultaDTO.getDataHoraConsulta()));
                 consulta.setClinica(clinica);
-                consulta.setNumber(numero.toString());
+                consulta.setNumero(numero.toString());
                 this.agendamentoRepository.save(consulta);
                 this.pacienteRepository.save(paciente);
                 this.profissionalRepository.save(profissional);

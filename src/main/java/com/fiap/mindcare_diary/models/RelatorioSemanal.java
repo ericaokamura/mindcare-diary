@@ -17,7 +17,7 @@ public class RelatorioSemanal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String number;
+    private String numero;
 
     @ManyToOne
     @JoinColumn(name = "paciente_id")
@@ -32,7 +32,7 @@ public class RelatorioSemanal {
 
     private String recomendacoes;
 
-    @Column(columnDefinition = "VARCHAR")
+    @Column(name = "relatorio_ia")
     private String relatorioIA;
 
     private LocalDateTime dataHoraCriacao;

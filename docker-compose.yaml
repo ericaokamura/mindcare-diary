@@ -1,19 +1,32 @@
 services:
-  postgres:
-    image: postgres:16
-    container_name: mindcare-postgres
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-26ai
     restart: unless-stopped
 
-    environment:
-      POSTGRES_DB: mindcare_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
-
     ports:
-      - "5432:5432"
+      - "1521:1521"
+
+    environment:
+      ORACLE_PWD: "12345678"
+      ORACLE_CHARACTERSET: AL32UTF8
 
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - oracle-data:/opt/oracle/oradata
+      - ./src/main/resources/dump:/opt/oracle/dump
+
+    shm_size: 1g
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "healthcheck.sh"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
 
 volumes:
-  postgres_data:
+  oracle-data:

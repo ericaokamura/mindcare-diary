@@ -23,7 +23,7 @@ public class ConsultaMapper {
         consulta.setPaciente(PacienteMapper.convertDTOToModel(dto.getPaciente()));
         consulta.setValorConsulta(dto.getValorConsulta());
         consulta.setConsultaModalidade(ConsultaModalidade.valueOf(dto.getConsultaModalidade()));
-        consulta.setNumber(dto.getNumber());
+        consulta.setNumero(dto.getNumero());
         return consulta;
     }
 
@@ -36,7 +36,7 @@ public class ConsultaMapper {
         dto.setPaciente(PacienteMapper.convertModelToDTO(model.getPaciente()));
         dto.setValorConsulta(model.getValorConsulta());
         dto.setConsultaModalidade(model.getConsultaModalidade() == null ? "": model.getConsultaModalidade().name());
-        dto.setNumber(model.getNumber());
+        dto.setNumero(model.getNumero());
         return dto;
     }
 

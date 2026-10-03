@@ -14,7 +14,7 @@ public class PrescriptionMapper {
 
     public static PrescriptionDTO convertModelToDTO(Prescription prescription) {
         PrescriptionDTO dto = new PrescriptionDTO();
-        dto.setNumber(prescription.getNumber());
+        dto.setNumero(prescription.getNumero());
         dto.setIssueDate(prescription.getIssueDate().toString());
         dto.setExpirationDate(prescription.getExpirationDate().toString());
         dto.setMedicines(prescription.getMedicines());
@@ -28,7 +28,7 @@ public class PrescriptionMapper {
 
     public static Prescription convertDTOToModel(PrescriptionDTO dto) {
         Prescription model = new Prescription();
-        model.setNumber(dto.getNumber());
+        model.setNumero(dto.getNumero());
         model.setIssueDate(LocalDate.parse(dto.getIssueDate()));
         model.setExpirationDate(LocalDate.parse(dto.getExpirationDate()));
         model.setMedicines(dto.getMedicines());

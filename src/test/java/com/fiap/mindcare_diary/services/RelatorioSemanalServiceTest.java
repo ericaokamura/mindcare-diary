@@ -10,8 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.api.Advisor;
-import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 
 import java.util.Optional;
 
@@ -25,7 +24,7 @@ class RelatorioSemanalServiceTest {
     @Mock PacienteRepository pacienteRepository;
     @Mock ChatClient.Builder chatClientBuilder;
     @Mock ChatClient chatClient;
-    @Mock PgVectorStore pgVectorStore;
+    @Mock VectorStore vectorStore;
     @Mock DataLoader dataLoader;
 
     @Test
@@ -108,7 +107,7 @@ class RelatorioSemanalServiceTest {
         var salvo = org.mockito.ArgumentCaptor.forClass(com.fiap.mindcare_diary.models.RelatorioSemanal.class);
         verify(relatorioSemanalRepository).save(salvo.capture());
         assertEquals(total, salvo.getValue().getRegistrosDiarios().size());
-        verifyNoInteractions(pgVectorStore, dataLoader);
+        verifyNoInteractions(vectorStore, dataLoader);
     }
 
     @Test
@@ -120,7 +119,7 @@ class RelatorioSemanalServiceTest {
         var service = new RelatorioSemanalService(relatorioSemanalRepository, registroDiarioRepository, pacienteRepository, chatClientBuilder);
         var dto = service.gerarRelatorioSemanal("p");
         assertTrue(dto.getRelatorioIA().contains("Não há registros"));
-        verifyNoInteractions(chatClient, pgVectorStore, dataLoader);
+        verifyNoInteractions(chatClient, vectorStore, dataLoader);
     }
 
     private com.fiap.mindcare_diary.models.RegistroDiario registro(long id, java.time.LocalDateTime data) {

@@ -1,14 +1,9 @@
 package com.fiap.mindcare_diary.controllers;
 
-import com.fiap.mindcare_diary.models.dtos.RegistroDiarioDTO;
 import com.fiap.mindcare_diary.models.dtos.RelatorioSemanalDTO;
 import com.fiap.mindcare_diary.services.RelatorioSemanalService;
-import com.fiap.mindcare_diary.utils.DataLoader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
-import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

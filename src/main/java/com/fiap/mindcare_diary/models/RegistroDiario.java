@@ -33,7 +33,7 @@ public class RegistroDiario {
 
     private LocalDateTime dataHoraCriacao;
 
-    @Column(columnDefinition = "text")
+    @Column(name = "texto_confirmado")
     private String textoConfirmado;
 
     @Enumerated(EnumType.STRING)

@@ -2,18 +2,14 @@ package com.fiap.mindcare_diary.utils;
 
 import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
 import com.fiap.mindcare_diary.models.*;
-import com.fiap.mindcare_diary.repositories.AgendamentoRepository;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
-import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
-import com.fiap.mindcare_diary.services.AgendamentoService;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 

@@ -52,7 +52,7 @@ public class ConsultaService {
     }
 
     public void atualizarConsulta(String number, ConsultaDTO consultaDTO) {
-        Optional<Consulta> consulta = consultaRepository.findByNumber(number);
+        Optional<Consulta> consulta = consultaRepository.findByNumero(number);
         if(consulta.isPresent()) {
             Consulta consultaConsulta = consulta.get();
             consultaConsulta.setAtendida(consultaDTO.isAtendida());

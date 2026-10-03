@@ -13,5 +13,5 @@ public interface RelatorioSemanalRepository extends JpaRepository<RelatorioSeman
 
     List<RelatorioSemanal> findAllByPaciente(Paciente paciente);
 
-    Optional<RelatorioSemanal> findByPacienteAndNumber(Paciente paciente, String number);
+    Optional<RelatorioSemanal> findByPacienteAndNumero(Paciente paciente, String numero);
 }

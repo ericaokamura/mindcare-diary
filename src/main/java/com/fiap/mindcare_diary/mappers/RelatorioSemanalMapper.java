@@ -14,7 +14,7 @@ public class RelatorioSemanalMapper {
             RelatorioSemanalDTO dto = new RelatorioSemanalDTO();
             dto.setFaixaDeDatas(relatorio.getFaixaDeDatas());
             dto.setPaciente(PacienteMapper.convertModelToDTO(relatorio.getPaciente()));
-            dto.setRegistrosDiarios(RegistroDiarioMapper.convertModelListToDTOList(relatorio.getRegistrosDiarios()));
+            //dto.setRegistrosDiarios(RegistroDiarioMapper.convertModelListToDTOList(relatorio.getRegistrosDiarios()));
             dto.setObservacoes(relatorio.getObservacoes());
             dto.setRecomendacoes(relatorio.getRecomendacoes());
             dto.setRelatorioIA(relatorio.getRelatorioIA());
@@ -32,7 +32,7 @@ public class RelatorioSemanalMapper {
         RelatorioSemanalDTO dto = new RelatorioSemanalDTO();
         dto.setFaixaDeDatas(relatorio.getFaixaDeDatas());
         dto.setPaciente(PacienteMapper.convertModelToDTO(relatorio.getPaciente()));
-        dto.setRegistrosDiarios(RegistroDiarioMapper.convertModelListToDTOList(relatorio.getRegistrosDiarios()));
+        //dto.setRegistrosDiarios(RegistroDiarioMapper.convertModelListToDTOList(relatorio.getRegistrosDiarios()));
         dto.setObservacoes(relatorio.getObservacoes());
         dto.setRecomendacoes(relatorio.getRecomendacoes());
         dto.setRelatorioIA(relatorio.getRelatorioIA());

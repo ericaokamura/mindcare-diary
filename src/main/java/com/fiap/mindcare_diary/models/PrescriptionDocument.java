@@ -19,6 +19,7 @@ public class PrescriptionDocument {
     @JoinColumn(name = "prescription_id")
     private Prescription prescription;
 
+    @Lob
     @Column(name = "arquivo_pdf")
     private byte[] arquivoPdf;
 

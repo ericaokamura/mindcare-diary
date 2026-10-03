@@ -26,9 +26,9 @@ public class DataLoader {
     private PacienteRepository pacienteRepository;
 
     public void loadRelatoriosSemanaisIntoVectorStore(String nomeUsuario) {
-        System.out.println("📥 Deleteando dados da tabela vector_store do banco de dados PostgreSQL...");
-        jdbcTemplate.execute("DELETE from vector_store");
-        System.out.println("📥 Carregando dados a partir da tabela consulta do banco de dados PostgreSQL...");
+        System.out.println("📥 Deleteando dados da tabela SPRING_AI_VECTORS do banco de dados Oracle SQL...");
+        jdbcTemplate.execute("DELETE from SPRING_AI_VECTORS");
+        System.out.println("📥 Carregando dados a partir da tabela registro_diario do banco de dados Oracle SQL...");
         List<Document> relatoriosSemanais = carregarRegistrosDiarios(nomeUsuario);
         vectorStore.add(relatoriosSemanais);
         System.out.println("✅ Dados de estoque carregados em vector store.");
@@ -45,10 +45,15 @@ public class DataLoader {
             ultimosRegistros.forEach(registro -> {
                 String nivelHumor = registro.getNivelHumor().name();
                 Long id = registro.getId();
-
-                String text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
-                        " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "' e \n" +
-                    "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
+                String text = "";
+                if(registro.getTextoConfirmado().isBlank()) {
+                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                            " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "', \n" +
+                            "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
+                } else {
+                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                            " escreveu : '" + registro.getTextoConfirmado() + "'.";
+                }
                 Map<String, Object> metadata = new HashMap<>();
                 metadata.put("id", id);
                 metadata.put("nivelHumor", nivelHumor);

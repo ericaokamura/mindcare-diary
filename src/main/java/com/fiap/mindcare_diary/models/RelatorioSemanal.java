@@ -32,7 +32,8 @@ public class RelatorioSemanal {
 
     private String recomendacoes;
 
-    @Column(name = "relatorio_ia")
+    @Lob
+    @Column(name = "relatorio_ia", columnDefinition = "CLOB")
     private String relatorioIA;
 
     private LocalDateTime dataHoraCriacao;

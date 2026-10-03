@@ -46,13 +46,17 @@ public class DataLoader {
                 String nivelHumor = registro.getNivelHumor().name();
                 Long id = registro.getId();
                 String text = "";
-                if(registro.getTextoConfirmado().isBlank()) {
-                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
-                            " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "', \n" +
-                            "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
+                if(registro.getTextoConfirmado() != null) {
+                    if(registro.getTextoConfirmado().isBlank()) {
+                        text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                                " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "', \n" +
+                                "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
+                    } else {
+                        text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                                " escreveu : '" + registro.getTextoConfirmado() + "'.";
+                    }
                 } else {
-                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
-                            " escreveu : '" + registro.getTextoConfirmado() + "'.";
+                    text = "";
                 }
                 Map<String, Object> metadata = new HashMap<>();
                 metadata.put("id", id);

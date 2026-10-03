@@ -62,7 +62,7 @@ class ConsultaServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoConsultaNaoExistir() {
-        when(consultaRepository.findByNumber("12345")).thenReturn(Optional.empty());
+        when(consultaRepository.findByNumero("12345")).thenReturn(Optional.empty());
         assertThrows(RuntimeException.class, () -> service.atualizarConsulta("12345", new ConsultaDTO()));
         verify(consultaRepository, never()).save(any());
     }

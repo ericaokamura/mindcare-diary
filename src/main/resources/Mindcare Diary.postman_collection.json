@@ -42,7 +42,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"nomeUsuario\": \"erica.okamura@yahoo.com.br\",\n    \"senha\": \"123456\",\n    \"nomeCompleto\": \"Erica Okamura\",\n    \"dataNascimento\": \"1986-04-04\"\n}",
+					"raw": "{\n    \"nomeUsuario\": \"erica.okamura@yahoo.com.br\",\n    \"senha\": \"123456\",\n    \"nomeCompleto\": \"Erica Okamura\",\n    \"dataNascimento\": \"1986-04-04\",\n    \"userRole\": \"PACIENTE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -113,6 +113,16 @@
 		{
 			"name": "Retorna registros diários de pacientes",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlcmljYS5va2FtdXJhQHlhaG9vLmNvbS5iciIsImlzcyI6IkFQSSBNaW5kQ2FyZSBEaWFyeSIsImV4cCI6MTc5MTA1ODI2OX0.QccIdidMxNYaPEe4CM6hvzMsfl0WmwRqmlsqv2brtWo",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
@@ -278,7 +288,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW5pc2UuY2hhbkBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc3MjY5Mzh9.RI-Pflc_ajgzbowD68h5lqQGFR6DF4xFWvJlsyJ0DqU",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlcmljYS5va2FtdXJhQHlhaG9vLmNvbS5iciIsImlzcyI6IkFQSSBNaW5kQ2FyZSBEaWFyeSIsImV4cCI6MTc5MTA1OTk0Nn0.Ag1gQSqlhgFrTvPlZ5YhSn1iMlGAy8bptoTVSAjcbfo",
 							"type": "string"
 						}
 					]
@@ -295,7 +305,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/relatoriosSemanais/gerar/barbosah@gmail.com",
+					"raw": "http://localhost:8080/relatoriosSemanais/gerar/erica.okamura@yahoo.com.br",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -304,7 +314,7 @@
 					"path": [
 						"relatoriosSemanais",
 						"gerar",
-						"barbosah@gmail.com"
+						"erica.okamura@yahoo.com.br"
 					]
 				}
 			},
@@ -313,10 +323,20 @@
 		{
 			"name": "Retorna relatórios semanais por paciente",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYXJib3NhaEBnbWFpbC5jb20iLCJpc3MiOiJBUEkgTWluZENhcmUgRGlhcnkiLCJleHAiOjE3ODc3Mjg0NjV9.7DZUWDHsE00IlEN2hxT3mozrN-49ikuTLXmCpUO3yCc",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/relatoriosSemanais/erica.okamura@yahoo.com.br",
+					"raw": "http://localhost:8080/relatoriosSemanais/barbosah@gmail.com",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -324,7 +344,7 @@
 					"port": "8080",
 					"path": [
 						"relatoriosSemanais",
-						"erica.okamura@yahoo.com.br"
+						"barbosah@gmail.com"
 					]
 				}
 			},
@@ -618,7 +638,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"nomeUsuario\": \"denise.chan@gmail.com\",\n    \"senha\": 123456\n}",
+					"raw": "{\n    \"nomeUsuario\": \"erica.okamura@yahoo.com.br\",\n    \"senha\": 123456\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -708,6 +728,76 @@
 							"key": "mes",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retorna clínica de usuário Admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmZWxpcGUubWVkZWlyb3NAZ21haWwuY29tIiwiaXNzIjoiQVBJIE1pbmRDYXJlIERpYXJ5IiwiZXhwIjoxNzg5MzIwODY1fQ.SxKTXbvrGVHlT7TwipMhGA_XqPEQ4KJh8ICPSQ4_BkA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/clinicas/admin/felipe.medeiros@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clinicas",
+						"admin",
+						"felipe.medeiros@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat MIA: registrar conversa",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlcmljYS5va2FtdXJhQHlhaG9vLmNvbS5iciIsImlzcyI6IkFQSSBNaW5kQ2FyZSBEaWFyeSIsImV4cCI6MTc5MTA2MDk3N30.YTN0M9G87Vi-3x6TKH8roWAJaT8LAuYFUNsPpM21vYM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idRequisicao\": \"81a620df-888d-4d84-856c-00eb5eef3314\",\n    \"textoConfirmado\": \"Ainda tenho algumas preocupações, mas hoje senti que as coisas podem melhorar. Quero continuar tentando aos poucos.\",\n    \"nivelHumor\": \"OTIMO\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/mia/registros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mia",
+						"registros"
 					]
 				}
 			},

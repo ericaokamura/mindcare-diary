@@ -64,7 +64,7 @@ class PrivacidadeServiceTest {
     }
     @Test void exportaPdfExistenteSemUsarNomeExternoComoCaminho() throws Exception {
         var p = paciente("pdf");
-        var rx = new Prescription(); rx.setPaciente(p); rx.setNumber("1"); em.persist(rx);
+        var rx = new Prescription(); rx.setPaciente(p); rx.setNumero("1"); em.persist(rx);
         var doc = new PrescriptionDocument(); doc.setPrescription(rx); doc.setNomeArquivo("../../escape.pdf");
         doc.setArquivoPdf("%PDF-teste".getBytes(StandardCharsets.UTF_8)); em.persist(doc);
         rx.setPrescriptionDocument(doc); em.flush();

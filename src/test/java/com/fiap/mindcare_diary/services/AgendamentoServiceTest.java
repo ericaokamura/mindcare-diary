@@ -1,6 +1,10 @@
 package com.fiap.mindcare_diary.services;
 
+import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
+import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
 import com.fiap.mindcare_diary.models.Paciente;
+import com.fiap.mindcare_diary.models.dtos.PacienteDTO;
+import com.fiap.mindcare_diary.models.dtos.ProfissionalDTO;
 import com.fiap.mindcare_diary.repositories.AgendamentoRepository;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.ProfissionalRepository;
@@ -53,29 +57,32 @@ class AgendamentoServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoPacienteNaoExistir() {
-        ConsultaDTO dto = mock(ConsultaDTO.class);
-        var pacienteDto = mock(com.fiap.mindcare_diary.models.dtos.PacienteDTO.class);
-        when(dto.getDataHoraConsulta()).thenReturn("2026-08-31T10:00");
-        when(dto.getPaciente()).thenReturn(pacienteDto);
-        when(pacienteDto.getNomeUsuario()).thenReturn("pac");
+        ConsultaDTO dto = new ConsultaDTO();
+        PacienteDTO pacienteDto = new PacienteDTO();
+        dto.setDataHoraConsulta("2026-11-30T10:00");
+        dto.setPaciente(pacienteDto);
+        pacienteDto.setNomeUsuario("pac");
         when(pacienteRepository.findByNomeUsuario("pac")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.salvarAgendamento(dto));
+        assertThrows(PacienteNaoEncontradoException.class, () -> service.salvarAgendamento(dto));
     }
 
     @Test
     void deveLancarExcecaoQuandoProfissionalNaoExistir() {
-        ConsultaDTO dto = mock(ConsultaDTO.class);
-        var pacienteDto = mock(com.fiap.mindcare_diary.models.dtos.PacienteDTO.class);
-        var profissionalDto = mock(com.fiap.mindcare_diary.models.dtos.ProfissionalDTO.class);
-        when(dto.getDataHoraConsulta()).thenReturn("2026-08-31T10:00");
-        when(dto.getPaciente()).thenReturn(pacienteDto);
-        when(dto.getProfissional()).thenReturn(profissionalDto);
-        when(pacienteDto.getNomeUsuario()).thenReturn("pac");
-        when(profissionalDto.getNomeUsuario()).thenReturn("prof");
+        ConsultaDTO dto = new ConsultaDTO();
+        PacienteDTO pacienteDto = new PacienteDTO();
+        ProfissionalDTO profissionalDto = new ProfissionalDTO();
+        dto.setDataHoraConsulta("2026-11-30T10:00");
+        dto.setPaciente(pacienteDto);
+        dto.setProfissional(profissionalDto);
+        pacienteDto.setNomeUsuario("pac");
+        profissionalDto.setNomeUsuario("prof");
+        Paciente paciente = new Paciente();
+        paciente.setNomeUsuario("pac");
+
         when(pacienteRepository.findByNomeUsuario("pac")).thenReturn(Optional.of(new Paciente()));
         when(profissionalRepository.findByNomeUsuario("prof")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.salvarAgendamento(dto));
+        assertThrows(ProfissionalNaoEncontradoException.class, () -> service.salvarAgendamento(dto));
     }
 }

@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.exceptions.AdminJaPossuiClinicaException;
+import com.fiap.mindcare_diary.exceptions.ClinicaNaoExistenteException;
 import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.Consulta;
 import com.fiap.mindcare_diary.models.Usuario;
@@ -28,6 +29,7 @@ class ClinicaServiceTest {
     @Mock PacienteRepository pacienteRepository;
     @Mock ConsultaRepository consultaRepository;
     @Mock PasswordEncoder passwordEncoder;
+    @Mock UsuarioRepository usuarioRepository;
     @InjectMocks ClinicaService service;
 
     @Test
@@ -118,9 +120,11 @@ class ClinicaServiceTest {
     void deveRetornarNullQuandoAdminNaoPossuiClinica() {
         Usuario admin = new Usuario();
         admin.setNomeUsuario("admin1");
+
+        when(usuarioRepository.findByNomeUsuario("admin1")).thenReturn(Optional.of(admin));
         when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.empty());
 
-        assertNull(service.retornarClinicaPorAdmin("admin1"));
+        assertThrows(ClinicaNaoExistenteException.class, () -> service.retornarClinicaPorAdmin("admin1"));
     }
 
     @Test
@@ -130,6 +134,9 @@ class ClinicaServiceTest {
         clinica.setPlanoAssinatura(PlanoAssinatura.CLINICA);
         Usuario admin = new Usuario();
         admin.setNomeUsuario("admin1");
+        clinica.setAdmin(admin);
+
+        when(usuarioRepository.findByNomeUsuario("admin1")).thenReturn(Optional.of(admin));
         when(clinicaRepository.findByAdmin(admin)).thenReturn(Optional.of(clinica));
 
         ClinicaDTO dto = service.retornarClinicaPorAdmin("admin1");

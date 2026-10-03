@@ -78,7 +78,7 @@ paciente confirma o texto e o cliente chama o endpoint de registros.
 
 ## Testes e execução
 
-Requisitos do backend existente: Java 21, Maven (ou wrapper), PostgreSQL/pgvector
+Requisitos do backend existente: Java 21, Maven (ou wrapper), Oracle SQL 26ai
 e integrações já configuradas. Nenhuma dependência foi adicionada.
 
 ```text

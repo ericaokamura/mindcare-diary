@@ -75,7 +75,10 @@ public class RelatorioSemanalService {
             List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.findAllByPaciente(paciente).stream()
                     .filter(registro -> registro.getDataHoraCriacao().isAfter(LocalDateTime.now().minusDays(7)))
                     .toList();
-            String relatorioIA = gerarRelatorioIA(nomeUsuario);
+            String relatorioIA = "";
+            if(!registrosDiarios.isEmpty()) {
+                relatorioIA = gerarRelatorioIA(nomeUsuario);
+            }
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
             relatorioSemanal.setRelatorioIA(relatorioIA);
             relatorioSemanal.setDataHoraCriacao(fim);
@@ -133,7 +136,7 @@ public class RelatorioSemanalService {
                 "Com base em TODOS os registros diários do paciente dos últimos 7 dias, " +
                 "gere um relatório clínico objetivo e acolhedor contendo:\n\n" +
                 "1. Resumo geral da semana.\n" +
-                "2. Humor predominante e sua evolução ao longo dos dias.\n" +
+                "2. Humor predominant e sua evolução ao longo dos dias.\n" +
                 "3. Principais emoções identificadas.\n" +
                 "4. Possíveis gatilhos emocionais ou situações recorrentes que impactaram o bem-estar.\n" +
                 "5. Estratégias de enfrentamento ou recursos positivos mencionados pelo paciente.\n" +
@@ -152,14 +155,23 @@ public class RelatorioSemanalService {
             return "⚠️ Nenhum documento relevante foi encontrado no vetor. Não é possível responder à pergunta.";
         }
 
-        System.out.println("📄 Documentos retornados pelo pgVector:");
+        System.out.println("📄 Documentos retornados pelo Oracle 26ai:");
         relevantDocs.forEach(doc -> System.out.println(doc.getFormattedContent()));
 
         String context = relevantDocs.stream()
                 .map(Document::getFormattedContent)
                 .reduce("", (a, b) -> a + "\n" + b);
 
-        String promptText = String.format("""
+        String promptText = promptText(context, question);
+
+        return chatClient.prompt(promptText)
+                .user(question)
+                .call()
+                .content();
+    }
+
+    public static String promptText(String context, String question) {
+        return String.format("""
         Baseando-se no seguinte contexto, responda à pergunta.
         Se não puder responder com base no contexto, diga "Não tenho informação suficiente."
 
@@ -167,10 +179,5 @@ public class RelatorioSemanalService {
 
         Pergunta: %s
         """, context, question);
-
-        return chatClient.prompt(new Prompt(promptText))
-                .user(question)
-                .call()
-                .content();
     }
 }

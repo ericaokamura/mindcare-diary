@@ -47,7 +47,7 @@ class PrescricaoServiceTest {
         Paciente pac = new Paciente();
         when(profissionalRepository.findByNomeUsuario("prof")).thenReturn(Optional.of(prof));
         when(pacienteRepository.findByNomeUsuario("pac")).thenReturn(Optional.of(pac));
-        when(prescriptionRepository.findByPacienteAndProfissionalAndNumber(pac, prof, "123"))
+        when(prescriptionRepository.findByPacienteAndProfissionalAndNumero(pac, prof, "123"))
                 .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,

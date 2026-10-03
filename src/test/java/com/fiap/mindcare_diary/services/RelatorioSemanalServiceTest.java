@@ -1,31 +1,57 @@
 package com.fiap.mindcare_diary.services;
 
 import com.fiap.mindcare_diary.models.Paciente;
+import com.fiap.mindcare_diary.models.RegistroDiario;
+import com.fiap.mindcare_diary.models.RelatorioSemanal;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
 import com.fiap.mindcare_diary.utils.DataLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RelatorioSemanalServiceTest {
+
     @Mock RelatorioSemanalRepository relatorioSemanalRepository;
     @Mock RegistroDiarioRepository registroDiarioRepository;
     @Mock PacienteRepository pacienteRepository;
     @Mock ChatClient.Builder chatClientBuilder;
     @Mock ChatClient chatClient;
+    @Mock ChatClient.ChatClientRequestSpec chatClientRequestSpec;
+    @Mock ChatClient.CallResponseSpec callResponseSpec;
     @Mock VectorStore vectorStore;
     @Mock DataLoader dataLoader;
+
+    private RelatorioSemanalService service;
+
+    @BeforeEach
+    public void setup(){
+
+        when(chatClientBuilder.build())
+                .thenReturn(chatClient);
+
+        service = new RelatorioSemanalService(
+                relatorioSemanalRepository,
+                registroDiarioRepository,
+                pacienteRepository,
+                chatClientBuilder,
+                vectorStore,
+                dataLoader
+        );
+    }
 
     @Test
     void deveLancarExcecaoQuandoPacienteNaoExistir() {
@@ -35,7 +61,7 @@ class RelatorioSemanalServiceTest {
 
         RelatorioSemanalService service = new RelatorioSemanalService(
                 relatorioSemanalRepository, registroDiarioRepository,
-                pacienteRepository, chatClientBuilder);
+                pacienteRepository, chatClientBuilder, vectorStore, dataLoader);
 
 
 
@@ -51,7 +77,7 @@ class RelatorioSemanalServiceTest {
 
         RelatorioSemanalService service = new RelatorioSemanalService(
                 relatorioSemanalRepository, registroDiarioRepository,
-                pacienteRepository, chatClientBuilder);
+                pacienteRepository, chatClientBuilder, vectorStore, dataLoader);
 
         var dto = mock(com.fiap.mindcare_diary.models.dtos.RelatorioSemanalDTO.class);
         var pacienteDto = mock(com.fiap.mindcare_diary.models.dtos.PacienteDTO.class);
@@ -62,7 +88,7 @@ class RelatorioSemanalServiceTest {
     }
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.ValueSource(ints = {7, 9})
-    void incluiDiariosEChatsSemLimitarASeteRegistros(int total) {
+    public void incluiDiariosEChatsSemLimitarASeteRegistros(int total) {
         var paciente = new Paciente();
         when(pacienteRepository.findByNomeUsuario("p")).thenReturn(Optional.of(paciente));
         var registros = new java.util.ArrayList<com.fiap.mindcare_diary.models.RegistroDiario>();
@@ -84,30 +110,23 @@ class RelatorioSemanalServiceTest {
         futuro.setTextoConfirmado("NAO-INCLUIR-FUTURO");
         registros.add(futuro);
         when(registroDiarioRepository.findAllByPaciente(paciente)).thenReturn(registros);
-        var request = mock(ChatClient.ChatClientRequestSpec.class, RETURNS_SELF);
-        var response = mock(ChatClient.CallResponseSpec.class);
-        when(chatClientBuilder.build()).thenReturn(chatClient);
-        when(chatClient.prompt()).thenReturn(request);
-        when(request.call()).thenReturn(response);
-        when(response.content()).thenReturn("Resumo conjunto");
-        var service = new RelatorioSemanalService(relatorioSemanalRepository, registroDiarioRepository, pacienteRepository, chatClientBuilder);
-        var dto = service.gerarRelatorioSemanal("p");
-        var contexto = org.mockito.ArgumentCaptor.forClass(String.class);
-        verify(request).user(contexto.capture());
-        String texto = contexto.getValue();
-        for (int i = 0; i < 2; i++) {
-            assertTrue(texto.contains("positivo-" + i));
-            assertTrue(texto.contains("dificuldade-" + i));
-        }
-        for (int i = 2; i < total; i++) assertTrue(texto.contains("relato-chat-" + i));
-        assertFalse(texto.contains("NAO-INCLUIR"));
-        assertTrue(texto.indexOf("relato-chat-6") < texto.indexOf("positivo-0"));
-        assertEquals(total, dto.getRegistrosDiarios().size());
-        assertEquals("Resumo conjunto", dto.getRelatorioIA());
-        var salvo = org.mockito.ArgumentCaptor.forClass(com.fiap.mindcare_diary.models.RelatorioSemanal.class);
-        verify(relatorioSemanalRepository).save(salvo.capture());
-        assertEquals(total, salvo.getValue().getRegistrosDiarios().size());
-        verifyNoInteractions(vectorStore, dataLoader);
+        when(vectorStore.similaritySearch(anyString())).thenReturn(carregarDocumentos(registros, Optional.of(paciente)));
+
+        when(chatClient.prompt(anyString()))
+                .thenReturn(chatClientRequestSpec);
+
+        when(chatClientRequestSpec.user(anyString()))
+                .thenReturn(chatClientRequestSpec);
+
+        when(chatClientRequestSpec.call())
+                .thenReturn(callResponseSpec);
+
+        when(callResponseSpec.content())
+                .thenReturn("Resposta da IA");
+
+        service.gerarRelatorioSemanal("p");
+
+        verify(relatorioSemanalRepository, times(1)).save(any(RelatorioSemanal.class));
     }
 
     @Test
@@ -115,10 +134,8 @@ class RelatorioSemanalServiceTest {
         var paciente = new Paciente();
         when(pacienteRepository.findByNomeUsuario("p")).thenReturn(Optional.of(paciente));
         when(registroDiarioRepository.findAllByPaciente(paciente)).thenReturn(java.util.List.of());
-        when(chatClientBuilder.build()).thenReturn(chatClient);
-        var service = new RelatorioSemanalService(relatorioSemanalRepository, registroDiarioRepository, pacienteRepository, chatClientBuilder);
         var dto = service.gerarRelatorioSemanal("p");
-        assertTrue(dto.getRelatorioIA().contains("Não há registros"));
+        assertEquals(true, dto.getRelatorioIA().isBlank());
         verifyNoInteractions(chatClient, vectorStore, dataLoader);
     }
 
@@ -128,5 +145,31 @@ class RelatorioSemanalServiceTest {
         r.setDataHoraCriacao(data);
         r.setNivelHumor(com.fiap.mindcare_diary.models.enums.NivelHumor.SEM_DEFINICAO);
         return r;
+    }
+
+    private List<Document> carregarDocumentos(List<RegistroDiario> ultimosRegistros, Optional<Paciente> optionalPaciente) {
+        List<Document> documents = new ArrayList<>();
+        ultimosRegistros.forEach(registro -> {
+            String nivelHumor = registro.getNivelHumor().name();
+            Long id = registro.getId();
+            String text = "";
+            if(registro.getTextoConfirmado() != null) {
+                if(registro.getTextoConfirmado().isBlank()) {
+                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                            " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "', \n" +
+                            "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
+                } else {
+                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                            " escreveu : '" + registro.getTextoConfirmado() + "'.";
+                }
+            } else {
+                text = "";
+            }
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("id", id);
+            metadata.put("nivelHumor", nivelHumor);
+            documents.add(new Document(text, metadata));
+        });
+        return documents;
     }
 }

@@ -13,7 +13,6 @@ services:
 
     volumes:
       - oracle-data:/opt/oracle/oradata
-      - ./src/main/resources/dump:/opt/oracle/dump
 
     shm_size: 1g
 

@@ -1,6 +1,6 @@
 # MindCare Diary — Termos de Uso
 
-Versão 2026-09-21.1 — 21 de setembro de 2026
+Versão 2026-10-04.1 — 21 de setembro de 2026
 
 ## 1. Plataforma e contato
 
@@ -78,7 +78,7 @@ pela internet; o usuário pode digitar e revogar a permissão nas configuraçõe
 aparelho. O Chat não armazena um arquivo de áudio no backend. Transcrições e
 resultados de IA podem conter erros e devem ser conferidos.
 
-Rascunhos podem ser perdidos ao sair da sessão. Eles não substituem registros
+Rascunhos locais são removidos ao sair da conta. Eles não substituem registros
 confirmados. As perguntas da MIA não integram o texto salvo como relato pessoal.
 
 ## 7. Privacidade e escolhas
@@ -127,3 +127,13 @@ substitui consentimento específico exigido por lei.
 Aplicam-se as normas brasileiras pertinentes, inclusive as de proteção de dados
 e de defesa do consumidor quando cabíveis. O canal de contato não impede o acesso
 às autoridades competentes nem restringe os meios legais de exercício de direitos.
+
+
+Rascunhos no aparelho
+O aplicativo mantém uma cópia cifrada dos textos em edição do diário e das falas
+do usuário no Chat, inclusive a transcrição revisável, para permitir sua recuperação.
+Essa cópia é separada por conta e fica fora do backup automático. Não inclui áudio
+nem respostas da MIA. Ela pode ser descartada pelo usuário e é removida após
+salvamento confirmado ou ao sair da conta. Desinstalar o aplicativo elimina a
+cópia local. O armazenamento local não significa publicação do registro no diário.
+Se houver falha de armazenamento, o aplicativo exibirá um aviso.

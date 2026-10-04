@@ -176,6 +176,9 @@ public class RegistroDiarioRepository {
 
     @Transactional
     public void saveAndFlush(RegistroDiario registroDiario) {
+        // Oracle considera iguais as chaves compostas com mesmo paciente e UUID nulo.
+        // Preserva chaves do Chat e atribui uma chave aos registros tradicionais sem UUID.
+        if (registroDiario.getIdRequisicao() == null) registroDiario.setIdRequisicao(UUID.randomUUID());
         Long pacienteId = registroDiario.getPaciente().getId();
         String nivelHumor = registroDiario.getNivelHumor() == null ? "" : registroDiario.getNivelHumor().name();
         String pontosPositivos = registroDiario.getPontosPositivos();

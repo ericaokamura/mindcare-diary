@@ -45,7 +45,7 @@ public class Usuario implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private UserRole userRole;
 
-    private boolean bloqueado;
+    private boolean bloqueado = false;
 
     private LocalDateTime encerradaEm;
 

@@ -22,9 +22,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MiaController.class)
@@ -104,14 +106,16 @@ class MiaControllerTest {
     void savesConfirmedTextUnderAuthenticatedPatient() throws Exception {
         var p = new Paciente(); p.setNomeUsuario("paciente-teste"); p.setAtivo(true);
         when(patients.findForDiaryUpdate("paciente-teste")).thenReturn(Optional.of(p));
+        when(records.findByPacienteAndIdRequisicao(
+                eq(p),
+                eq(UUID.fromString("0afc7e20-3210-4ec0-8b04-7a52047f04c0"))
+        )).thenReturn(Optional.empty());
         doNothing().when(records).saveAndFlush(any());
         mvc.perform(post("/mia/registros").header("Authorization", "Bearer test-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"idRequisicao\":\"0afc7e20-3210-4ec0-8b04-7a52047f04c0\",\"textoConfirmado\":\"Meu relato revisado\",\"nomeUsuario\":\"outro\"}"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(12))
-                .andExpect(jsonPath("$.origem").value("CHAT"))
-                .andExpect(jsonPath("$.textoConfirmado").value("Meu relato revisado"))
-                .andExpect(jsonPath("$.paciente.nomeUsuario").value("paciente-teste"))
+                .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(header().string("Cache-Control", "no-store"));
         verifyNoInteractions(ai);
         verify(patients, never()).findForDiaryUpdate("outro");

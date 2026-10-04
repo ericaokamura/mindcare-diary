@@ -42,10 +42,26 @@ public class PrivacidadeService {
 
     @Transactional
     public void registrarAceite(Usuario usuario, String versao) {
-        if (!VERSAO.equals(versao)) throw new ResponseStatusException(HttpStatus.CONFLICT, "Atualize os termos no aplicativo.");
+        if (!VERSAO.equals(versao)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Atualize os termos no aplicativo.");
+        }
+
+        List<AceiteTermos> aceites = em.createQuery(
+                        "SELECT a FROM AceiteTermos a WHERE a.versao = :versao",
+                        AceiteTermos.class
+                )
+                .setParameter("versao", versao)
+                .getResultList();
+
+        if(aceites != null && aceites.size() > 0) {
+            return;
+        }
+
         var aceite = new AceiteTermos();
-        aceite.setUsuario(usuario); aceite.setVersao(VERSAO);
-        aceite.setHashDocumentos(hashDocumentos); aceite.setAceitoEm(Instant.now());
+        aceite.setUsuario(usuario);
+        aceite.setVersao(VERSAO);
+        aceite.setHashDocumentos(hashDocumentos);
+        aceite.setAceitoEm(Instant.now());
         em.persist(aceite);
     }
 

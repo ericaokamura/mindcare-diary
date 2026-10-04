@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class CustomControllerAdvice {
+public class ApplicationExceptionHandler {
 
     @ExceptionHandler(value = { AgendamentoNaoPodeSerRealizadoException.class })
     public ResponseEntity<ErrorDTO> handleAgendamentoNaoPodeSerRealizadoException(AgendamentoNaoPodeSerRealizadoException exception) {
@@ -72,4 +72,8 @@ public class CustomControllerAdvice {
         return ResponseEntity.badRequest().body(new ErrorDTO(400, exception.getMessage()));
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDTO> handleInternalServerError(Exception exception) {
+        return ResponseEntity.internalServerError().body(new ErrorDTO(500, exception.getMessage()));
+    }
 }

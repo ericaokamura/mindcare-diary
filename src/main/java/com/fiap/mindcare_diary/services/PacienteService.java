@@ -1,9 +1,6 @@
 package com.fiap.mindcare_diary.services;
 
-import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoException;
-import com.fiap.mindcare_diary.exceptions.PacienteNaoEncontradoParaEsteProfissionalException;
-import com.fiap.mindcare_diary.exceptions.ProfissionalNaoEncontradoException;
-import com.fiap.mindcare_diary.exceptions.ProfissionalSemPermissaoParaRealizarUploadDeReceitaMedica;
+import com.fiap.mindcare_diary.exceptions.*;
 import com.fiap.mindcare_diary.mappers.PacienteMapper;
 import com.fiap.mindcare_diary.mappers.PrescriptionMapper;
 import com.fiap.mindcare_diary.mappers.ProfissionalMapper;
@@ -53,6 +50,10 @@ public class PacienteService {
     private PasswordEncoder passwordEncoder;
 
     public void salvarCadastroPaciente(PacienteDTO pacienteDTO) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteDTO.getNomeUsuario());
+        if(optionalPaciente.isPresent()) {
+            throw new UsuarioJaExistenteException("Paciente já cadastrado.");
+        }
         Paciente paciente = PacienteMapper.convertDTOToModel(pacienteDTO);
         paciente.setAtivo(true);
         paciente.setDataHoraAtivacao(LocalDateTime.now());

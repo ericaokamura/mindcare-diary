@@ -114,9 +114,9 @@ public class RegistroDiarioRepository {
             return null;
         }
 
-        if (bytes.length != 16) {
+        if (bytes.length != 36) {
             throw new IllegalArgumentException(
-                    "UUID deve possuir exatamente 16 bytes. Recebido: " + bytes.length
+                    "UUID deve possuir exatamente 36 bytes. Recebido: " + bytes.length
             );
         }
 
@@ -159,8 +159,8 @@ public class RegistroDiarioRepository {
 
     public Optional<RegistroDiario> findByPacienteAndIdRequisicao(Paciente paciente, UUID idRequisicao) {
         Long pacienteId = paciente.getId();
-        String uuidHex = idRequisicao == null ? "": idRequisicao.toString().replace("-", "");
-        String sql = "select * from registro_diario where paciente_id = ? and id_requisicao = HEXTORAW(?)";
+        String uuidHex = idRequisicao == null ? "": idRequisicao.toString();
+        String sql = "select * from registro_diario where paciente_id = ? and id_requisicao = ?";
 
         List<RegistroDiario> registros = jdbcTemplate.query(
                 sql,
@@ -184,8 +184,8 @@ public class RegistroDiarioRepository {
                 : Timestamp.valueOf(registroDiario.getDataHoraCriacao());
         String textConfirmado = registroDiario.getTextoConfirmado();
         String origem = registroDiario.getOrigem() == null ? "" : registroDiario.getOrigem().name();
-        String idRequisicao = registroDiario.getIdRequisicao() == null ? "" : registroDiario.getIdRequisicao().toString().replace("-", "");
-        String sql = "insert into registro_diario (paciente_id, nivel_humor, pontos_positivos, dificuldades_desafios, data_hora_criacao, texto_confirmado, origem, id_requisicao) values (?, ?, ?, ?, ?, ?, ?, HEXTORAW(?))";
+        String idRequisicao = registroDiario.getIdRequisicao() == null ? "" : registroDiario.getIdRequisicao().toString();
+        String sql = "insert into registro_diario (paciente_id, nivel_humor, pontos_positivos, dificuldades_desafios, data_hora_criacao, texto_confirmado, origem, id_requisicao) values (?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
                 pacienteId, nivelHumor, pontosPositivos, dificuldadesDesafios, dataHoraCriacao, textConfirmado, origem, idRequisicao);

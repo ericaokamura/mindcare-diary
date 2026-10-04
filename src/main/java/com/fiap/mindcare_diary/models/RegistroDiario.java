@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -41,6 +43,7 @@ public class RegistroDiario {
     @org.hibernate.annotations.ColumnDefault("'TRADITIONAL'")
     private OrigemRegistro origem = OrigemRegistro.TRADITIONAL;
 
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "id_requisicao", length = 36)
     private UUID idRequisicao;
 }

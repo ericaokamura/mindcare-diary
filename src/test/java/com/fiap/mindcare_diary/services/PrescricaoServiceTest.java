@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PrescricaoServiceTest {
+
     @Mock PrescriptionRepository prescriptionRepository;
     @Mock PacienteRepository pacienteRepository;
     @Mock ProfissionalRepository profissionalRepository;

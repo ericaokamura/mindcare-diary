@@ -8,16 +8,15 @@ import com.fiap.mindcare_diary.repositories.UsuarioRepository;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import com.fiap.mindcare_diary.models.Paciente;
-import com.fiap.mindcare_diary.models.RegistroDiario;
 import com.fiap.mindcare_diary.services.TokenService;
 import com.fiap.mindcare_diary.services.mia.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -33,12 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({SecurityConfiguration.class, SecurityFilter.class, MiaService.class,
         MiaIntentClassifier.class, MiaResponseValidator.class, MiaRegistroService.class})
 class MiaControllerTest {
+
     @Autowired MockMvc mvc;
-    @MockBean TokenService tokens;
-    @MockBean UsuarioRepository usuarios;
-    @MockBean MiaAiService ai;
-    @MockBean PacienteRepository patients;
-    @MockBean RegistroDiarioRepository records;
+    @MockitoBean TokenService tokens;
+    @MockitoBean UsuarioRepository usuarios;
+    @MockitoBean MiaAiService ai;
+    @MockitoBean PacienteRepository patients;
+    @MockitoBean RegistroDiarioRepository records;
     private Usuario patient;
 
     @BeforeEach

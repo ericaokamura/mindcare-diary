@@ -16,6 +16,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AutenticacaoServiceTest {
+
     @Mock UsuarioRepository usuarioRepository;
     @InjectMocks AutenticacaoService service;
 

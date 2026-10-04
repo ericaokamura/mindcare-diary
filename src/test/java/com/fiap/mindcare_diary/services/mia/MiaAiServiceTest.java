@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MiaAiServiceTest {
+
     @Test
     void reusesModelAndSeparatesUntrustedInputFromSystemInstructions() {
         var model = mock(ChatModel.class);

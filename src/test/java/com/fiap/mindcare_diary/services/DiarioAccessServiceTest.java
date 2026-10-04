@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class DiarioAccessServiceTest {
+
     @Test void permitsOnlyOwnerOrLinkedProfessionalForReading() {
         var repo = mock(PacienteRepository.class); var access = new DiarioAccessService(repo);
         var user = new Usuario(); user.setNomeUsuario("ana"); user.setAtivo(true); user.setUserRole(UserRole.PACIENTE);

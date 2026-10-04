@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegistroDiarioMapperTest {
+
     @Test void legacyInputDoesNotRequireDateOrTrustClientOwnership() {
         var dto = new RegistroDiarioDTO(); dto.setDataHoraCriacao(""); dto.setPaciente(new PacienteDTO());
         dto.setOrigem("CHAT"); dto.setTextoConfirmado("não deve entrar pelo fluxo tradicional");

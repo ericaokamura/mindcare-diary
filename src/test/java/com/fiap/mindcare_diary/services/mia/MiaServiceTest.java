@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MiaServiceTest {
+
     @Test
     void diagnosticLogsIdentifyFailuresWithoutSensitiveContent() {
         var logger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(MiaService.class);

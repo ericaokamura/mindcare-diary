@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MiaIntentClassifierTest {
+
     private final MiaIntentClassifier classifier = new MiaIntentClassifier();
 
     @ParameterizedTest

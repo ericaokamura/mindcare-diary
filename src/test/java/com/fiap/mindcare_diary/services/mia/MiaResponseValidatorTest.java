@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MiaResponseValidatorTest {
+
     private final MiaResponseValidator validator = new MiaResponseValidator(new ObjectMapper());
 
     @ParameterizedTest

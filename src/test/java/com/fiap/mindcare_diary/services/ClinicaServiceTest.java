@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClinicaServiceTest {
+
     @Mock ClinicaRepository clinicaRepository;
     @Mock ProfissionalRepository profissionalRepository;
     @Mock PacienteRepository pacienteRepository;

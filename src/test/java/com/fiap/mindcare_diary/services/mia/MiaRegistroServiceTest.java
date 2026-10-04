@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MiaRegistroServiceTest {
+
     PacienteRepository patients;
     RegistroDiarioRepository records;
     MiaRegistroService service;

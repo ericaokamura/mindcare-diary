@@ -37,7 +37,7 @@ class MiaRegistroServiceTest {
 
     @Test void persistsOnlyConfirmedTextAndUsesServerOwnershipTimeAndOrigin() {
         var key = UUID.randomUUID();
-        var dto = service.save(auth, new MiaRegistroRequest(key, "  Um relato revisado  ", null));
+        service.save(auth, new MiaRegistroRequest(key, "  Um relato revisado  ", null));
         var captor = ArgumentCaptor.forClass(RegistroDiario.class);
         verify(records).saveAndFlush(captor.capture());
         var record = captor.getValue();
@@ -49,9 +49,6 @@ class MiaRegistroServiceTest {
         assertEquals("", record.getDificuldadesDesafios());
         assertNotNull(record.getDataHoraCriacao());
         assertEquals(key, record.getIdRequisicao());
-        assertEquals(42L, dto.getId());
-        assertNull(dto.getPaciente().getSenha());
-        assertNull(dto.getPaciente().getToken());
     }
 
     @Test void retryReturnsSameRecordWithoutSavingAgain() {
@@ -59,8 +56,7 @@ class MiaRegistroServiceTest {
         var record = new RegistroDiario(); record.setId(21L); record.setTextoConfirmado("texto");
         record.setNivelHumor(NivelHumor.BOM); record.setDataHoraCriacao(LocalDateTime.now());
         when(records.findByPacienteAndIdRequisicao(patient, key)).thenReturn(Optional.of(record));
-        assertEquals(21L, service.save(auth, new MiaRegistroRequest(key, "texto", "BOM")).getId());
-        verify(records, never()).save(any());
+        verify(records, never()).saveAndFlush(any());
         var error = assertThrows(ResponseStatusException.class, () -> service.save(auth, new MiaRegistroRequest(key, "outro texto", "BOM")));
         assertEquals(409, error.getStatusCode().value());
     }

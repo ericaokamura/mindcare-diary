@@ -6,14 +6,17 @@ import com.fiap.mindcare_diary.models.RegistroDiario;
 import com.fiap.mindcare_diary.models.enums.NivelHumor;
 import com.fiap.mindcare_diary.models.enums.OrigemRegistro;
 import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.nio.ByteBuffer;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,16 +48,91 @@ public class RegistroDiarioRepository {
         );
     }
 
-    public List<RegistroDiario> carregarUltimosRegistrosDiarios(String pacienteNomeUsuario) {
+    public List<RegistroDiario> deletarTodos(String pacienteNomeUsuario) {
+        Optional<Paciente> optionalPaciente = pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
+        if(optionalPaciente.isEmpty()) {
+            throw new PacienteNaoEncontradoException("Paciente não encontrado.");
+        }
+        Paciente paciente = optionalPaciente.get();
+        Long pacienteId = paciente.getId();
+        String sql = "delete * from registro_diario where paciente_id = ?";
 
-        return jdbcTemplate.queryForObject(
-                "CALL carrega_ultimos_registros_diarios(?)",
-                List.class,
-                pacienteNomeUsuario
+        return jdbcTemplate.query(
+                sql,
+                registroDiarioRowMapper,
+                pacienteId
+        );
+    }
+
+    public List<RegistroDiario> carregarUltimosRegistrosDiarios(
+            String pacienteNomeUsuario) {
+
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
+        if(optionalPaciente.isEmpty()) {
+            throw new PacienteNaoEncontradoException("Paciente não encontrado.");
+        }
+
+
+        return jdbcTemplate.execute(
+                (CallableStatementCreator) connection -> {
+                    CallableStatement cs = connection.prepareCall(
+                            "{ ? = call MINDCARE.CARREGA_ULTIMOS_REGISTROS_DIARIOS(?) }"
+                    );
+                    cs.registerOutParameter(1, Types.REF_CURSOR);
+                    cs.setString(2, pacienteNomeUsuario);
+                    return cs;
+                },
+                cs -> {
+                    cs.execute();
+                    List<RegistroDiario> registros = new ArrayList<>();
+                    try {
+                        ResultSet rs = (ResultSet) cs.getObject(1);
+                        while (rs.next()) {
+                            RegistroDiario registro = new RegistroDiario();
+                            registro.setId(rs.getLong("id"));
+                            registro.setNivelHumor(NivelHumor.valueOf(rs.getString("nivel_humor")));
+                            registro.setPontosPositivos(rs.getString("pontos_positivos"));
+                            registro.setDificuldadesDesafios(rs.getString("dificuldades_desafios"));
+                            registro.setDataHoraCriacao(rs.getTimestamp("data_hora_criacao").toLocalDateTime());
+                            registro.setTextoConfirmado(rs.getString("texto_confirmado"));
+                            registro.setOrigem(OrigemRegistro.valueOf(rs.getString("origem")));
+                            registro.setIdRequisicao(bytesToUUID(rs.getBytes("id_requisicao")));
+                            registro.setPaciente(optionalPaciente.get());
+                            registros.add(registro);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return registros;
+                }
+        );
+    }
+
+    private UUID bytesToUUID(byte[] bytes) {
+
+        if (bytes == null) {
+            return null;
+        }
+
+        if (bytes.length != 16) {
+            throw new IllegalArgumentException(
+                    "UUID deve possuir exatamente 16 bytes. Recebido: " + bytes.length
+            );
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+
+        long mostSignificantBits = buffer.getLong();
+        long leastSignificantBits = buffer.getLong();
+
+        return new UUID(
+                mostSignificantBits,
+                leastSignificantBits
         );
     }
 
     private final RowMapper<RegistroDiario> registroDiarioRowMapper = (rs, rowNum) -> {
+
         RegistroDiario registro = new RegistroDiario();
 
         registro.setId(rs.getLong("id"));
@@ -73,6 +151,8 @@ public class RegistroDiarioRepository {
         registro.setOrigem(rs.getString("origem") == null || rs.getString("origem").isBlank()
                 ? OrigemRegistro.TRADITIONAL
                 : OrigemRegistro.valueOf(rs.getString("origem")));
+
+        registro.setIdRequisicao(bytesToUUID(rs.getBytes("id_requisicao")));
 
         return registro;
     };

@@ -41,6 +41,6 @@ public class RegistroDiario {
     @org.hibernate.annotations.ColumnDefault("'TRADITIONAL'")
     private OrigemRegistro origem = OrigemRegistro.TRADITIONAL;
 
-    @Column(name = "id_requisicao")
+    @Column(name = "id_requisicao", length = 36)
     private UUID idRequisicao;
 }

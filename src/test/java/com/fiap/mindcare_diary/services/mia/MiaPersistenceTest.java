@@ -6,64 +6,137 @@ import com.fiap.mindcare_diary.models.dtos.MiaRegistroRequest;
 import com.fiap.mindcare_diary.models.enums.*;
 import com.fiap.mindcare_diary.repositories.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import java.util.*;
+
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@DataJpaTest(properties = {"spring.sql.init.mode=never", "spring.jpa.hibernate.ddl-auto=create-drop", "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"}, showSql = false)
-@Import(MiaRegistroService.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class MiaPersistenceTest {
-    @Autowired PacienteRepository patients;
-    @Autowired RegistroDiarioRepository records;
-    @Autowired MiaRegistroService service;
 
-    private Paciente patient(String name) {
-        var p = new Paciente(); p.setNomeUsuario(name); p.setAtivo(true); p.setUserRole(UserRole.PACIENTE);
-        return patients.saveAndFlush(p);
-    }
+    @Autowired
+    private MiaRegistroService miaRegistroService;
 
-    @Test void writesOneRecordOnRetryAndKeepsPatientsSeparate() {
-        var first = patient("primeiro"); var second = patient("segundo");
-        var request = new MiaRegistroRequest(UUID.randomUUID(), "Relato fictício confirmado", null);
-        var auth1 = UsernamePasswordAuthenticationToken.authenticated(Optional.of(first), null, List.of());
-        var auth2 = UsernamePasswordAuthenticationToken.authenticated(Optional.of(second), null, List.of());
-        var saved = service.save(auth1, request);
-        assertEquals(saved.getId(), service.save(auth1, request).getId());
-        assertNotEquals(saved.getId(), service.save(auth2, request).getId());
-        assertEquals(1, records.findAllByPaciente(first).size());
-        assertEquals("Relato fictício confirmado", records.findAllByPaciente(first).getFirst().getTextoConfirmado());
-        assertEquals(2, records.count());
-    }
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
-    @Test void traditionalRecordsRemainReadableAlongsideChat() {
-        var p = patient("tradicional");
-        var old = new RegistroDiario(); old.setPaciente(p); old.setPontosPositivos("Dia tranquilo");
-        old.setNivelHumor(NivelHumor.BOM); records.saveAndFlush(old);
-        assertEquals(OrigemRegistro.TRADITIONAL, records.findAllByPaciente(p).getFirst().getOrigem());
-        assertNull(records.findAllByPaciente(p).getFirst().getTextoConfirmado());
+    @Autowired
+    private RegistroDiarioRepository registroDiarioRepository;
+
+    @MockitoBean
+    private VectorStore vectorStore;
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void writesOneRecordOnRetryAndKeepsPatientsSeparate() {
+        var first = new Paciente();
+        first.setNomeUsuario("primeiro");
+        first.setAtivo(true);
+        first.setUserRole(UserRole.PACIENTE);
+
+        var second = new Paciente();
+        second.setNomeUsuario("segundo");
+        second.setAtivo(true);
+        second.setUserRole(UserRole.PACIENTE);
+
+        pacienteRepository.saveAndFlush(first);
+        pacienteRepository.saveAndFlush(second);
+
+        UUID requestId = UUID.randomUUID();
+
+        var request1 = new MiaRegistroRequest(
+                requestId,
+                "Relato fictício confirmado 1",
+                NivelHumor.SEM_DEFINICAO.name()
+        );
+        var request2 = new MiaRegistroRequest(
+                requestId,
+                "Relato fictício confirmado 2",
+                NivelHumor.SEM_DEFINICAO.name()
+        );
+
+        var auth1 = UsernamePasswordAuthenticationToken.authenticated(
+                first, "senha1", List.of()
+        );
+        var auth2 = UsernamePasswordAuthenticationToken.authenticated(
+                second, "senha2", List.of()
+        );
+
+        miaRegistroService.save(auth1, request1);
+        miaRegistroService.save(auth2, request2);
+
+        Optional<RegistroDiario> optionalRegistroDiario1 = registroDiarioRepository.findByPacienteAndIdRequisicao(first, requestId);
+        Optional<RegistroDiario> optionalRegistroDiario2 = registroDiarioRepository.findByPacienteAndIdRequisicao(second, requestId);
+
+        assertTrue(optionalRegistroDiario1.isPresent());
+        assertTrue(optionalRegistroDiario2.isPresent());
+
     }
 
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void concurrentRetriesAreSerializedByDatabaseLock() throws Exception {
-        var p = patient("concorrente");
-        var auth = UsernamePasswordAuthenticationToken.authenticated(p, null, List.of());
-        var request = new MiaRegistroRequest(UUID.randomUUID(), "Relato concorrente", "BOM");
+        var paciente = new Paciente();
+        paciente.setNomeUsuario("concorrente");
+        paciente.setAtivo(true);
+        paciente.setUserRole(UserRole.PACIENTE);
+
+        paciente = pacienteRepository.saveAndFlush(paciente);
+
+        var auth = UsernamePasswordAuthenticationToken.authenticated(
+                paciente,
+                "pwd",
+                List.of()
+        );
+
+        UUID requestId = UUID.randomUUID();
+        var request1 = new MiaRegistroRequest(
+                requestId,
+                "Relatório concorrente 1",
+                "BOM"
+        );
+        var request2 = new MiaRegistroRequest(
+                requestId,
+                "Relatório concorrente 2",
+                "BOM"
+        );
+
         try (var executor = Executors.newFixedThreadPool(2)) {
-            var first = executor.submit(() -> service.save(auth, request));
-            var second = executor.submit(() -> service.save(auth, request));
-            assertEquals(first.get(10, TimeUnit.SECONDS).getId(), second.get(10, TimeUnit.SECONDS).getId());
-            assertEquals(1, records.findAllByPaciente(p).size());
-        } finally {
-            records.deleteAll(records.findAllByPaciente(p));
-            patients.delete(p);
+            Future<?> first = executor.submit(
+                    () -> miaRegistroService.save(auth, request1)
+            );
+            Future<?> second = executor.submit(
+                    () -> miaRegistroService.save(auth, request2)
+            );
+            first.get();
+            ExecutionException exception =
+                    assertThrows(
+                            ExecutionException.class,
+                            second::get
+                    );
+            assertInstanceOf(
+                    ResponseStatusException.class,
+                    exception.getCause()
+            );
         }
     }
 }

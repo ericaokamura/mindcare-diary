@@ -85,7 +85,7 @@ class PrivacidadeServiceTest {
         var result = service.encerrar(p.getId(), "senha-teste");
         assertNotNull(result.get("protocolo")); assertNotNull(p.getEncerradaEm());
         assertFalse(p.isAtivo()); assertTrue(p.isBloqueado()); assertNull(p.getToken());
-        assertEquals(1, registros.findAllByPaciente(p).size());
+        assertEquals(1, registros.carregarTodosRegistrosDiarios(p.getNomeUsuario()).size());
         assertEquals(result.get("protocolo"), service.encerrar(p.getId(), "senha-teste").get("protocolo"));
         assertThrows(ResponseStatusException.class, () -> service.exportar(p.getId(), "senha-teste"));
     }

@@ -39,25 +39,21 @@ public class DataLoader {
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
             List<RegistroDiario> registroDiarios = registroDiarioRepository.carregarUltimosRegistrosDiarios(optionalPaciente.get().getNomeUsuario());
-//            List<RegistroDiario> ultimosRegistros = registroDiarios.stream()
-//                    .filter(registro -> registro.getDataHoraCriacao().isAfter(LocalDateTime.now().minusDays(7)))
-//                    .toList();
             registroDiarios.forEach(registro -> {
                 String nivelHumor = registro.getNivelHumor().name();
                 Long id = registro.getId();
                 String text = "";
-                if(registro.getTextoConfirmado() != null) {
-                    if(registro.getTextoConfirmado().isBlank()) {
-                        text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
+                if(registro.getTextoConfirmado() != null && registro.getTextoConfirmado().isBlank()) {
+                    text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
                                 " descreveu suas dificuldades como '" + registro.getDificuldadesDesafios() + "', \n" +
                                 "seus pontos positivos como '" + registro.getPontosPositivos() + "'.";
-                    } else {
+                }
+
+                if(registro.getTextoConfirmado() == null) {
                         text = "Paciente " + optionalPaciente.get().getNomeCompleto() +
                                 " escreveu : '" + registro.getTextoConfirmado() + "'.";
-                    }
-                } else {
-                    text = "";
                 }
+
                 Map<String, Object> metadata = new HashMap<>();
                 metadata.put("id", id);
                 metadata.put("nivelHumor", nivelHumor);

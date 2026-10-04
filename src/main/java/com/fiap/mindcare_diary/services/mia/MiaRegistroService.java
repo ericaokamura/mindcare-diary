@@ -53,6 +53,7 @@ public class MiaRegistroService {
             if (!text.equals(record.getTextoConfirmado()) || mood != record.getNivelHumor()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta requisição já foi salva com outro conteúdo. Consulte seu histórico.");
             }
+            return;
         }
         var record = new RegistroDiario();
         record.setPaciente(patient);

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 
@@ -89,8 +90,9 @@ class RelatorioSemanalServiceTest {
     @org.junit.jupiter.params.provider.ValueSource(ints = {7, 9})
     public void incluiDiariosEChatsSemLimitarASeteRegistros(int total) {
         var paciente = new Paciente();
+        paciente.setNomeUsuario("p");
         when(pacienteRepository.findByNomeUsuario("p")).thenReturn(Optional.of(paciente));
-        var registros = new java.util.ArrayList<com.fiap.mindcare_diary.models.RegistroDiario>();
+        List<RegistroDiario> registros = new ArrayList<>();
         for (int i = 0; i < total; i++) {
             var r = registro(i + 1, java.time.LocalDateTime.now().minusHours(i * 16L).minusMinutes(1));
             if (i < 2) {
@@ -100,18 +102,21 @@ class RelatorioSemanalServiceTest {
                 r.setOrigem(com.fiap.mindcare_diary.models.enums.OrigemRegistro.CHAT);
                 r.setTextoConfirmado("relato-chat-" + i);
             }
+            r.setPaciente(paciente);
             registros.add(r);
         }
         var antigo = registro(90, java.time.LocalDateTime.now().minusDays(8));
         antigo.setTextoConfirmado("NAO-INCLUIR-ANTIGO");
+        antigo.setPaciente(paciente);
         registros.add(antigo);
         var futuro = registro(91, java.time.LocalDateTime.now().plusDays(1));
         futuro.setTextoConfirmado("NAO-INCLUIR-FUTURO");
+        futuro.setPaciente(paciente);
         registros.add(futuro);
-        when(registroDiarioRepository.findAllByPaciente(paciente)).thenReturn(registros);
+        when(registroDiarioRepository.carregarUltimosRegistrosDiarios(anyString())).thenReturn(registros);
         when(vectorStore.similaritySearch(anyString())).thenReturn(carregarDocumentos(registros, Optional.of(paciente)));
 
-        when(chatClient.prompt(anyString()))
+        when(chatClient.prompt(any(Prompt.class)))
                 .thenReturn(chatClientRequestSpec);
 
         when(chatClientRequestSpec.user(anyString()))
@@ -131,8 +136,9 @@ class RelatorioSemanalServiceTest {
     @Test
     void semRegistrosNaoChamaIA() {
         var paciente = new Paciente();
+        paciente.setNomeUsuario("p");
         when(pacienteRepository.findByNomeUsuario("p")).thenReturn(Optional.of(paciente));
-        when(registroDiarioRepository.findAllByPaciente(paciente)).thenReturn(java.util.List.of());
+        when(registroDiarioRepository.carregarUltimosRegistrosDiarios(paciente.getNomeUsuario())).thenReturn(List.of());
         var dto = service.gerarRelatorioSemanal("p");
         assertEquals(true, dto.getRelatorioIA().isBlank());
         verifyNoInteractions(chatClient, vectorStore, dataLoader);

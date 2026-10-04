@@ -26,7 +26,7 @@ class RegistroDiarioServiceTest {
 
         assertThrows(RuntimeException.class,
                 () -> service.salvarRegistroDiario("x", new com.fiap.mindcare_diary.models.dtos.RegistroDiarioDTO()));
-        verify(registroDiarioRepository, never()).save(any());
+        verify(registroDiarioRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -35,6 +35,6 @@ class RegistroDiarioServiceTest {
 
         assertThrows(RuntimeException.class,
                 () -> service.retornarRegistrosDiarios("x"));
-        verify(registroDiarioRepository, never()).findAllByPaciente(any());
+        verify(registroDiarioRepository, never()).carregarTodosRegistrosDiarios(any());
     }
 }

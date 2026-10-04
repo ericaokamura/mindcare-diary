@@ -15,6 +15,7 @@ import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
 import com.fiap.mindcare_diary.utils.DataLoader;
 import org.springframework.ai.chat.client.ChatClient;
 
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class RelatorioSemanalService {
             if (paciente.getEncerradaEm() != null) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.GONE, "Conta encerrada.");
             List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.carregarUltimosRegistrosDiarios(pacienteNomeUsuario);
             String relatorioIA = "";
-            if(!registrosDiarios.isEmpty()) {
+            if(registrosDiarios != null && !registrosDiarios.isEmpty()) {
                 relatorioIA = gerarRelatorioIA(pacienteNomeUsuario);
             }
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
@@ -161,7 +162,7 @@ public class RelatorioSemanalService {
 
         String promptText = promptText(context, question);
 
-        return chatClient.prompt(promptText)
+        return chatClient.prompt(new Prompt(promptText))
                 .user(question)
                 .call()
                 .content();

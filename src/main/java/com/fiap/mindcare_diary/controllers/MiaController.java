@@ -26,8 +26,9 @@ public class MiaController {
     }
 
     @PostMapping("/registros")
-    public ResponseEntity<RegistroDiarioDTO> save(Authentication authentication, @RequestBody MiaRegistroRequest request) {
-        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(records.save(authentication, request));
+    public ResponseEntity<Void> save(Authentication authentication, @RequestBody MiaRegistroRequest request) {
+        records.save(authentication, request);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).build();
     }
 
     @PostMapping("/mensagens")

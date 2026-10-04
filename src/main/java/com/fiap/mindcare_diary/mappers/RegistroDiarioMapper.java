@@ -32,7 +32,6 @@ public class RegistroDiarioMapper {
 
     public static RegistroDiario convertDTOToModel(RegistroDiarioDTO registroDiarioDTO) {
         RegistroDiario model = new RegistroDiario();
-        // The service assigns patient and creation time; never trust these input fields.
         model.setDificuldadesDesafios(registroDiarioDTO.getDificuldadesDesafios());
         model.setPontosPositivos(registroDiarioDTO.getPontosPositivos());
         model.setNivelHumor(registroDiarioDTO.getNivelHumor() == null || registroDiarioDTO.getNivelHumor().isBlank() ? NivelHumor.SEM_DEFINICAO : NivelHumor.valueOf(registroDiarioDTO.getNivelHumor()));

@@ -27,7 +27,7 @@ public class MiaRegistroService {
     }
 
     @Transactional
-    public RegistroDiarioDTO save(Authentication authentication, MiaRegistroRequest request) {
+    public void save(Authentication authentication, MiaRegistroRequest request) {
         var user = MiaAuthentication.requirePatient(authentication);
         if (request == null || request.idRequisicao() == null || request.textoConfirmado() == null
                 || request.textoConfirmado().isBlank() || request.textoConfirmado().length() > MAX_TEXT_LENGTH) {
@@ -53,7 +53,6 @@ public class MiaRegistroService {
             if (!text.equals(record.getTextoConfirmado()) || mood != record.getNivelHumor()) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Esta requisição já foi salva com outro conteúdo. Consulte seu histórico.");
             }
-            return RegistroDiarioMapper.convertModelToDTO(record);
         }
         var record = new RegistroDiario();
         record.setPaciente(patient);
@@ -64,6 +63,6 @@ public class MiaRegistroService {
         record.setDificuldadesDesafios("");
         record.setDataHoraCriacao(LocalDateTime.now());
         record.setIdRequisicao(request.idRequisicao());
-        return RegistroDiarioMapper.convertModelToDTO(records.saveAndFlush(record));
+        records.saveAndFlush(record);
     }
 }

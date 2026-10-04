@@ -32,7 +32,7 @@ class MiaRegistroServiceTest {
         patient.setSenha("nao-retornar"); patient.setToken("nao-retornar");
         auth = UsernamePasswordAuthenticationToken.authenticated(Optional.of(patient), null, List.of());
         when(patients.findForDiaryUpdate("paciente")).thenReturn(Optional.of(patient));
-        when(records.saveAndFlush(any())).thenAnswer(i -> { RegistroDiario r = i.getArgument(0); r.setId(42L); return r; });
+        doNothing().when(records).saveAndFlush(any());
     }
 
     @Test void persistsOnlyConfirmedTextAndUsesServerOwnershipTimeAndOrigin() {
@@ -60,7 +60,7 @@ class MiaRegistroServiceTest {
         record.setNivelHumor(NivelHumor.BOM); record.setDataHoraCriacao(LocalDateTime.now());
         when(records.findByPacienteAndIdRequisicao(patient, key)).thenReturn(Optional.of(record));
         assertEquals(21L, service.save(auth, new MiaRegistroRequest(key, "texto", "BOM")).getId());
-        verify(records, never()).saveAndFlush(any());
+        verify(records, never()).save(any());
         var error = assertThrows(ResponseStatusException.class, () -> service.save(auth, new MiaRegistroRequest(key, "outro texto", "BOM")));
         assertEquals(409, error.getStatusCode().value());
     }

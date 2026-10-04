@@ -38,11 +38,11 @@ public class DataLoader {
         List<Document> documents = new ArrayList<>();
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {
-            List<RegistroDiario> registroDiarios = registroDiarioRepository.findAllByPaciente(optionalPaciente.get());
-            List<RegistroDiario> ultimosRegistros = registroDiarios.stream()
-                    .filter(registro -> registro.getDataHoraCriacao().isAfter(LocalDateTime.now().minusDays(7)))
-                    .toList();
-            ultimosRegistros.forEach(registro -> {
+            List<RegistroDiario> registroDiarios = registroDiarioRepository.carregarUltimosRegistrosDiarios(optionalPaciente.get().getNomeUsuario());
+//            List<RegistroDiario> ultimosRegistros = registroDiarios.stream()
+//                    .filter(registro -> registro.getDataHoraCriacao().isAfter(LocalDateTime.now().minusDays(7)))
+//                    .toList();
+            registroDiarios.forEach(registro -> {
                 String nivelHumor = registro.getNivelHumor().name();
                 Long id = registro.getId();
                 String text = "";

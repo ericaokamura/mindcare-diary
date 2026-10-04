@@ -104,7 +104,7 @@ class MiaControllerTest {
     void savesConfirmedTextUnderAuthenticatedPatient() throws Exception {
         var p = new Paciente(); p.setNomeUsuario("paciente-teste"); p.setAtivo(true);
         when(patients.findForDiaryUpdate("paciente-teste")).thenReturn(Optional.of(p));
-        when(records.saveAndFlush(any())).thenAnswer(i -> { RegistroDiario r = i.getArgument(0); r.setId(12L); return r; });
+        doNothing().when(records).saveAndFlush(any());
         mvc.perform(post("/mia/registros").header("Authorization", "Bearer test-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"idRequisicao\":\"0afc7e20-3210-4ec0-8b04-7a52047f04c0\",\"textoConfirmado\":\"Meu relato revisado\",\"nomeUsuario\":\"outro\"}"))

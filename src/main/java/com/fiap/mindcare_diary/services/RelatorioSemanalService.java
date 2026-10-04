@@ -61,22 +61,20 @@ public class RelatorioSemanalService {
         this.dataLoader = dataLoader;
     }
 
-    public RelatorioSemanalDTO gerarRelatorioSemanal(String nomeUsuario) {
+    public RelatorioSemanalDTO gerarRelatorioSemanal(String pacienteNomeUsuario) {
 
         Integer numero = 100000 + random.nextInt(900000);
 
         LocalDateTime fim = LocalDateTime.now();
         LocalDateTime inicio = fim.minusDays(7);
-        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
+        Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(pacienteNomeUsuario);
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
             if (paciente.getEncerradaEm() != null) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.GONE, "Conta encerrada.");
-            List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.findAllByPaciente(paciente).stream()
-                    .filter(registro -> registro.getDataHoraCriacao().isAfter(LocalDateTime.now().minusDays(7)))
-                    .toList();
+            List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.carregarUltimosRegistrosDiarios(pacienteNomeUsuario);
             String relatorioIA = "";
             if(!registrosDiarios.isEmpty()) {
-                relatorioIA = gerarRelatorioIA(nomeUsuario);
+                relatorioIA = gerarRelatorioIA(pacienteNomeUsuario);
             }
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
             relatorioSemanal.setRelatorioIA(relatorioIA);

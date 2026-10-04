@@ -1,14 +1,8 @@
-### Instruções: 
-- Utilizar branch master
-- Instalar banco de dados PostgreSQL ou subir uma imagem Docker do PostgreSQL utilizando o docker-compose.yaml, que se encontra na raiz do projeto
-- Criar banco de dados mindcare_db (connection string: jdbc:postgresql://localhost:5432/mindcare_db, username: postgres, password: 12345678)
-- Restaurar dados usando o seguinte comando Bash (file:src/main/resources/mindcare_db.dump):
-  - pg_restore \
-    -U postgres \
-    -h localhost \
-    -p 5432 \
-    -d mindcare_db \
-    mindcare_db.dump
+### Instruções para executar a aplicação: 
+- Utilizar branch feature/oracle-db
+- Instalar banco de dados Oracle SQL 26ai ou subir uma imagem Docker do Oracle 26ai, utilizando o docker-compose.yaml, que se encontra na raiz do projeto
+- Cadastrar schema 'MINDCARE' no banco de dados Oracle SQL
+- Connection string: jdbc:oracle:thin:@localhost:1521/FREEPDB1, schema: MINDCARE, password: 12345678
 - Rodar mvn clean install para baixar as dependências Maven
 - Configurar variáveis de ambiente: 
   - DB_PASSWORD = 12345678

@@ -102,6 +102,7 @@ public class RegistroDiarioRepository {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        return null;
                     }
                     return registros;
                 }

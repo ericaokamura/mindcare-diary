@@ -7,7 +7,7 @@
 - Configurar variáveis de ambiente: 
   - DB_PASSWORD = 12345678
   - OPEN_AI_API_KEY
-- As functions e procedures desenvolvidas em linguagem PL/SQL encontram-se na pasta /src/main/resources/plsql:
+- Criar as functions e procedures no banco de dados Oracle SQL, que foram desenvolvidas em linguagem PL/SQL. Elas se encontram na pasta /src/main/resources/plsql:
   - carrega_ultimos_registros_diarios.sql
   - registra_alerta_nivel_humor_paciente.sql
 - Para testar os endpoints da aplicação no Postman, siga o passo:

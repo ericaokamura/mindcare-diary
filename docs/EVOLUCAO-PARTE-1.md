@@ -38,8 +38,8 @@ GET /meu-diario/historico
 Autenticação: Bearer JWT de paciente ativo. Não há parâmetro para selecionar outro paciente.
 Parâmetros opcionais: texto (até 200 caracteres), inicio/fim (AAAA-MM-DD), humor, origem (CHAT/TRADITIONAL), pagina (base zero), tamanho (1–50, padrão 20).
 Retorno: registros, pagina, temMais. Ordem: data decrescente, depois id decrescente para desempate.
-Datas incluem todo o último dia. Pesquisa escapa %, _ e ! e usa parâmetros vinculados.
-Consulta lê tamanho+1 linhas para determinar se há próxima página, sem COUNT completo.
+Datas incluem todo o último dia. Após a atualização criptográfica, a pesquisa textual usa comparação literal em memória sobre registros decifrados do titular. Filtros de metadados usam parâmetros vinculados.
+Sem busca textual, a consulta lê tamanho+1 linhas para determinar se há próxima página. Com texto, percorre candidatos do titular até encontrar a página solicitada; não há COUNT completo nem índice de texto aberto.
 Paginação por offset: novos registros inseridos durante a navegação podem deslocar páginas; o cliente elimina IDs repetidos. Para volumes maiores, avaliar paginação por cursor.
 Resposta usa Cache-Control: no-store.
 
@@ -87,3 +87,6 @@ mesmo paciente sem UUID no Oracle. O repositório agora atribui UUID quando ause
 preservando o identificador fornecido pelo Chat. Não foram modificadas rotinas PL/SQL.
 O teste instrumentado de rascunhos usa diretório e alias Keystore exclusivos de
 teste, sem apagar rascunhos ou chaves reais do aplicativo.
+
+## Atualização: criptografia dos registros no banco
+Implementada criptografia dos textos de diário/Chat e relatórios no backend. A suíte atual passou com 153 testes, incluindo a compatibilidade do Swagger com Spring Boot 3.4. Consulte [escopo, migração e gestão da chave](CRIPTOGRAFIA-REGISTROS.md). Além dos testes em esquema descartável, o ambiente local foi migrado para MINDCARE no Oracle, preservando uma conta, três registros e 11 aceites anteriores. Login e histórico foram conferidos. Cada outro ambiente deve executar sua própria migração e configurar sua chave.

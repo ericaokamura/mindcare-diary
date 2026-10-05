@@ -12,10 +12,15 @@ class HistoricoServiceTest {
     @BeforeEach void setup() {
         var jdbc = new JdbcTemplate(new DriverManagerDataSource("jdbc:h2:mem:" + java.util.UUID.randomUUID() + ";MODE=Oracle;DB_CLOSE_DELAY=-1", "sa", ""));
         jdbc.execute("CREATE TABLE registro_diario(id BIGINT, paciente_id BIGINT, nivel_humor VARCHAR(30), pontos_positivos VARCHAR(1000), dificuldades_desafios VARCHAR(1000), texto_confirmado CLOB, origem VARCHAR(30), data_hora_criacao TIMESTAMP)");
+        var crypto = new com.fiap.mindcare_diary.security.storage.RecordCrypto("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=");
         for (int i=1;i<=4;i++) jdbc.update("INSERT INTO registro_diario VALUES(?,1,'BOM','Passeio 100%',NULL,NULL,'TRADITIONAL',TIMESTAMP '2026-10-01 23:59:00')",i);
         jdbc.update("INSERT INTO registro_diario VALUES(5,1,'MAL',NULL,NULL,'Texto do Chat','CHAT',TIMESTAMP '2026-10-02 12:00:00')");
         jdbc.update("INSERT INTO registro_diario VALUES(6,2,'BOM','SEGREDO',NULL,NULL,'CHAT',TIMESTAMP '2026-10-03 12:00:00')");
-        service = new HistoricoService(jdbc);
+        jdbc.execute("CREATE TABLE relatorio_semanal(id BIGINT, observacoes CLOB, recomendacoes CLOB, relatorio_ia CLOB, resumo CLOB)");
+        try (var connection = jdbc.getDataSource().getConnection()) {
+            com.fiap.mindcare_diary.security.storage.EncryptionMigration.migrate(connection, crypto, false);
+        } catch (java.sql.SQLException ex) { throw new RuntimeException(ex); }
+        service = new HistoricoService(jdbc, crypto);
     }
     @Test void paginaOrdenaDesempateENaoVazaOutroPaciente() {
         var p = service.buscar(1L,null,null,null,null,null,0,2);

@@ -25,10 +25,12 @@ import java.util.UUID;
 public class RegistroDiarioRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final com.fiap.mindcare_diary.security.storage.RecordCrypto crypto;
     private final PacienteRepository pacienteRepository;
 
-    public RegistroDiarioRepository(JdbcTemplate jdbcTemplate, PacienteRepository pacienteRepository) {
+    public RegistroDiarioRepository(JdbcTemplate jdbcTemplate, PacienteRepository pacienteRepository, com.fiap.mindcare_diary.security.storage.RecordCrypto crypto) {
         this.jdbcTemplate = jdbcTemplate;
+        this.crypto = crypto;
         this.pacienteRepository = pacienteRepository;
     }
 
@@ -43,7 +45,7 @@ public class RegistroDiarioRepository {
 
         return jdbcTemplate.query(
                 sql,
-                registroDiarioRowMapper,
+                this::mapRegistro,
                 pacienteId
         );
     }
@@ -59,7 +61,7 @@ public class RegistroDiarioRepository {
 
         return jdbcTemplate.query(
                 sql,
-                registroDiarioRowMapper,
+                this::mapRegistro,
                 pacienteId
         );
     }
@@ -85,54 +87,19 @@ public class RegistroDiarioRepository {
                 cs -> {
                     cs.execute();
                     List<RegistroDiario> registros = new ArrayList<>();
-                    try {
-                        ResultSet rs = (ResultSet) cs.getObject(1);
+                    try (ResultSet rs = (ResultSet) cs.getObject(1)) {
                         while (rs.next()) {
-                            RegistroDiario registro = new RegistroDiario();
-                            registro.setId(rs.getLong("id"));
-                            registro.setNivelHumor(NivelHumor.valueOf(rs.getString("nivel_humor")));
-                            registro.setPontosPositivos(rs.getString("pontos_positivos"));
-                            registro.setDificuldadesDesafios(rs.getString("dificuldades_desafios"));
-                            registro.setDataHoraCriacao(rs.getTimestamp("data_hora_criacao").toLocalDateTime());
-                            registro.setTextoConfirmado(rs.getString("texto_confirmado"));
-                            registro.setOrigem(OrigemRegistro.valueOf(rs.getString("origem")));
-                            registro.setIdRequisicao(bytesToUUID(rs.getBytes("id_requisicao")));
+                            RegistroDiario registro = mapRegistro(rs, 0);
                             registro.setPaciente(optionalPaciente.get());
                             registros.add(registro);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
                     }
                     return registros;
                 }
         );
     }
 
-    private UUID bytesToUUID(byte[] bytes) {
-
-        if (bytes == null) {
-            return null;
-        }
-
-        if (bytes.length != 36) {
-            throw new IllegalArgumentException(
-                    "UUID deve possuir exatamente 36 bytes. Recebido: " + bytes.length
-            );
-        }
-
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
-
-        long mostSignificantBits = buffer.getLong();
-        long leastSignificantBits = buffer.getLong();
-
-        return new UUID(
-                mostSignificantBits,
-                leastSignificantBits
-        );
-    }
-
-    private final RowMapper<RegistroDiario> registroDiarioRowMapper = (rs, rowNum) -> {
+    private RegistroDiario mapRegistro(ResultSet rs, int rowNum) throws java.sql.SQLException {
 
         RegistroDiario registro = new RegistroDiario();
 
@@ -141,22 +108,23 @@ public class RegistroDiarioRepository {
                 ? null
                 : NivelHumor.valueOf(rs.getString("nivel_humor")));
 
-        registro.setPontosPositivos(rs.getString("pontos_positivos"));
-        registro.setDificuldadesDesafios(rs.getString("dificuldades_desafios"));
+        registro.setPontosPositivos(crypto.decrypt(rs.getString("pontos_positivos_enc"), "registro_diario.pontos_positivos"));
+        registro.setDificuldadesDesafios(crypto.decrypt(rs.getString("dificuldades_desafios_enc"), "registro_diario.dificuldades_desafios"));
 
         Timestamp dataHoraCriacao = rs.getTimestamp("data_hora_criacao");
         registro.setDataHoraCriacao(dataHoraCriacao == null ? null : dataHoraCriacao.toLocalDateTime());
 
-        registro.setTextoConfirmado(rs.getString("texto_confirmado"));
+        registro.setTextoConfirmado(crypto.decrypt(rs.getString("texto_confirmado_enc"), "registro_diario.texto_confirmado"));
 
         registro.setOrigem(rs.getString("origem") == null || rs.getString("origem").isBlank()
                 ? OrigemRegistro.TRADITIONAL
                 : OrigemRegistro.valueOf(rs.getString("origem")));
 
-        registro.setIdRequisicao(bytesToUUID(rs.getBytes("id_requisicao")));
+        String requestId = rs.getString("id_requisicao");
+        registro.setIdRequisicao(requestId == null ? null : UUID.fromString(requestId));
 
         return registro;
-    };
+    }
 
     public Optional<RegistroDiario> findByPacienteAndIdRequisicao(Paciente paciente, UUID idRequisicao) {
         Long pacienteId = paciente.getId();
@@ -165,7 +133,7 @@ public class RegistroDiarioRepository {
 
         List<RegistroDiario> registros = jdbcTemplate.query(
                 sql,
-                registroDiarioRowMapper,
+                this::mapRegistro,
                 pacienteId,
                 uuidHex
         );
@@ -181,15 +149,15 @@ public class RegistroDiarioRepository {
         if (registroDiario.getIdRequisicao() == null) registroDiario.setIdRequisicao(UUID.randomUUID());
         Long pacienteId = registroDiario.getPaciente().getId();
         String nivelHumor = registroDiario.getNivelHumor() == null ? "" : registroDiario.getNivelHumor().name();
-        String pontosPositivos = registroDiario.getPontosPositivos();
-        String dificuldadesDesafios = registroDiario.getDificuldadesDesafios();
+        String pontosPositivos = crypto.encrypt(registroDiario.getPontosPositivos(), "registro_diario.pontos_positivos");
+        String dificuldadesDesafios = crypto.encrypt(registroDiario.getDificuldadesDesafios(), "registro_diario.dificuldades_desafios");
         Timestamp dataHoraCriacao = registroDiario.getDataHoraCriacao() == null
                 ? null
                 : Timestamp.valueOf(registroDiario.getDataHoraCriacao());
-        String textConfirmado = registroDiario.getTextoConfirmado();
+        String textConfirmado = crypto.encrypt(registroDiario.getTextoConfirmado(), "registro_diario.texto_confirmado");
         String origem = registroDiario.getOrigem() == null ? "" : registroDiario.getOrigem().name();
         String idRequisicao = registroDiario.getIdRequisicao() == null ? "" : registroDiario.getIdRequisicao().toString();
-        String sql = "insert into registro_diario (paciente_id, nivel_humor, pontos_positivos, dificuldades_desafios, data_hora_criacao, texto_confirmado, origem, id_requisicao) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into registro_diario (paciente_id, nivel_humor, pontos_positivos_enc, dificuldades_desafios_enc, data_hora_criacao, texto_confirmado_enc, origem, id_requisicao) values (?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.update(sql,
                 pacienteId, nivelHumor, pontosPositivos, dificuldadesDesafios, dataHoraCriacao, textConfirmado, origem, idRequisicao);

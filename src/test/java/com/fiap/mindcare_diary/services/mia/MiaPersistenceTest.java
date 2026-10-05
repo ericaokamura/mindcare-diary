@@ -78,6 +78,7 @@ class MiaPersistenceTest {
         );
 
         miaRegistroService.save(auth1, request1);
+        miaRegistroService.save(auth1, request1);
         miaRegistroService.save(auth2, request2);
 
         Optional<RegistroDiario> optionalRegistroDiario1 = registroDiarioRepository.findByPacienteAndIdRequisicao(first, requestId);
@@ -123,16 +124,16 @@ class MiaPersistenceTest {
             Future<?> second = executor.submit(
                     () -> miaRegistroService.save(auth, request2)
             );
-            first.get();
-            ExecutionException exception =
-                    assertThrows(
-                            ExecutionException.class,
-                            second::get
-                    );
-            assertInstanceOf(
-                    ResponseStatusException.class,
-                    exception.getCause()
-            );
+            int accepted = 0, rejected = 0;
+            for (Future<?> result : List.of(first, second)) {
+                try { result.get(); accepted++; }
+                catch (ExecutionException exception) {
+                    var conflict = assertInstanceOf(ResponseStatusException.class, exception.getCause());
+                    assertEquals(409, conflict.getStatusCode().value()); rejected++;
+                }
+            }
+            assertEquals(1, accepted); assertEquals(1, rejected);
+            assertEquals(1, registroDiarioRepository.carregarTodosRegistrosDiarios(paciente.getNomeUsuario()).size());
         }
     }
 }

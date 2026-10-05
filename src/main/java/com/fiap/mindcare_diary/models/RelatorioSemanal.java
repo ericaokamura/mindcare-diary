@@ -1,6 +1,7 @@
 package com.fiap.mindcare_diary.models;
 
 import jakarta.persistence.*;
+import com.fiap.mindcare_diary.security.storage.EncryptedConverters;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,12 +29,19 @@ public class RelatorioSemanal {
     @ManyToMany
     private List<RegistroDiario> registrosDiarios;
 
+    @Lob
+    @Column(name = "observacoes_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Observacoes.class)
     private String observacoes;
 
+    @Lob
+    @Column(name = "recomendacoes_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Recomendacoes.class)
     private String recomendacoes;
 
     @Lob
-    @Column(name = "relatorio_ia", columnDefinition = "CLOB")
+    @Column(name = "relatorio_ia_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Relatorio.class)
     private String relatorioIA;
 
     private LocalDateTime dataHoraCriacao;
@@ -42,5 +50,8 @@ public class RelatorioSemanal {
 
     private int totalNegativos;
 
+    @Lob
+    @Column(name = "resumo_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Resumo.class)
     private String resumo;
 }

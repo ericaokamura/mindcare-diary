@@ -6,7 +6,6 @@ import com.fiap.mindcare_diary.models.RelatorioSemanal;
 import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
-import com.fiap.mindcare_diary.utils.DataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +32,6 @@ class RelatorioSemanalServiceTest {
     @Mock ChatClient.ChatClientRequestSpec chatClientRequestSpec;
     @Mock ChatClient.CallResponseSpec callResponseSpec;
     @Mock VectorStore vectorStore;
-    @Mock DataLoader dataLoader;
 
     private RelatorioSemanalService service;
 
@@ -47,9 +45,7 @@ class RelatorioSemanalServiceTest {
                 relatorioSemanalRepository,
                 registroDiarioRepository,
                 pacienteRepository,
-                chatClientBuilder,
-                vectorStore,
-                dataLoader
+                chatClientBuilder
         );
     }
 
@@ -61,7 +57,7 @@ class RelatorioSemanalServiceTest {
 
         RelatorioSemanalService service = new RelatorioSemanalService(
                 relatorioSemanalRepository, registroDiarioRepository,
-                pacienteRepository, chatClientBuilder, vectorStore, dataLoader);
+                pacienteRepository, chatClientBuilder);
 
 
 
@@ -77,7 +73,7 @@ class RelatorioSemanalServiceTest {
 
         RelatorioSemanalService service = new RelatorioSemanalService(
                 relatorioSemanalRepository, registroDiarioRepository,
-                pacienteRepository, chatClientBuilder, vectorStore, dataLoader);
+                pacienteRepository, chatClientBuilder);
 
         var dto = mock(com.fiap.mindcare_diary.models.dtos.RelatorioSemanalDTO.class);
         var pacienteDto = mock(com.fiap.mindcare_diary.models.dtos.PacienteDTO.class);
@@ -114,7 +110,6 @@ class RelatorioSemanalServiceTest {
         futuro.setPaciente(paciente);
         registros.add(futuro);
         when(registroDiarioRepository.carregarUltimosRegistrosDiarios(anyString())).thenReturn(registros);
-        when(vectorStore.similaritySearch(anyString())).thenReturn(carregarDocumentos(registros, Optional.of(paciente)));
 
         when(chatClient.prompt(any(Prompt.class)))
                 .thenReturn(chatClientRequestSpec);
@@ -130,6 +125,14 @@ class RelatorioSemanalServiceTest {
 
         service.gerarRelatorioSemanal("p");
 
+        var prompt = org.mockito.ArgumentCaptor.forClass(Prompt.class);
+        verify(chatClient).prompt(prompt.capture());
+        String sent = prompt.getValue().getContents();
+        assertTrue(sent.contains("positivo-0"));
+        assertTrue(sent.contains("relato-chat-2"));
+        assertFalse(sent.contains("NAO-INCLUIR-ANTIGO"));
+        assertFalse(sent.contains("NAO-INCLUIR-FUTURO"));
+        verifyNoInteractions(vectorStore);
         verify(relatorioSemanalRepository, times(1)).save(any(RelatorioSemanal.class));
     }
 
@@ -141,7 +144,7 @@ class RelatorioSemanalServiceTest {
         when(registroDiarioRepository.carregarUltimosRegistrosDiarios(paciente.getNomeUsuario())).thenReturn(List.of());
         var dto = service.gerarRelatorioSemanal("p");
         assertEquals(true, dto.getRelatorioIA().isBlank());
-        verifyNoInteractions(chatClient, vectorStore, dataLoader);
+        verifyNoInteractions(chatClient, vectorStore);
     }
 
     private com.fiap.mindcare_diary.models.RegistroDiario registro(long id, java.time.LocalDateTime data) {

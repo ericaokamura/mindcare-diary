@@ -9,7 +9,7 @@ Os arquivos backend.patch e mobile.patch permitem transportar somente esta entre
 ## Preparação
 1. Abra o Docker Desktop e o emulador. O Android deve chegar à tela inicial.
 2. Disponibilize o Oracle e o esquema da feature/oracle-db com os scripts da colega. PostgreSQL não atende a esta branch.
-3. Configure DB_PASSWORD e OPEN_AI_API_KEY no terminal, sem gravar credenciais no código.
+3. Siga primeiro CRIPTOGRAFIA-REGISTROS.md para carregar MINDCARE_DATA_KEY e migrar o banco existente. Configure DB_PASSWORD e OPEN_AI_API_KEY no terminal, sem gravar credenciais no código.
 4. Inicie o backend da pasta evolucao-backend. A configuração de desenvolvimento herdada aponta para localhost:1521/FREEPDB1, usuário MINDCARE. Confirme os valores do seu ambiente.
 5. Instale mindcare-evolucao-debug.apk no emulador e use uma conta de teste ativa. O app acessa 10.0.2.2:8080.
 6. Abra o relatório EVOLUCAO-PARTE-1.md para seguir os cenários da demonstração.

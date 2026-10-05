@@ -18,7 +18,47 @@ import static org.junit.jupiter.api.Assertions.*;
 class HistoricoOracleTest {
     @Autowired EntityManager em;
     @Autowired HistoricoService service;
+    @Autowired org.springframework.jdbc.core.JdbcTemplate jdbc;
+    @Autowired com.fiap.mindcare_diary.security.storage.RecordCrypto crypto;
+
+    @Test
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED)
+    void migraTextoLegadoNoOracleSemPerderConteudo() throws Exception {
+        // This entire schema is disposable (test profile, create-drop).
+        jdbc.execute("ALTER TABLE registro_diario ADD pontos_positivos CLOB");
+        jdbc.update("INSERT INTO registro_diario (origem, pontos_positivos) VALUES ('TRADITIONAL', 'Relato legado Oracle')");
+        Long id = jdbc.queryForObject("SELECT MAX(id) FROM registro_diario",Long.class);
+        try (var connection = jdbc.getDataSource().getConnection()) {
+            com.fiap.mindcare_diary.security.storage.EncryptionMigration.migrate(connection,crypto,false);
+            com.fiap.mindcare_diary.security.storage.EncryptionMigration.migrate(connection,crypto,false);
+        }
+        var raw = jdbc.queryForObject("SELECT pontos_positivos_enc FROM registro_diario WHERE id=?", (rs,n)->rs.getString(1),id);
+        assertEquals("Relato legado Oracle",crypto.decrypt(raw,"registro_diario.pontos_positivos"));
+        assertNull(jdbc.queryForObject("SELECT pontos_positivos FROM registro_diario WHERE id=?",(rs,n)->rs.getString(1),id));
+        jdbc.update("DELETE FROM registro_diario WHERE id=?",id);
+    }
     @Autowired com.fiap.mindcare_diary.repositories.RegistroDiarioRepository registros;
+
+    @Test void jdbcEJpaGuardamCiphertextEMantemLeituraDoDiarioERelatorio() {
+        var patient = paciente(); em.flush();
+        var r = new RegistroDiario(); r.setPaciente(patient); r.setOrigem(OrigemRegistro.CHAT);
+        r.setDataHoraCriacao(LocalDateTime.now());
+        String text = "Relato privado com emoção 😀 ".repeat(1500);
+        r.setTextoConfirmado(text); registros.saveAndFlush(r);
+        String raw = jdbc.queryForObject("SELECT texto_confirmado_enc FROM registro_diario WHERE paciente_id = ?",
+                (rs,n) -> rs.getString(1),patient.getId());
+        assertTrue(raw.startsWith("mc1:")); assertFalse(raw.contains("Relato"));
+        assertEquals(text, registros.findByPacienteAndIdRequisicao(patient,r.getIdRequisicao()).orElseThrow().getTextoConfirmado());
+        var report = new RelatorioSemanal(); report.setPaciente(patient); report.setRelatorioIA(text);
+        report.setObservacoes("Observação privada"); report.setResumo("Resumo privado"); report.setRecomendacoes("Recomendação privada");
+        em.persist(report); em.flush(); Long id=report.getId(); em.clear();
+        var loaded = em.find(RelatorioSemanal.class,id);
+        assertEquals(text, loaded.getRelatorioIA()); assertEquals("Resumo privado",loaded.getResumo());
+        raw=jdbc.queryForObject("SELECT relatorio_ia_enc FROM relatorio_semanal WHERE id=?",(rs,n)->rs.getString(1),id);
+        assertTrue(raw.startsWith("mc1:")); assertFalse(raw.contains("Relato"));
+        assertEquals(text, em.createQuery("select r from RegistroDiario r where r.paciente.id=:id",RegistroDiario.class)
+                .setParameter("id",patient.getId()).getSingleResult().getTextoConfirmado());
+    }
 
     @Test void permiteDoisRegistrosTradicionaisSemChaveEnviadaPeloApp() {
         var patient = paciente(); em.flush();

@@ -4,6 +4,7 @@ import com.fiap.mindcare_diary.models.enums.NivelHumor;
 import com.fiap.mindcare_diary.models.enums.OrigemRegistro;
 import java.util.UUID;
 import jakarta.persistence.*;
+import com.fiap.mindcare_diary.security.storage.EncryptedConverters;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,13 +30,21 @@ public class RegistroDiario {
     @Enumerated(EnumType.STRING)
     private NivelHumor nivelHumor;
 
+    @Lob
+    @Column(name = "pontos_positivos_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Pontos.class)
     private String pontosPositivos;
 
+    @Lob
+    @Column(name = "dificuldades_desafios_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Dificuldades.class)
     private String dificuldadesDesafios;
 
     private LocalDateTime dataHoraCriacao;
 
-    @Column(name = "texto_confirmado")
+    @Lob
+    @Column(name = "texto_confirmado_enc", columnDefinition = "CLOB")
+    @Convert(converter = EncryptedConverters.Texto.class)
     private String textoConfirmado;
 
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,6 @@
 # MindCare Diary — Política de Privacidade
 
-Versão 2026-09-21.1 — 21 de setembro de 2026
+Versão 2026-10-04.1 — 21 de setembro de 2026
 
 ## 1. Apresentação e contato
 
@@ -45,7 +45,7 @@ publicidade baseada em relatos ou treinamento próprio de IA pela equipe.
 ## 4. Diário, Chat e resumos
 
 O diário tradicional e o texto confirmado do Chat são guardados no backend.
-No Chat, mensagens e rascunhos ficam na sessão do aplicativo; a confirmação é
+No Chat, as falas do usuário têm uma cópia local cifrada de rascunho; a confirmação é
 necessária para salvar o relato no diário. Enviar uma mensagem à MIA pode provocar
 processamento pela OpenAI mesmo antes dessa confirmação.
 
@@ -134,3 +134,13 @@ um fluxo de autorização de responsáveis que o aplicativo ainda não oferece.
 Mudanças relevantes nas finalidades, destinatários e condições devem ser
 informadas ao usuário. Quando necessário, a autorização será renovada para a
 finalidade específica. A versão e a data identificam o texto apresentado.
+
+
+Rascunhos no aparelho
+O aplicativo mantém uma cópia cifrada dos textos em edição do diário e das falas
+do usuário no Chat, inclusive a transcrição revisável, para permitir sua recuperação.
+Essa cópia é separada por conta e fica fora do backup automático. Não inclui áudio
+nem respostas da MIA. Ela pode ser descartada pelo usuário e é removida após
+salvamento confirmado ou ao sair da conta. Desinstalar o aplicativo elimina a
+cópia local. O armazenamento local não significa publicação do registro no diário.
+Se houver falha de armazenamento, o aplicativo exibirá um aviso.

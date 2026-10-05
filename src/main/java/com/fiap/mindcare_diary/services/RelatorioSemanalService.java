@@ -12,12 +12,9 @@ import com.fiap.mindcare_diary.repositories.PacienteRepository;
 import com.fiap.mindcare_diary.repositories.RegistroDiarioRepository;
 import com.fiap.mindcare_diary.repositories.RelatorioSemanalRepository;
 
-import com.fiap.mindcare_diary.utils.DataLoader;
 import org.springframework.ai.chat.client.ChatClient;
 
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,9 +35,7 @@ public class RelatorioSemanalService {
 
     private final ChatClient chatClient;
 
-    private final VectorStore vectorStore;
 
-    private final DataLoader dataLoader;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -51,15 +46,11 @@ public class RelatorioSemanalService {
     public RelatorioSemanalService(RelatorioSemanalRepository relatorioSemanalRepository,
                                    RegistroDiarioRepository registroDiarioRepository,
                                    PacienteRepository pacienteRepository,
-                                   ChatClient.Builder builder,
-                                   VectorStore vectorStore,
-                                   DataLoader dataLoader) {
+                                   ChatClient.Builder builder) {
         this.relatorioSemanalRepository = relatorioSemanalRepository;
         this.registroDiarioRepository = registroDiarioRepository;
         this.pacienteRepository = pacienteRepository;
         this.chatClient = builder.build();
-        this.vectorStore = vectorStore;
-        this.dataLoader = dataLoader;
     }
 
     public RelatorioSemanalDTO gerarRelatorioSemanal(String pacienteNomeUsuario) {
@@ -72,10 +63,11 @@ public class RelatorioSemanalService {
         if(optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
             if (paciente.getEncerradaEm() != null) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.GONE, "Conta encerrada.");
-            List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.carregarUltimosRegistrosDiarios(pacienteNomeUsuario);
+            List<RegistroDiario> registrosDiarios = this.registroDiarioRepository.carregarUltimosRegistrosDiarios(pacienteNomeUsuario).stream()
+                    .filter(r -> r.getDataHoraCriacao() != null && !r.getDataHoraCriacao().isBefore(inicio) && !r.getDataHoraCriacao().isAfter(fim)).toList();
             String relatorioIA = "";
             if(registrosDiarios != null && !registrosDiarios.isEmpty()) {
-                relatorioIA = gerarRelatorioIA(pacienteNomeUsuario);
+                relatorioIA = gerarRelatorioIA(registrosDiarios);
             }
             RelatorioSemanal relatorioSemanal = new RelatorioSemanal();
             relatorioSemanal.setRelatorioIA(relatorioIA);
@@ -128,7 +120,7 @@ public class RelatorioSemanalService {
 
     }
 
-    private String gerarRelatorioIA(String nomeUsuario) {
+    private String gerarRelatorioIA(List<RegistroDiario> registros) {
 
         String question = "Você é um psicólogo/psiquiatra experiente especializado em análise de registros de saúde mental. " +
                 "Com base em TODOS os registros diários do paciente dos últimos 7 dias, " +
@@ -145,20 +137,14 @@ public class RelatorioSemanalService {
                 "Não realize diagnósticos médicos ou psiquiátricos. " +
                 "Caso não existam informações suficientes para alguma conclusão, informe explicitamente essa limitação.";
 
-        dataLoader.loadRelatoriosSemanaisIntoVectorStore(nomeUsuario);
-
-        List<Document> relevantDocs = vectorStore.similaritySearch(question);
-
-        if (relevantDocs.isEmpty()) {
-            return "⚠️ Nenhum documento relevante foi encontrado no vetor. Não é possível responder à pergunta.";
-        }
-
-        System.out.println("📄 Documentos retornados pelo Oracle 26ai:");
-        relevantDocs.forEach(doc -> System.out.println(doc.getFormattedContent()));
-
-        String context = relevantDocs.stream()
-                .map(Document::getFormattedContent)
-                .reduce("", (a, b) -> a + "\n" + b);
+        // Context exists only in memory; never duplicate patient narratives in a vector table or logs.
+        String context = registros.stream().map(r -> "Data: " + r.getDataHoraCriacao()
+                + "; humor: " + r.getNivelHumor() + "; relato: " + java.util.Objects.toString(r.getTextoConfirmado(), "")
+                + "; pontos positivos: " + java.util.Objects.toString(r.getPontosPositivos(), "")
+                + "; dificuldades: " + java.util.Objects.toString(r.getDificuldadesDesafios(), ""))
+                .collect(java.util.stream.Collectors.joining("\n"));
+        if (context.length() > 120000) throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY, "Volume de registros muito grande para gerar o relatório em uma chamada.");
 
         String promptText = promptText(context, question);
 

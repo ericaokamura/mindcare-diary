@@ -9,8 +9,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestControllerAdvice(assignableTypes = {MiaController.class, RegistroDiarioController.class})
+@org.springframework.core.annotation.Order(org.springframework.core.Ordered.HIGHEST_PRECEDENCE)
+@RestControllerAdvice(assignableTypes = {MiaController.class, RegistroDiarioController.class,
+        com.fiap.mindcare_diary.controllers.HistoricoController.class,
+        com.fiap.mindcare_diary.controllers.PrivacidadeController.class})
 public class MiaExceptionHandler {
+
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDTO> invalidFilter() {
+        return ResponseEntity.badRequest().cacheControl(CacheControl.noStore())
+                .body(new ErrorDTO(400, "Confira os filtros informados."));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDTO> unexpectedError() {
+        return ResponseEntity.internalServerError().cacheControl(CacheControl.noStore())
+                .body(new ErrorDTO(500, "Não foi possível concluir a operação."));
+    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorDTO> malformedBody() {

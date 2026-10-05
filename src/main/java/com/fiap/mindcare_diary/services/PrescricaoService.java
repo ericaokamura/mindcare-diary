@@ -28,7 +28,7 @@ public class PrescricaoService {
     @Autowired
     private ProfissionalRepository profissionalRepository;
 
-    public PrescriptionDTO retornarPrescricaoPorNumber(String pacienteNomeUsuario, String profissionalNomeUsuario, String number) {
+    public PrescriptionDTO retornarPrescricaoPorNumber(String pacienteNomeUsuario, String profissionalNomeUsuario, String numero) {
         Optional<Profissional> optionalProfissional = profissionalRepository.findByNomeUsuario(profissionalNomeUsuario);
         if(optionalProfissional.isEmpty()) {
             throw new ProfissionalNaoEncontradoException("Profissional não encontrado.");
@@ -39,7 +39,7 @@ public class PrescricaoService {
             throw new PacienteNaoEncontradoException("Paciente não encontrado.");
         }
 
-        Optional<Prescription> optionalPrescription = prescriptionRepository.findByPacienteAndProfissionalAndNumero(optionalPaciente.get(), optionalProfissional.get(), number);
+        Optional<Prescription> optionalPrescription = prescriptionRepository.findByPacienteAndProfissionalAndNumero(optionalPaciente.get(), optionalProfissional.get(), numero);
         if(optionalPrescription.isEmpty()) {
             throw new PrescricaoNaoEncontradaException("Prescrição não encontrada para esse número, paciente e profissional.");
         }

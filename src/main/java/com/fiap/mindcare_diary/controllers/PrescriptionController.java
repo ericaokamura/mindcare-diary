@@ -76,15 +76,15 @@ public class PrescriptionController {
     }
 
     @PreAuthorize("hasAuthority('PATIENT_DOWNLOAD_PRESCRIPTION')")
-    @PostMapping(value = "/{profissionalNomeUsuario}/{number}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "/{profissionalNomeUsuario}/{numero}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(
             summary = "Realiza download de receita médica",
             description = "Realiza download de receita médica pelo paciente."
     )
-    public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String number) {
+    public ResponseEntity<byte[]> baixarPdf(@PathVariable("profissionalNomeUsuario") String profissionalNomeUsuario, @PathVariable String numero) {
         Optional<Paciente> optionalPaciente = (Optional<Paciente>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (optionalPaciente.isPresent()) {
-            PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(optionalPaciente.get().getNomeUsuario(), profissionalNomeUsuario, number);
+            PrescriptionDTO receita = prescricaoService.retornarPrescricaoPorNumber(optionalPaciente.get().getNomeUsuario(), profissionalNomeUsuario, numero);
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION,
                     "inline; filename=\"" + receita.getPrescriptionDocument().getNomeArquivo() + "\"").body(receita.getPrescriptionDocument().getArquivoPdf());
         }

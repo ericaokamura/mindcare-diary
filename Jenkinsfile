@@ -4,6 +4,13 @@ pipeline {
     environment {
         JAVA_HOME = '/Library/Java/JavaVirtualMachines/zulu-24.jdk/Contents/Home'
         PATH = "${JAVA_HOME}/bin:/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
+
+        IMAGE_NAME = 'mindcare-diary'
+        CONTAINER_NAME = 'mindcare-diary'
+
+        DB_PASSWORD = credentials('mindcare_db_password')
+        OPEN_AI_API_KEY = credentials('openai_api_key')
+        MINDCARE_DATA_KEY = credentials('mindcare_crypto_key')
     }
 
     stages {
@@ -11,10 +18,15 @@ pipeline {
         stage('Environment') {
             steps {
                 sh '''
+                    echo "JAVA_HOME=$JAVA_HOME"
+                    echo "PATH=$PATH"
+
                     java -version
                     mvn -version
+
+                    which docker
                     docker --version
-                    docker compose version
+                    docker info
                 '''
             }
         }
@@ -31,19 +43,26 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Docker Build') {
             steps {
-                sh '''
-                    docker compose up -d --build
-                '''
+                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Deploy') {
             steps {
                 sh '''
-                    docker compose ps
-                    docker compose logs --tail=50 mindcare-diary
+                    echo "Stopping previous container..."
+
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+
+                    echo "Starting version $BUILD_NUMBER..."
+
+                    docker run -d \
+                        --name $CONTAINER_NAME \
+                        -p 8080:8080 \
+                        $IMAGE_NAME:$BUILD_NUMBER
                 '''
             }
         }
@@ -55,8 +74,7 @@ pipeline {
         }
 
         failure {
-            echo 'MindCare Diary deployment failed!'
-            sh 'docker compose logs --tail=100 || true'
+            echo 'MindCare Diary deployment failed.'
         }
     }
 }

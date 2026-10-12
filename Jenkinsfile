@@ -19,12 +19,10 @@ pipeline {
             steps {
                 sh '''
                     echo "JAVA_HOME=$JAVA_HOME"
-                    echo "PATH=$PATH"
 
                     java -version
                     mvn -version
 
-                    which docker
                     docker --version
                     docker info
                 '''
@@ -45,22 +43,25 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
+                sh '''
+                    docker build \
+                        -t "$IMAGE_NAME:$BUILD_NUMBER" \
+                        .
+                '''
             }
         }
 
         stage('Deploy') {
-
             when {
-                    branch 'feature/oracle-db'
+                branch 'feature/oracle-db'
             }
 
             steps {
                 sh '''
                     echo "Stopping previous container..."
 
-                    docker stop $CONTAINER_NAME || true
-                    docker rm $CONTAINER_NAME || true
+                    docker stop "$CONTAINER_NAME" || true
+                    docker rm "$CONTAINER_NAME" || true
 
                     echo "Starting version $BUILD_NUMBER..."
 
@@ -72,6 +73,29 @@ pipeline {
                         -e OPEN_AI_API_KEY \
                         -e MINDCARE_DATA_KEY \
                         "$IMAGE_NAME:$BUILD_NUMBER"
+
+                    echo "Waiting for Spring Boot..."
+                    sleep 15
+
+                    if ! docker ps \
+                        --filter "name=$CONTAINER_NAME" \
+                        --filter "status=running" \
+                        --format '{{.Names}}' \
+                        | grep -qx "$CONTAINER_NAME"; then
+
+                        echo "ERROR: MindCare Diary failed during startup."
+                        echo ""
+                        echo "Container status:"
+                        docker ps -a --filter "name=$CONTAINER_NAME"
+
+                        echo ""
+                        echo "Spring Boot logs:"
+                        docker logs "$CONTAINER_NAME"
+
+                        exit 1
+                    fi
+
+                    echo "MindCare Diary is running."
                 '''
             }
         }

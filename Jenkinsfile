@@ -50,6 +50,11 @@ pipeline {
         }
 
         stage('Deploy') {
+
+            when {
+                    branch 'feature/oracle-db'
+            }
+
             steps {
                 sh '''
                     echo "Stopping previous container..."

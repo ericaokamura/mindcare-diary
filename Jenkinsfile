@@ -66,7 +66,11 @@ pipeline {
 
                     docker run -d \
                         --name $CONTAINER_NAME \
+                        --network mindcare-network \
                         -p 8080:8080 \
+                        -e DB_PASSWORD="$DB_PASSWORD" \
+                        -e OPEN_AI_API_KEY="$OPEN_AI_API_KEY" \
+                        -e MINDCARE_DATA_KEY="$MINDCARE_DATA_KEY" \
                         $IMAGE_NAME:$BUILD_NUMBER
                 '''
             }

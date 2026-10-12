@@ -12,4 +12,7 @@
   - registra_alerta_nivel_humor_paciente.sql (trigger)
 - Para testar os endpoints da aplicação no Postman, siga o passo:
     - Importe como collection o arquivo Mindcare Diary.postman_collection.json, que se encontra na pasta /src/main/resources
-- Rodar a aplicação
+- Rodar a aplicação via IDE ou utilizando o comando:
+```bash
+mvn spring-boot:run
+```

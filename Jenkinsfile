@@ -64,7 +64,7 @@ pipeline {
 
                     echo "Starting version $BUILD_NUMBER..."
 
-                    docker run -d \
+                    docker run \
                         --name $CONTAINER_NAME \
                         --network mindcare-network \
                         -p 8080:8080 \

@@ -33,9 +33,6 @@ public class RegistroDiarioService {
     }
 
     public void salvarRegistroDiario(String nomeUsuario, RegistroDiarioDTO registroDiarioDTO) {
-        if(NivelHumor.PESSIMO.equals(NivelHumor.valueOf(registroDiarioDTO.getNivelHumor()))) {
-            alertaNivelHumorPacienteRepository.registraAlertaNivelHumorPaciente(registroDiarioDTO.getPaciente().getNomeUsuario());
-        }
         RegistroDiario registroDiario= RegistroDiarioMapper.convertDTOToModel(registroDiarioDTO);
         Optional<Paciente> optionalPaciente = this.pacienteRepository.findByNomeUsuario(nomeUsuario);
         if(optionalPaciente.isPresent()) {

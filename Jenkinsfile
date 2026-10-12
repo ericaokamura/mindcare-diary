@@ -6,7 +6,7 @@ pipeline {
         PATH = "${JAVA_HOME}/bin:/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
 
         IMAGE_NAME = 'mindcare-diary'
-        CONTAINER_NAME = 'mindcare-diary'
+        CONTAINER_NAME = 'mindcare-api'
 
         DB_PASSWORD = credentials('mindcare_db_password')
         OPEN_AI_API_KEY = credentials('openai_api_key')
@@ -58,16 +58,17 @@ pipeline {
 
             steps {
                 sh '''
-                    echo "Stopping previous container..."
+                    echo "Removing previous Spring Boot container..."
 
                     docker stop "$CONTAINER_NAME" || true
                     docker rm "$CONTAINER_NAME" || true
 
-                    echo "Starting version $BUILD_NUMBER..."
+                    echo "Starting MindCare API build $BUILD_NUMBER..."
 
                     docker run -d \
                         --name "$CONTAINER_NAME" \
                         --network mindcare-network \
+                        --restart unless-stopped \
                         -p 8080:8080 \
                         -e DB_PASSWORD \
                         -e OPEN_AI_API_KEY \
@@ -77,25 +78,21 @@ pipeline {
                     echo "Waiting for Spring Boot..."
                     sleep 15
 
+                    echo "Container status:"
+                    docker ps -a --filter "name=$CONTAINER_NAME"
+
                     if ! docker ps \
-                        --filter "name=$CONTAINER_NAME" \
+                        --filter "name=^/${CONTAINER_NAME}$" \
                         --filter "status=running" \
                         --format '{{.Names}}' \
                         | grep -qx "$CONTAINER_NAME"; then
 
-                        echo "ERROR: MindCare Diary failed during startup."
-                        echo ""
-                        echo "Container status:"
-                        docker ps -a --filter "name=$CONTAINER_NAME"
-
-                        echo ""
-                        echo "Spring Boot logs:"
+                        echo "MindCare API failed to start."
                         docker logs "$CONTAINER_NAME"
-
                         exit 1
                     fi
 
-                    echo "MindCare Diary is running."
+                    echo "MindCare API is running."
                 '''
             }
         }

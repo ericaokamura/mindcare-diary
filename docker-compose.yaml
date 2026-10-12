@@ -1,4 +1,5 @@
 services:
+
   oracle-db:
     image: container-registry.oracle.com/database/free:latest
     container_name: oracle-26ai
@@ -18,14 +19,33 @@ services:
 
     healthcheck:
       test:
-        [
-          "CMD-SHELL",
+        [ "CMD-SHELL",
           "healthcheck.sh"
         ]
       interval: 30s
       timeout: 10s
       retries: 10
       start_period: 120s
+
+  mindcare-diary:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: mindcare-diary
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/FREEPDB1
+      SPRING_DATASOURCE_USERNAME: MINDCARE
+      SPRING_DATASOURCE_PASSWORD: "12345678"
+
+    depends_on:
+      oracle-db:
+        condition: service_healthy
 
 volumes:
   oracle-data:

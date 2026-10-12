@@ -3,18 +3,19 @@ pipeline {
 
     environment {
         JAVA_HOME = '/Library/Java/JavaVirtualMachines/zulu-24.jdk/Contents/Home'
-        PATH = "${JAVA_HOME}/bin:/opt/homebrew/bin:${env.PATH}"
-        IMAGE_NAME = 'mindcare-diary'
-        CONTAINER_NAME = 'mindcare-diary'
+        PATH = "${JAVA_HOME}/bin:/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
     }
 
     stages {
 
         stage('Environment') {
             steps {
-                sh 'java -version'
-                sh 'mvn -version'
-                sh 'docker --version'
+                sh '''
+                    java -version
+                    mvn -version
+                    docker --version
+                    docker compose version
+                '''
             }
         }
 
@@ -30,22 +31,19 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                sh '/usr/local/bin/docker build -t mindcare-diary:$BUILD_NUMBER .'
-            }
-        }
-
         stage('Deploy') {
             steps {
                 sh '''
-                    docker stop $CONTAINER_NAME || true
-                    docker rm $CONTAINER_NAME || true
+                    docker compose up -d --build
+                '''
+            }
+        }
 
-                    docker run -d \
-                        --name $CONTAINER_NAME \
-                        -p 8080:8080 \
-                        $IMAGE_NAME:$BUILD_NUMBER
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                    docker compose ps
+                    docker compose logs --tail=50 mindcare-diary
                 '''
             }
         }
@@ -57,7 +55,8 @@ pipeline {
         }
 
         failure {
-            echo 'MindCare Diary deployment failed.'
+            echo 'MindCare Diary deployment failed!'
+            sh 'docker compose logs --tail=100 || true'
         }
     }
 }

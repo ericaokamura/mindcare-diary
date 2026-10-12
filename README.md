@@ -10,7 +10,7 @@
 - Criar a procedure e trigger no banco de dados Oracle SQL, que foram desenvolvidas em linguagem PL/SQL. Elas se encontram na pasta /src/main/resources/plsql:
   - carrega_ultimos_registros_diarios.sql (procedure)
   - registra_alerta_nivel_humor_paciente.sql (trigger)
-- Para testar os endpoints da aplicação no Postman, siga o passo:
+- Para testar os endpoints da aplicação no Postman, siga o seguinte passo:
     - Importe como collection o arquivo Mindcare Diary.postman_collection.json, que se encontra na pasta /src/main/resources
 - Rodar a aplicação via IDE ou utilizando o comando:
 ```bash

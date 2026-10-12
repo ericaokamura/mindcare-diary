@@ -1,6 +1,6 @@
 services:
 
-  oracle:
+  oracle-db:
     image: container-registry.oracle.com/database/free:latest
     container_name: oracle-26ai
 

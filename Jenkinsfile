@@ -52,9 +52,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                branch 'feature/oracle-db'
-            }
 
             steps {
                 sh '''

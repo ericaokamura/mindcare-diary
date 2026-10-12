@@ -1,9 +1,5 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import com.fiap.mindcare_diary.models.Profissional;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 

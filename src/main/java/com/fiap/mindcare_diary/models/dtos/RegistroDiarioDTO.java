@@ -1,6 +1,5 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,9 +1,5 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import com.fiap.mindcare_diary.models.Profissional;
-import com.fiap.mindcare_diary.models.enums.PlanoAssinatura;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
 

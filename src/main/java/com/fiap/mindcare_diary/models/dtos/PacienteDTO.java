@@ -1,7 +1,6 @@
 package com.fiap.mindcare_diary.models.dtos;
 
 import com.fiap.mindcare_diary.models.Clinica;
-import com.fiap.mindcare_diary.models.Prescription;
 import lombok.Getter;
 import lombok.Setter;
 

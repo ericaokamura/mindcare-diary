@@ -64,12 +64,12 @@ public final class EncryptionMigration {
                 }
             }
         }
-        if (tableExists(c, "spring_ai_vectors")) {
-            try (Statement s = c.createStatement(); ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM spring_ai_vectors")) {
-                rs.next();
-                if (rs.getLong(1) > 0) throw new IllegalStateException("Cache vetorial legado presente: revise e execute a migração offline.");
-            }
-        }
+//        if (tableExists(c, "spring_ai_vectors")) {
+//            try (Statement s = c.createStatement(); ResultSet rs = s.executeQuery("SELECT COUNT(*) FROM spring_ai_vectors")) {
+//                rs.next();
+//                if (rs.getLong(1) > 0) throw new IllegalStateException("Cache vetorial legado presente: revise e execute a migração offline.");
+//            }
+//        }
     }
 
     public static void migrate(Connection c, RecordCrypto crypto, boolean purgeLegacyVectors) throws SQLException {

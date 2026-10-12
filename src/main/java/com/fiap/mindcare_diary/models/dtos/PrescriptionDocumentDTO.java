@@ -1,7 +1,5 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import com.fiap.mindcare_diary.models.Prescription;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 

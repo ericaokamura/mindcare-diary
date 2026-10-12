@@ -1,8 +1,6 @@
 package com.fiap.mindcare_diary.models.dtos;
 
-import com.fiap.mindcare_diary.models.Clinica;
 import com.fiap.mindcare_diary.models.enums.AbordagemPsicologia;
-import com.fiap.mindcare_diary.models.enums.ConsultaModalidade;
 import com.fiap.mindcare_diary.models.enums.EspecialidadePsiquiatria;
 import lombok.Getter;
 import lombok.Setter;

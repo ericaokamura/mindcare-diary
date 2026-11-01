@@ -1,0 +1,113 @@
+-- =============================================================================
+-- PKG_MINDCARE_COMUM
+-- Base reutilizada pelos demais packages do MindCare: códigos de erro
+-- padronizados, localização de usuários por NOME_USUARIO e utilitários de data.
+-- Executar conectado ao schema dono das tabelas (MINDCARE ou MINDCARE_TEST).
+-- =============================================================================
+
+CREATE OR REPLACE PACKAGE PKG_MINDCARE_COMUM AS
+
+    -- Códigos de erro (faixa reservada -20001 .. -20099)
+    C_ERR_PACIENTE_NAO_ENCONTRADO      CONSTANT PLS_INTEGER := -20001;
+    C_ERR_PROFISSIONAL_NAO_ENCONTRADO  CONSTANT PLS_INTEGER := -20002;
+    C_ERR_CLINICA_NAO_ENCONTRADA       CONSTANT PLS_INTEGER := -20003;
+    C_ERR_AGENDAMENTO_INVALIDO         CONSTANT PLS_INTEGER := -20004;
+    C_ERR_CONSULTA_NAO_ENCONTRADA      CONSTANT PLS_INTEGER := -20005;
+    C_ERR_STATUS_CONSULTA_INVALIDO     CONSTANT PLS_INTEGER := -20006;
+    C_ERR_PARAMETRO_INVALIDO           CONSTANT PLS_INTEGER := -20007;
+
+    -- Id do paciente com conta não encerrada; erro -20001 se não existir.
+    FUNCTION FN_ID_PACIENTE (P_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE) RETURN USUARIO.ID%TYPE;
+
+    -- Id do profissional com conta não encerrada; erro -20002 se não existir.
+    FUNCTION FN_ID_PROFISSIONAL (P_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE) RETURN USUARIO.ID%TYPE;
+
+    -- Número de negócio de 6 dígitos (mesmo formato gerado pelo backend Java).
+    FUNCTION FN_GERAR_NUMERO RETURN VARCHAR2;
+
+    -- Dia da semana ISO (1 = segunda ... 7 = domingo), independente de NLS.
+    FUNCTION FN_DIA_SEMANA (P_DATA IN DATE) RETURN PLS_INTEGER DETERMINISTIC;
+
+    -- 1 se a data cair de segunda a sexta, 0 caso contrário.
+    FUNCTION FN_DIA_UTIL (P_DATA IN DATE) RETURN PLS_INTEGER DETERMINISTIC;
+
+    -- Primeiro dia útil a partir de P_DATA (inclusive).
+    FUNCTION FN_PROXIMO_DIA_UTIL (P_DATA IN DATE) RETURN DATE DETERMINISTIC;
+
+    -- Primeiro instante do mês informado; erro -20007 se ano/mês forem inválidos.
+    FUNCTION FN_INICIO_MES (P_ANO IN PLS_INTEGER, P_MES IN PLS_INTEGER) RETURN DATE;
+
+END PKG_MINDCARE_COMUM;
+/
+
+CREATE OR REPLACE PACKAGE BODY PKG_MINDCARE_COMUM AS
+
+    -- Busca genérica reaproveitada pelas funções públicas de lookup.
+    FUNCTION FN_ID_USUARIO (
+        P_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE,
+        P_DTYPE        IN USUARIO.DTYPE%TYPE,
+        P_COD_ERRO     IN PLS_INTEGER,
+        P_MSG_ERRO     IN VARCHAR2
+    ) RETURN USUARIO.ID%TYPE
+    IS
+        V_ID USUARIO.ID%TYPE;
+    BEGIN
+        SELECT U.ID
+          INTO V_ID
+          FROM USUARIO U
+         WHERE U.NOME_USUARIO = P_NOME_USUARIO
+           AND U.DTYPE = P_DTYPE
+           AND U.ENCERRADA_EM IS NULL;
+        RETURN V_ID;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(P_COD_ERRO, P_MSG_ERRO);
+    END FN_ID_USUARIO;
+
+    FUNCTION FN_ID_PACIENTE (P_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE) RETURN USUARIO.ID%TYPE IS
+    BEGIN
+        RETURN FN_ID_USUARIO(P_NOME_USUARIO, 'Paciente',
+                             C_ERR_PACIENTE_NAO_ENCONTRADO, 'Paciente não encontrado.');
+    END FN_ID_PACIENTE;
+
+    FUNCTION FN_ID_PROFISSIONAL (P_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE) RETURN USUARIO.ID%TYPE IS
+    BEGIN
+        RETURN FN_ID_USUARIO(P_NOME_USUARIO, 'Profissional',
+                             C_ERR_PROFISSIONAL_NAO_ENCONTRADO, 'Profissional não encontrado.');
+    END FN_ID_PROFISSIONAL;
+
+    FUNCTION FN_GERAR_NUMERO RETURN VARCHAR2 IS
+    BEGIN
+        RETURN TO_CHAR(TRUNC(DBMS_RANDOM.VALUE(100000, 1000000)));
+    END FN_GERAR_NUMERO;
+
+    FUNCTION FN_DIA_SEMANA (P_DATA IN DATE) RETURN PLS_INTEGER DETERMINISTIC IS
+    BEGIN
+        -- 'IW' trunca para a segunda-feira da semana ISO, sem depender de NLS_TERRITORY
+        RETURN TRUNC(P_DATA) - TRUNC(P_DATA, 'IW') + 1;
+    END FN_DIA_SEMANA;
+
+    FUNCTION FN_DIA_UTIL (P_DATA IN DATE) RETURN PLS_INTEGER DETERMINISTIC IS
+    BEGIN
+        RETURN CASE WHEN FN_DIA_SEMANA(P_DATA) <= 5 THEN 1 ELSE 0 END;
+    END FN_DIA_UTIL;
+
+    FUNCTION FN_PROXIMO_DIA_UTIL (P_DATA IN DATE) RETURN DATE DETERMINISTIC IS
+        V_DATA DATE := TRUNC(P_DATA);
+    BEGIN
+        WHILE FN_DIA_UTIL(V_DATA) = 0 LOOP
+            V_DATA := V_DATA + 1;
+        END LOOP;
+        RETURN V_DATA;
+    END FN_PROXIMO_DIA_UTIL;
+
+    FUNCTION FN_INICIO_MES (P_ANO IN PLS_INTEGER, P_MES IN PLS_INTEGER) RETURN DATE IS
+    BEGIN
+        IF P_MES IS NULL OR P_MES NOT BETWEEN 1 AND 12 OR P_ANO IS NULL OR P_ANO NOT BETWEEN 2000 AND 2999 THEN
+            RAISE_APPLICATION_ERROR(C_ERR_PARAMETRO_INVALIDO, 'Ano/mês inválido.');
+        END IF;
+        RETURN TO_DATE(TO_CHAR(P_ANO) || LPAD(TO_CHAR(P_MES), 2, '0') || '01', 'YYYYMMDD');
+    END FN_INICIO_MES;
+
+END PKG_MINDCARE_COMUM;
+/

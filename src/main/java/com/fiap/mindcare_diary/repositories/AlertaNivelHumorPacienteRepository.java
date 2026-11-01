@@ -17,7 +17,7 @@ public class AlertaNivelHumorPacienteRepository {
     public void registraAlertaNivelHumorPaciente(String pacienteNomeUsuario) {
 
         jdbcTemplate.update(
-                "CALL registra_alerta_nivel_humor_paciente(?)",
+                "CALL PKG_MINDCARE_DIARIO.REGISTRA_ALERTA_NIVEL_HUMOR_PACIENTE(?)",
                 pacienteNomeUsuario
         );
     }

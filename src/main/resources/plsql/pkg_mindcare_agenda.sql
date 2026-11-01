@@ -1,0 +1,268 @@
+-- =============================================================================
+-- PKG_MINDCARE_AGENDA
+-- Regras de agendamento de consultas, espelhando o AgendamentoService:
+-- somente dias úteis, entre 08h e 18h, em horário futuro e sem conflito
+-- com outra consulta ativa do mesmo profissional.
+-- Os procedimentos não fazem COMMIT: a transação é controlada pelo chamador.
+-- Depende de: PKG_MINDCARE_COMUM.
+-- =============================================================================
+
+CREATE OR REPLACE PACKAGE PKG_MINDCARE_AGENDA AS
+
+    C_HORA_INICIO   CONSTANT PLS_INTEGER := 8;
+    C_HORA_FIM      CONSTANT PLS_INTEGER := 18;
+    C_HORA_ALMOCO   CONSTANT PLS_INTEGER := 12;   -- sem atendimento
+    C_PRESENCIAL    CONSTANT CONSULTA.CONSULTA_MODALIDADE%TYPE := 'PRESENCIAL';
+    C_TELECONSULTA  CONSTANT CONSULTA.CONSULTA_MODALIDADE%TYPE := 'TELECONSULTA';
+
+    -- NULL se a data/hora puder ser agendada; senão, a mensagem do motivo.
+    FUNCTION FN_VALIDAR_HORARIO (P_DATA_HORA IN TIMESTAMP) RETURN VARCHAR2;
+
+    -- 1 se o profissional não tiver consulta ativa (não cancelada) no horário, 0 caso contrário.
+    FUNCTION FN_PROFISSIONAL_DISPONIVEL (
+        P_PROFISSIONAL_ID IN USUARIO.ID%TYPE,
+        P_DATA_HORA       IN TIMESTAMP
+    ) RETURN PLS_INTEGER;
+
+    -- Horários livres do profissional no dia (colunas: DATA_HORA_CONSULTA, TIPO_PROFISSIONAL).
+    FUNCTION FN_HORARIOS_DISPONIVEIS (
+        P_PROFISSIONAL_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE,
+        P_DATA                      IN DATE
+    ) RETURN SYS_REFCURSOR;
+
+    -- Agenda a consulta, vincula paciente e profissional e devolve o número gerado.
+    PROCEDURE PRC_AGENDAR_CONSULTA (
+        P_PACIENTE_NOME_USUARIO     IN  USUARIO.NOME_USUARIO%TYPE,
+        P_PROFISSIONAL_NOME_USUARIO IN  USUARIO.NOME_USUARIO%TYPE,
+        P_DATA_HORA                 IN  TIMESTAMP,
+        P_VALOR                     IN  CONSULTA.VALOR_CONSULTA%TYPE,
+        P_MODALIDADE                IN  CONSULTA.CONSULTA_MODALIDADE%TYPE DEFAULT C_PRESENCIAL,
+        P_NUMERO                    OUT CONSULTA.NUMERO%TYPE
+    );
+
+    -- Marca como atendida uma consulta não cancelada cujo horário já passou.
+    PROCEDURE PRC_REGISTRAR_ATENDIMENTO (P_NUMERO IN CONSULTA.NUMERO%TYPE);
+
+    -- Cancela uma consulta ainda não atendida.
+    PROCEDURE PRC_CANCELAR_CONSULTA (P_NUMERO IN CONSULTA.NUMERO%TYPE);
+
+    -- Percentual (0..100) de consultas passadas e não canceladas que o paciente compareceu.
+    -- NULL se ainda não houver consultas passadas.
+    FUNCTION FN_TAXA_COMPARECIMENTO (
+        P_PACIENTE_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE
+    ) RETURN NUMBER;
+
+END PKG_MINDCARE_AGENDA;
+/
+
+CREATE OR REPLACE PACKAGE BODY PKG_MINDCARE_AGENDA AS
+
+    -- Localiza a consulta pelo número, travando a linha para a alteração de status.
+    PROCEDURE PRC_CARREGAR_CONSULTA (
+        P_NUMERO    IN  CONSULTA.NUMERO%TYPE,
+        P_CONSULTA  OUT CONSULTA%ROWTYPE
+    )
+    IS
+    BEGIN
+        SELECT *
+          INTO P_CONSULTA
+          FROM CONSULTA
+         WHERE NUMERO = P_NUMERO
+           FOR UPDATE;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_CONSULTA_NAO_ENCONTRADA, 'Consulta não encontrada.');
+    END PRC_CARREGAR_CONSULTA;
+
+    -- Número de 6 dígitos ainda não usado por outra consulta.
+    FUNCTION FN_NOVO_NUMERO_CONSULTA RETURN CONSULTA.NUMERO%TYPE IS
+        V_NUMERO CONSULTA.NUMERO%TYPE;
+        V_EXISTE PLS_INTEGER;
+    BEGIN
+        LOOP
+            V_NUMERO := PKG_MINDCARE_COMUM.FN_GERAR_NUMERO;
+            SELECT COUNT(*) INTO V_EXISTE FROM CONSULTA WHERE NUMERO = V_NUMERO;
+            EXIT WHEN V_EXISTE = 0;
+        END LOOP;
+        RETURN V_NUMERO;
+    END FN_NOVO_NUMERO_CONSULTA;
+
+    FUNCTION FN_VALIDAR_HORARIO (P_DATA_HORA IN TIMESTAMP) RETURN VARCHAR2 IS
+        V_MINUTOS PLS_INTEGER;
+    BEGIN
+        IF P_DATA_HORA IS NULL THEN
+            RETURN 'Data/horário da consulta não informado.';
+        END IF;
+        IF PKG_MINDCARE_COMUM.FN_DIA_UTIL(CAST(P_DATA_HORA AS DATE)) = 0 THEN
+            RETURN 'Agendamento não pode ser realizado no fim de semana.';
+        END IF;
+        IF P_DATA_HORA < LOCALTIMESTAMP THEN
+            RETURN 'Agendamento precisa ser realizado em data/horário futuro.';
+        END IF;
+        V_MINUTOS := EXTRACT(HOUR FROM P_DATA_HORA) * 60 + EXTRACT(MINUTE FROM P_DATA_HORA);
+        IF V_MINUTOS NOT BETWEEN C_HORA_INICIO * 60 AND C_HORA_FIM * 60 THEN
+            RETURN 'Agendamento precisa ser realizado entre 8h e 18h.';
+        END IF;
+        RETURN NULL;
+    END FN_VALIDAR_HORARIO;
+
+    FUNCTION FN_PROFISSIONAL_DISPONIVEL (
+        P_PROFISSIONAL_ID IN USUARIO.ID%TYPE,
+        P_DATA_HORA       IN TIMESTAMP
+    ) RETURN PLS_INTEGER
+    IS
+        V_OCUPADO PLS_INTEGER;
+    BEGIN
+        SELECT COUNT(*)
+          INTO V_OCUPADO
+          FROM CONSULTA
+         WHERE PROFISSIONAL_ID = P_PROFISSIONAL_ID
+           AND DATA_HORA_CONSULTA = P_DATA_HORA
+           AND CANCELADA = 0;
+        RETURN CASE WHEN V_OCUPADO = 0 THEN 1 ELSE 0 END;
+    END FN_PROFISSIONAL_DISPONIVEL;
+
+    FUNCTION FN_HORARIOS_DISPONIVEIS (
+        P_PROFISSIONAL_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE,
+        P_DATA                      IN DATE
+    ) RETURN SYS_REFCURSOR
+    IS
+        V_PROFISSIONAL_ID USUARIO.ID%TYPE;
+        V_INICIO_DIA      TIMESTAMP;
+        V_RESULTADO       SYS_REFCURSOR;
+    BEGIN
+        IF P_DATA IS NULL OR PKG_MINDCARE_COMUM.FN_DIA_UTIL(P_DATA) = 0 THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_AGENDAMENTO_INVALIDO,
+                                    'Data informada não pode ser no fim de semana.');
+        END IF;
+        V_PROFISSIONAL_ID := PKG_MINDCARE_COMUM.FN_ID_PROFISSIONAL(P_PROFISSIONAL_NOME_USUARIO);
+        V_INICIO_DIA := CAST(TRUNC(P_DATA) AS TIMESTAMP);
+
+        OPEN V_RESULTADO FOR
+            SELECT V_INICIO_DIA + NUMTODSINTERVAL(H.HORA, 'HOUR') AS DATA_HORA_CONSULTA,
+                   U.TIPO_PROFISSIONAL
+              FROM (SELECT C_HORA_INICIO + LEVEL - 1 AS HORA
+                      FROM DUAL
+                   CONNECT BY LEVEL <= C_HORA_FIM - C_HORA_INICIO + 1) H
+             CROSS JOIN USUARIO U
+             WHERE U.ID = V_PROFISSIONAL_ID
+               AND H.HORA <> C_HORA_ALMOCO
+               AND V_INICIO_DIA + NUMTODSINTERVAL(H.HORA, 'HOUR') > LOCALTIMESTAMP
+               AND NOT EXISTS (
+                       SELECT 1
+                         FROM CONSULTA C
+                        WHERE C.PROFISSIONAL_ID = V_PROFISSIONAL_ID
+                          AND C.CANCELADA = 0
+                          AND C.DATA_HORA_CONSULTA = V_INICIO_DIA + NUMTODSINTERVAL(H.HORA, 'HOUR'))
+             ORDER BY H.HORA;
+
+        RETURN V_RESULTADO;
+    END FN_HORARIOS_DISPONIVEIS;
+
+    PROCEDURE PRC_AGENDAR_CONSULTA (
+        P_PACIENTE_NOME_USUARIO     IN  USUARIO.NOME_USUARIO%TYPE,
+        P_PROFISSIONAL_NOME_USUARIO IN  USUARIO.NOME_USUARIO%TYPE,
+        P_DATA_HORA                 IN  TIMESTAMP,
+        P_VALOR                     IN  CONSULTA.VALOR_CONSULTA%TYPE,
+        P_MODALIDADE                IN  CONSULTA.CONSULTA_MODALIDADE%TYPE DEFAULT C_PRESENCIAL,
+        P_NUMERO                    OUT CONSULTA.NUMERO%TYPE
+    )
+    IS
+        V_ERRO            VARCHAR2(200);
+        V_PACIENTE_ID     USUARIO.ID%TYPE;
+        V_PROFISSIONAL_ID USUARIO.ID%TYPE;
+        V_CLINICA_ID      USUARIO.CLINICA_ID%TYPE;
+    BEGIN
+        V_ERRO := FN_VALIDAR_HORARIO(P_DATA_HORA);
+        IF V_ERRO IS NOT NULL THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_AGENDAMENTO_INVALIDO, V_ERRO);
+        END IF;
+        IF P_MODALIDADE IS NULL OR P_MODALIDADE NOT IN (C_PRESENCIAL, C_TELECONSULTA) THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_PARAMETRO_INVALIDO, 'Modalidade de consulta inválida.');
+        END IF;
+        IF P_VALOR IS NULL OR P_VALOR < 0 THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_PARAMETRO_INVALIDO, 'Valor da consulta inválido.');
+        END IF;
+
+        V_PACIENTE_ID := PKG_MINDCARE_COMUM.FN_ID_PACIENTE(P_PACIENTE_NOME_USUARIO);
+        V_PROFISSIONAL_ID := PKG_MINDCARE_COMUM.FN_ID_PROFISSIONAL(P_PROFISSIONAL_NOME_USUARIO);
+
+        -- Trava o profissional para que dois agendamentos simultâneos não ocupem o mesmo horário
+        SELECT CLINICA_ID
+          INTO V_CLINICA_ID
+          FROM USUARIO
+         WHERE ID = V_PROFISSIONAL_ID
+           FOR UPDATE;
+
+        IF FN_PROFISSIONAL_DISPONIVEL(V_PROFISSIONAL_ID, P_DATA_HORA) = 0 THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_AGENDAMENTO_INVALIDO,
+                                    'Já existe um agendamento para essa data e hora.');
+        END IF;
+
+        MERGE INTO PACIENTE_PROFISSIONAL PP
+        USING (SELECT V_PACIENTE_ID AS PACIENTE_ID, V_PROFISSIONAL_ID AS PROFISSIONAL_ID FROM DUAL) S
+           ON (PP.PACIENTE_ID = S.PACIENTE_ID AND PP.PROFISSIONAL_ID = S.PROFISSIONAL_ID)
+         WHEN NOT MATCHED THEN
+            INSERT (PACIENTE_ID, PROFISSIONAL_ID) VALUES (S.PACIENTE_ID, S.PROFISSIONAL_ID);
+
+        P_NUMERO := FN_NOVO_NUMERO_CONSULTA;
+
+        INSERT INTO CONSULTA (NUMERO, PROFISSIONAL_ID, PACIENTE_ID, CLINICA_ID, VALOR_CONSULTA,
+                              CONSULTA_MODALIDADE, DATA_HORA_CONSULTA, ATENDIDA, CANCELADA)
+        VALUES (P_NUMERO, V_PROFISSIONAL_ID, V_PACIENTE_ID, V_CLINICA_ID, P_VALOR,
+                P_MODALIDADE, P_DATA_HORA, 0, 0);
+    END PRC_AGENDAR_CONSULTA;
+
+    PROCEDURE PRC_REGISTRAR_ATENDIMENTO (P_NUMERO IN CONSULTA.NUMERO%TYPE) IS
+        V_CONSULTA CONSULTA%ROWTYPE;
+    BEGIN
+        PRC_CARREGAR_CONSULTA(P_NUMERO, V_CONSULTA);
+        IF V_CONSULTA.CANCELADA = 1 THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_STATUS_CONSULTA_INVALIDO,
+                                    'Consulta cancelada não pode ser marcada como atendida.');
+        END IF;
+        IF V_CONSULTA.DATA_HORA_CONSULTA > LOCALTIMESTAMP THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_STATUS_CONSULTA_INVALIDO,
+                                    'Consulta futura não pode ser marcada como atendida.');
+        END IF;
+
+        UPDATE CONSULTA SET ATENDIDA = 1 WHERE ID = V_CONSULTA.ID;
+    END PRC_REGISTRAR_ATENDIMENTO;
+
+    PROCEDURE PRC_CANCELAR_CONSULTA (P_NUMERO IN CONSULTA.NUMERO%TYPE) IS
+        V_CONSULTA CONSULTA%ROWTYPE;
+    BEGIN
+        PRC_CARREGAR_CONSULTA(P_NUMERO, V_CONSULTA);
+        IF V_CONSULTA.ATENDIDA = 1 THEN
+            RAISE_APPLICATION_ERROR(PKG_MINDCARE_COMUM.C_ERR_STATUS_CONSULTA_INVALIDO,
+                                    'Consulta já atendida não pode ser cancelada.');
+        END IF;
+
+        UPDATE CONSULTA SET CANCELADA = 1 WHERE ID = V_CONSULTA.ID;
+    END PRC_CANCELAR_CONSULTA;
+
+    FUNCTION FN_TAXA_COMPARECIMENTO (
+        P_PACIENTE_NOME_USUARIO IN USUARIO.NOME_USUARIO%TYPE
+    ) RETURN NUMBER
+    IS
+        V_PACIENTE_ID USUARIO.ID%TYPE;
+        V_TOTAL       PLS_INTEGER;
+        V_ATENDIDAS   PLS_INTEGER;
+    BEGIN
+        V_PACIENTE_ID := PKG_MINDCARE_COMUM.FN_ID_PACIENTE(P_PACIENTE_NOME_USUARIO);
+
+        SELECT COUNT(*), COUNT(CASE WHEN ATENDIDA = 1 THEN 1 END)
+          INTO V_TOTAL, V_ATENDIDAS
+          FROM CONSULTA
+         WHERE PACIENTE_ID = V_PACIENTE_ID
+           AND CANCELADA = 0
+           AND DATA_HORA_CONSULTA < LOCALTIMESTAMP;
+
+        IF V_TOTAL = 0 THEN
+            RETURN NULL;
+        END IF;
+        RETURN ROUND(V_ATENDIDAS * 100 / V_TOTAL, 2);
+    END FN_TAXA_COMPARECIMENTO;
+
+END PKG_MINDCARE_AGENDA;
+/

@@ -78,7 +78,7 @@ public class RegistroDiarioRepository {
         return jdbcTemplate.execute(
                 (CallableStatementCreator) connection -> {
                     CallableStatement cs = connection.prepareCall(
-                            "{ ? = call MINDCARE.CARREGA_ULTIMOS_REGISTROS_DIARIOS(?) }"
+                            "{ ? = call MINDCARE.PKG_MINDCARE_DIARIO.CARREGA_ULTIMOS_REGISTROS_DIARIOS(?) }"
                     );
                     cs.registerOutParameter(1, Types.REF_CURSOR);
                     cs.setString(2, pacienteNomeUsuario);
